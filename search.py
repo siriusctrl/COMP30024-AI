@@ -11,7 +11,6 @@ import json
 def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
-        print(len(data))
     # TODO: Search for and output winning sequence of moves
     # ...
 
