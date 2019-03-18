@@ -2,7 +2,8 @@
 COMP30024 Artificial Intelligence, Semester 1 2019
 Solution to Project Part A: Searching
 
-Authors: 
+Authors: Xinyao Niu (900721), Maoting Zuo (901116)
+Team Name: VanGame
 """
 
 import sys
@@ -11,11 +12,12 @@ import json
 def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
+    print_board(data, message="this is a test", debug=True)
     # TODO: Search for and output winning sequence of moves
     # ...
 
 
-def print_board(board_dict, message="", debug=False, **kwargs):
+def print_board(board_dict:dict, message:str="", debug:bool=False, **kwargs):
     """
     Helper function to print a drawing of a hexagonal board's contents.
     
