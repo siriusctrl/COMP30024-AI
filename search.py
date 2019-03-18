@@ -14,7 +14,7 @@ def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
     print(data)
-    utils.print_board(data, message="this is a test", debug=True)
+    utils.print_board(data['blocks'])
     # TODO: Search for and output winning sequence of moves
     # ...
 
