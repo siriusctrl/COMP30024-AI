@@ -2,7 +2,7 @@ import math
 
 class Node:
 
-    def __init__(self, preNode) -> None:
+    def __init__(self, preNode:'Node') -> None:
         self.preNode = preNode
         self.possibleNext = []
         self.coordinates = []
@@ -10,7 +10,7 @@ class Node:
         # actions
         # TODO: finish the build of the tree
 
-    def pieceValid(piece: tuple) -> bool:
+    def pieceValid(self, piece: tuple) -> bool:
         max_coor = 3
         min_coor = -3
 
