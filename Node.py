@@ -1,8 +1,8 @@
 import math
 
-class Node:
+class node:
 
-    def __init__(self, preNode:'Node'=None) -> None:
+    def __init__(self, preNode:'node'=None) -> None:
         self.nearSix = [
             [0, -1],
             [1, -1],
@@ -116,4 +116,4 @@ class Node:
     
 
 if __name__ == "__main__":
-    thatShitNode = Node()
+    thatShitNode = node()
