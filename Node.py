@@ -2,11 +2,21 @@ import math
 
 class Node:
 
-    def __init__(self, preNode:'Node') -> None:
+    def __init__(self, preNode:'Node'=None) -> None:
+        self.nearSix = [
+            [0, -1],
+            [1, -1],
+            [1, 0],
+            [0, 1],
+            [-1, 1],
+            [-1, 0]
+        ]
         self.preNode = preNode
         self.possibleNext = []
         self.coordinates = []
         self.g = 0
+        self.state = {"players": [], "goals": []}
+        self.heuristic({"players": [[-3, 3], [5,5]], "goals": [[-3, 3]]})
         # actions
         # TODO: finish the build of the tree
 
@@ -15,7 +25,38 @@ class Node:
         min_coor = -3
 
         return piece[0] >= min_coor and piece[1] >= min_coor and piece[0] <= max_coor and piece[1] <= max_coor
-    
+
+    def heuristic(self, state):
+        Heuri = []
+        for pc in state["players"]:
+            tmpHeuri = []
+            for go in state["goals"]:
+                
+                if pc[1] > go[1]:
+                    checkNear = [0, 1]
+                elif pc[1] < go[1]:
+                    checkNear = [3, 4]
+                else:
+                    tmpHeuri.append(abs(go[0] - pc[0]))
+                    continue
+                
+                for i in checkNear:
+                    moveCoor = self.nearSix[i]
+                    dX = abs(go[0] - pc[0])
+                    dY = abs(go[1] - pc[1])
+
+                    moveToX = [x * dX for x in moveCoor]
+                    newCoor = [pc[0] + moveToX[0], pc[1] + moveToX[1]]
+                    tmpHeuri.append(dX + abs(go[1] - newCoor[1]))
+
+                    moveToY = [x * dY for x in moveCoor]
+                    newCoor = [pc[0] + moveToY[0], pc[1] + moveToY[1]]
+                    tmpHeuri.append(dY + abs(go[0] - newCoor[0]))
+
+                
+            Heuri.append(min(tmpHeuri))
+            print(Heuri)
+        return max(Heuri)
 
     def expand(self, chessBoard: list, blocks: list) -> None:
         """
@@ -73,3 +114,6 @@ class Node:
         """
         pass
     
+
+if __name__ == "__main__":
+    thatShitNode = Node()
