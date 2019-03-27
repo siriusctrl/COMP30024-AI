@@ -1,6 +1,6 @@
 import math
 
-class node:
+class Node:
 
     def __init__(self, preNode:'node'=None) -> None:
         self.nearSix = [
@@ -11,8 +11,9 @@ class node:
             [-1, 1],
             [-1, 0]
         ]
+
         self.preNode = preNode
-        self.possibleNext = []
+        self.successors = []
         self.coordinates = []
         self.g = 0
         self.state = {"players": [], "goals": []}
@@ -65,7 +66,7 @@ class node:
         states based on the current position of pieces, and trate
         them like the child of this node.
         """
-
+        # TODO: also need to consider when pieces can exit the board
         nearSix = [
             [0, -1],
             [1, -1],
@@ -83,6 +84,7 @@ class node:
             [-2, 2],
             [-2, 0]
         ]
+
         allMoves = dict()
         numOfAllPossible = 6
 
@@ -112,8 +114,15 @@ class node:
 
         * `c2` the position that piece will move to
         """
+        # TODO: Does not need it for now
         pass
     
+    def goal_test(self):
+        """
+        determine whether the current state is the goal state
+        """
+        #TODO: implement this here
+        pass
 
 if __name__ == "__main__":
-    thatShitNode = node()
+    thatShitNode = Node()

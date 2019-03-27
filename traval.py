@@ -1,23 +1,82 @@
 import math
-from heapq import *
-import node
+from heapq import heappush,heappop
+from node import Node
 
 class traval():
 
-    def __init__(self, root:node) -> None:
+    def __init__(self, root):
+        self.root = root
+        self.infi = 999
+        self.base = []
         self.frontier = []
-        heappush(self.frontier, root)
-        self.flimit = 9999999
+        self.fa = "Failure"
+        
+        for s in root.expand():
+            heappush(self.base, (s.f, s))
+
+
+    def RBFS(self, node:node, flimit:float) -> Node:
+        
+        successors = node.successors
+
+        # there is no path for base node
+        if len(successors) == 0:
+            return self.fa, self.infi
+
+        for s in successors:
+            heappush(self.frontier, (s.f, s))
+
+        while True:
+            
+            # no way towards the goal state through this offspring
+            if len(self.frontier) == 0:
+                return self.fa, self.infi
+
+            currentNode = heappop(self.frontier)
+
+            # already find the goal
+            if currentNode.goal_test():
+                return currentNode, currentNode.f
+            
+            if (currentNode.f <= flimit):
+                successors = currentNode.expand()
+
+                # NOTICE: len(successors) might = 0
+                for s in successors:
+                    heappush(self.frontier, (s.f, s))
+                
+            else:
+                return self.fa, currentNode.f
         
 
-    def traval(self, root:node, ) -> None:
-        # the game has finished
-        if (len(root.state["players"]) == 0) or (len(root.possibleNext) == 0):
-            return None
-        
-        
+    def find(self):
+        flimit = self.infi - 1
 
+        # expand all the base node before calculating the cost
+        for b in self.base:
+            b[1].expand()
 
+        while True:
+            #(NodeCost, NodeObject)
+            best = heappop(self.base)
 
-    def can_builder(self, n:node) -> tuple:
-        return (n.f, n)
+            # if best base be assigned a infi cost value
+            if best[0] >= flimit:
+                return "No path, cheack your search logic"
+
+            # the cost of the second best one
+            alternativeCost= self.base[0][0]
+
+            # new frontier
+            # TODO: we can try to a hash table to store part of the frontier in order to save times
+            self.frontier = []
+            
+            result, cost = self.RBFS(best, min(flimit, alternativeCost))
+
+            if result != self.fa:
+                return result
+            
+            # update the flimit for the base node
+            heappush(self.base, (cost, best[1]))
+
+    
