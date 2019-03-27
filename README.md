@@ -7,4 +7,9 @@ This a project repo for game chexers which introduced by course COMP30024 Semest
     - closest exit
     - mean of two closest exit
     - mean of four exit
-3. 
+
+
+## TODO List
+1. implement goal_test in node
+2. 补全expand,需要能更新self.successors并且能考虑到棋子离开棋盘的情况
+3. 还是expand,return改成直接返回node
