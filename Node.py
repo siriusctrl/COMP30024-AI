@@ -1,8 +1,9 @@
 import math
+import utils
 
 class Node:
 
-    def __init__(self, preNode:'node'=None) -> None:
+    def __init__(self, preNode:'node'=None, state: "dict"={}, fromLastAction="") -> None:
         self.nearSix = [
             [0, -1],
             [1, -1],
@@ -12,11 +13,11 @@ class Node:
             [-1, 0]
         ]
 
+        self.fromLastAction = fromLastAction
         self.preNode = preNode
         self.successors = []
-        self.coordinates = []
         self.g = 0
-        self.state = {"players": [], "goals": []}
+        self.state = state
         self.heuristic({"players": [[-3, 3], [5,5]], "goals": [[-3, 3]]})
         # actions
         # TODO: finish the build of the tree
@@ -31,6 +32,7 @@ class Node:
         Heuri = []
         for pc in state["players"]:
             tmpHeuri = []
+            print(str(pc))
             for go in state["goals"]:
                 
                 if pc[1] > go[1]:
@@ -46,20 +48,45 @@ class Node:
                     dX = abs(go[0] - pc[0])
                     dY = abs(go[1] - pc[1])
 
+
+
                     moveToX = [x * dX for x in moveCoor]
+                    print(moveToX)
                     newCoor = [pc[0] + moveToX[0], pc[1] + moveToX[1]]
-                    tmpHeuri.append(dX + abs(go[1] - newCoor[1]))
+                    if go[0] == newCoor[0]:
+                        tmpHeuri.append(abs(dX + abs(go[1] - newCoor[1])))
+
+                    print("goal: " + str(go) + str(dX + abs(go[1] - newCoor[1])))
 
                     moveToY = [x * dY for x in moveCoor]
+                    print(moveToY)
                     newCoor = [pc[0] + moveToY[0], pc[1] + moveToY[1]]
-                    tmpHeuri.append(dY + abs(go[0] - newCoor[0]))
+                    if go[1] == newCoor[1]:
+                        tmpHeuri.append(dY + abs(go[0] - newCoor[0]))
+                    print("goal: " + str(go) + str(dY + abs(go[0] - newCoor[0])))
+                    
 
                 
-            Heuri.append(min(tmpHeuri))
-            print(Heuri)
-        return max(Heuri)
+            Heuri.append(math.floor(min(tmpHeuri) / 2) + 1)
+            # print(Heuri)
+        return sum(Heuri)
 
-    def expand(self, chessBoard: list, blocks: list) -> None:
+    def _newNode(self, oldCoor: tuple, newCoor: tuple=None):
+        newState = {}
+        newState["players"] = self.state["players"] + []
+        newState["players"].remove(oldCoor)
+        if newCoor:
+            newState["players"].append(newCoor)
+        newState["goals"] = self.state["goals"]
+        newState["blocks"] = self.state["blocks"]
+
+        newNode = Node(self, newState)
+        newNode.g = self.g + 1
+
+        self.successors.append(newNode)
+        return newNode
+
+    def expand(self) -> None:
         """
         this method are tring to find all the possible movement for
         all the avaliable pieces on the board as next possible
@@ -85,24 +112,47 @@ class Node:
             [-2, 0]
         ]
 
-        allMoves = dict()
+        # allMoves = dict()
+        allMoveNodes = []
         numOfAllPossible = 6
 
-        for piece in self.coordinates:
+        for piece in range(len(self.state["players"])):
 
-            tmpPiece = tuple(piece + [])
-            tmpCanMovePieces = []
+            tmpPiece = tuple(self.state["players"][piece] + ())
+            # tmpCanMovePieces = []
+
+            if tmpPiece in self.state["goals"]:
+                theNew = self._newNode(tmpPiece)
+                theNew.fromLastAction = str(tmpPiece) + " EXIT from " + str(tmpPiece)
+                allMoveNodes.append(theNew)
+                continue
+
             for i in range(numOfAllPossible):
                 checkingCoordin = (tmpPiece[0] + nearSix[i][0], tmpPiece[1] + nearSix[i][1])
-                if (not (checkingCoordin in blocks)) and self.pieceValid(checkingCoordin):
-                    tmpCanMovePieces.append(checkingCoordin)
+                if (not (checkingCoordin in self.state["blocks"])) and self.pieceValid(checkingCoordin):
+                    # tmpCanMovePieces.append(checkingCoordin)
+                    theNew = self._newNode(tmpPiece, checkingCoordin)
+                    theNew.fromLastAction = str(tmpPiece) + " MOVE to " + str(checkingCoordin)
+                    allMoveNodes.append(theNew)
                 else:
                     furtherCoordin = (tmpPiece[0] + further[i][0], tmpPiece[1] + further[i][1])
-                    if (not (furtherCoordin in blocks)) and self.pieceValid(furtherCoordin):
-                        tmpCanMovePieces.append(furtherCoordin)
-            allMoves[tmpPiece] = tmpCanMovePieces
+                    if (not (furtherCoordin in self.state["blocks"])) and self.pieceValid(furtherCoordin):
+                        # tmpCanMovePieces.append(furtherCoordin)
+
+                        theNew = self._newNode(tmpPiece, furtherCoordin)
+                        theNew.formLastAction = str(tmpPiece) + " JUMP to " + str(furtherCoordin)
+                        allMoveNodes.append(theNew)
+
+
+
+
+            
+            # allMoves[tmpPiece] = tmpCanMovePieces
+
+
         
-        return allMoves
+        # return allMoves
+        return allMoveNodes
     
 
     def moveTo(self, c1:list, c2:list):
@@ -122,7 +172,38 @@ class Node:
         determine whether the current state is the goal state
         """
         #TODO: implement this here
-        pass
+        return self.state["players"] == []
+
+
+    def __str__(self):
+        stateBoard = {
+
+        }
+        for p in self.state["players"]:
+            stateBoard[p] = "*p*"
+
+        for l in self.state["goals"]:
+            if l in stateBoard:
+                stateBoard[l] = stateBoard[l]+ "*a*"
+            else:
+                stateBoard[l] = "*a*"
+        
+        for o in self.state["blocks"]:
+            if o in stateBoard:
+                stateBoard[o] = stateBoard[o] + "*o*"
+            else:
+                stateBoard[o] = "*o*"
+        utils.print_board(stateBoard, message=self.fromLastAction + str(self.heuristic(self.state)), debug=True)
+        # return utils.print_board(stateBoard, debug=True)
+        return self.fromLastAction
+
+    __repr__ = __str__
 
 if __name__ == "__main__":
-    thatShitNode = Node()
+    thatShitNode = Node(state={
+        "players": [(0, 2), (2, 1)],
+        "goals": [(3, 0), (2, 1), (1, 2), (0, 3)],
+        "blocks": [(2, -1)]
+    })
+
+    print(thatShitNode.expand())
