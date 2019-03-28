@@ -33,7 +33,7 @@ class Node:
         Heuri = []
         for pc in state["players"]:
             tmpHeuri = []
-            print(str(pc))
+            #print(str(pc))
             for go in state["goals"]:
                 
                 if pc[1] > go[1]:
@@ -52,19 +52,19 @@ class Node:
 
 
                     moveToX = [x * dX for x in moveCoor]
-                    print(moveToX)
+                    #print(moveToX)
                     newCoor = [pc[0] + moveToX[0], pc[1] + moveToX[1]]
                     if go[0] == newCoor[0]:
                         tmpHeuri.append(abs(dX + abs(go[1] - newCoor[1])))
 
-                    print("goal: " + str(go) + str(dX + abs(go[1] - newCoor[1])))
+                    #print("goal: " + str(go) + str(dX + abs(go[1] - newCoor[1])))
 
                     moveToY = [x * dY for x in moveCoor]
-                    print(moveToY)
+                    #print(moveToY)
                     newCoor = [pc[0] + moveToY[0], pc[1] + moveToY[1]]
                     if go[1] == newCoor[1]:
                         tmpHeuri.append(dY + abs(go[0] - newCoor[0]))
-                    print("goal: " + str(go) + str(dY + abs(go[0] - newCoor[0])))
+                    #print("goal: " + str(go) + str(dY + abs(go[0] - newCoor[0])))
                     
 
                 

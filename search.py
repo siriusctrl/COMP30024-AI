@@ -18,7 +18,7 @@ def main():
     # TODO: Search for and output winning sequence of moves
     root = utils.initialNode(data)
     #print(utils.initialNode(data))
-    last = traval.Traval(root)
+    last = traval.Traval(root).find()
     print(last)
 
 # when this module is executed, run the `main` function:

@@ -10,9 +10,11 @@ class Traval():
         self.base = []
         self.frontier = []
         self.fa = "Failure"
-        
+
         for s in root.expand():
-            heappush(self.base, (s.f, s))
+            self.base.append([s.f, s])
+        
+        self.base = self.nodeSort(self.base)
 
 
     def RBFS(self, node:Node, flimit:float) -> Node:
@@ -24,15 +26,18 @@ class Traval():
             return self.fa, self.infi
 
         for s in successors:
-            heappush(self.frontier, (s.f, s))
+            self.frontier.append((s.f, s))
 
         while True:
-            
+            self.frontier = self.nodeSort(self.frontier)
+
             # no way towards the goal state through this offspring
             if len(self.frontier) == 0:
                 return self.fa, self.infi
 
-            currentNode = heappop(self.frontier)
+            currentNode = self.frontier[0][1]
+            # remove the current node from the frontier
+            self.frontier = self.frontier[1:]
 
             # already find the goal
             if currentNode.goal_test():
@@ -43,8 +48,7 @@ class Traval():
 
                 # NOTICE: len(successors) might = 0
                 for s in successors:
-                    heappush(self.frontier, (s.f, s))
-                
+                    self.frontier.append((s.f, s))
             else:
                 return self.fa, currentNode.f
         
@@ -57,26 +61,30 @@ class Traval():
             b[1].expand()
 
         while True:
-            #(NodeCost, NodeObject)
-            best = heappop(self.base)
+            print([i[0] for i in self.base])
+            self.base = self.nodeSort(self.base)
+            #[NodeCost, NodeObject]
+            best = self.base[0]
 
             # if best base be assigned a infi cost value
             if best[0] >= flimit:
                 return "No path, cheack your search logic"
 
             # the cost of the second best one
-            alternativeCost= self.base[0][0]
+            alternativeCost= self.base[1][0]
 
-            # new frontier
-            # TODO: we can try to a hash table to store part of the frontier in order to save times
+            # TODO: we can try to use a hash table to store part of the frontier in order to save times
+            # new frontier for switching between different branch
             self.frontier = []
             
-            result, cost = self.RBFS(best, min(flimit, alternativeCost))
+            result, cost = self.RBFS(best[1], min(flimit, alternativeCost))
 
             if result != self.fa:
                 return result
             
             # update the flimit for the base node
-            heappush(self.base, (cost, best[1]))
+            self.base[0][0] = cost
 
-    
+
+    def nodeSort(self, nodes:[Node]) -> [Node]:
+        return sorted(nodes, key=lambda x:x[0])
