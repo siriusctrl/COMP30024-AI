@@ -6,7 +6,7 @@ class Traval():
 
     def __init__(self, root):
         self.root = root
-        self.infi = 999
+        self.infi = 99
         self.base = []
         self.frontier = []
         self.fa = "Failure"
@@ -15,6 +15,10 @@ class Traval():
             self.base.append([s.f, s])
         
         self.base = self.nodeSort(self.base)
+
+        # expand all the base node before calculating the cost
+        for b in self.base:
+            b[1].expand()
 
 
     def RBFS(self, node:Node, flimit:float) -> Node:
@@ -53,18 +57,14 @@ class Traval():
                 return self.fa, currentNode.f
         
 
-    def find(self):
+    def findRBFS(self):
         flimit = self.infi - 1
-
-        # expand all the base node before calculating the cost
-        for b in self.base:
-            b[1].expand()
 
         while True:
 
             self.base = self.nodeSort(self.base)
             print([(i[0], i[1].fromLastAction) for i in self.base])
-            
+
             #[NodeCost, NodeObject]
             best = self.base[0]
 
@@ -88,5 +88,43 @@ class Traval():
             self.base[0][0] = cost
 
 
+    def Astar(self):
+        visited = {}
+
+        #(object.f, object)
+        for b in self.base:
+            self.frontier.append(b)
+            visited[ str(sorted(b[1].state["players"])) ] = b[1]
+        
+
+        while True:
+            print(len(self.frontier))
+            self.frontier = self.nodeSort(self.frontier)
+
+            currentNode = self.frontier[0][1]
+            self.frontier = self.frontier[1:]
+            
+            if currentNode.goal_test():
+                #print(len(self.frontier))
+                return currentNode
+            
+            if currentNode.f > self.infi:
+                return "Failed"
+            
+            successors = currentNode.expand()
+
+            for s in successors:
+                state = str(sorted(s.state["players"]))
+                if state in visited:
+                    if visited[state].g > s.g:
+                        self.frontier.append((s.f, s))
+                        visited[state] = s
+                else:
+                    self.frontier.append((s.f, s))
+                    visited[state] = s
+
+
     def nodeSort(self, nodes:[Node]) -> [Node]:
         return sorted(nodes, key=lambda x:x[0])
+
+sorted([[-3,'b'], [0,'a'], [-3,'c']])
