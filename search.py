@@ -17,9 +17,14 @@ def main():
     #print(data)
     # TODO: Search for and output winning sequence of moves
     root = utils.initialNode(data)
+    print(root)
+
     #print(utils.initialNode(data))
     last = traval.Traval(root).find()
-    print(last)
+
+    while last:
+        print(last.fromLastAction)
+        last = last.preNode
 
 # when this module is executed, run the `main` function:
 if __name__ == '__main__':

@@ -13,7 +13,7 @@ class Node:
             [-1, 0]
         ]
 
-        self.fromLastAction = fromLastAction
+        self.fromLastAction = fromLastAction + "."
         self.preNode = preNode
         self.successors = []
         self.g = g
