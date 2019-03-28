@@ -3,7 +3,7 @@ import utils
 
 class Node:
 
-    def __init__(self, preNode:'node'=None, state: "dict"={}, fromLastAction="") -> None:
+    def __init__(self, preNode:'node'=None, state: "dict"={}, fromLastAction="", g=0) -> None:
         self.nearSix = [
             [0, -1],
             [1, -1],
@@ -16,9 +16,10 @@ class Node:
         self.fromLastAction = fromLastAction
         self.preNode = preNode
         self.successors = []
-        self.g = 0
+        self.g = g
         self.state = state
         self.heuristic({"players": [[-3, 3], [5,5]], "goals": [[-3, 3]]})
+        self.f = self.g + self.heuristic(self.state)
         # actions
         # TODO: finish the build of the tree
 
