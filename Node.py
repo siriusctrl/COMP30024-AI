@@ -81,8 +81,8 @@ class Node:
         newState["goals"] = self.state["goals"]
         newState["blocks"] = self.state["blocks"]
 
-        newNode = Node(self, newState)
-        newNode.g = self.g + 1
+        newNode = Node(self, newState, g=(self.g + 1))
+        # newNode.g = self.g + 1
 
         self.successors.append(newNode)
         return newNode
