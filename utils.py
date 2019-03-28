@@ -121,9 +121,9 @@ def initialNode(inputBoard: dict):
     }
 
     initialSt = {}
-    initialSt["players"] = inputBoard["pieces"]
+    initialSt["players"] = [tuple(x) for x in inputBoard["pieces"]]
     initialSt["goals"] = COLORS[inputBoard["color"]]
-    initialSt["blocks"] = inputBoard["blocks"]
+    initialSt["blocks"] = [tuple(x) for x in inputBoard["blocks"]]
 
-    initialNd = Node(state=initialSt)
+    initialNd = Node.Node(state=initialSt)
     return initialNd
