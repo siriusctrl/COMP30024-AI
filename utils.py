@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import math
+import Node
 
 def print_board(board_dict:dict, message:str="", debug:bool=False, **kwargs):
     """
@@ -97,3 +98,32 @@ def eud(p1:tuple, p2:tuple) -> float:
     """
     return math.sqrt(sum([(i-j)**2 for i,j in zip(p1,p2)]))
 
+def initialNode(inputBoard: dict):
+    COLORS = {
+        "red": [
+            (3, -3),
+            (3, -2),
+            (3, -1),
+            (3, 0)
+        ],
+        "green": [
+            (-3, 3),
+            (-2, 3),
+            (-1, 3),
+            (0, 3)
+        ],
+        "blue": [
+            (0, -3),
+            (-1, -2),
+            (-2, -1),
+            (-3, 0)
+        ]
+    }
+
+    initialSt = {}
+    initialSt["players"] = inputBoard["pieces"]
+    initialSt["goals"] = COLORS[inputBoard["color"]]
+    initialSt["blocks"] = inputBoard["blocks"]
+
+    initialNd = Node(state=initialSt)
+    return initialNd
