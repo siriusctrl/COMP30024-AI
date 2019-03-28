@@ -61,7 +61,8 @@ class Traval():
             b[1].expand()
 
         while True:
-            print([i[0] for i in self.base])
+            print([ (i[1].f, i[1].fromLastAction) for i in self.base])
+
             self.base = self.nodeSort(self.base)
             #[NodeCost, NodeObject]
             best = self.base[0]
