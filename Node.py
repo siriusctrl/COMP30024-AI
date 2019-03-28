@@ -72,7 +72,7 @@ class Node:
             # print(Heuri)
         return sum(Heuri)
 
-    def _newNode(self, oldCoor: tuple, newCoor: tuple=None):
+    def _newNode(self, oldCoor: tuple, newCoor: tuple=None, fromLastAction=""):
         newState = {}
         newState["players"] = self.state["players"] + []
         newState["players"].remove(oldCoor)
@@ -81,7 +81,7 @@ class Node:
         newState["goals"] = self.state["goals"]
         newState["blocks"] = self.state["blocks"]
 
-        newNode = Node(self, newState, g=(self.g + 1))
+        newNode = Node(self, newState, g=(self.g + 1), fromLastAction=fromLastAction)
         # newNode.g = self.g + 1
 
         self.successors.append(newNode)
@@ -123,25 +123,25 @@ class Node:
             # tmpCanMovePieces = []
 
             if tmpPiece in self.state["goals"]:
-                theNew = self._newNode(tmpPiece)
-                theNew.fromLastAction = str(tmpPiece) + " EXIT from " + str(tmpPiece)
+                theNew = self._newNode(tmpPiece, fromLastAction=str(tmpPiece) + " EXIT from " + str(tmpPiece))
+                # theNew.fromLastAction = str(tmpPiece) + " EXIT from " + str(tmpPiece)
                 allMoveNodes.append(theNew)
                 continue
 
             for i in range(numOfAllPossible):
                 checkingCoordin = (tmpPiece[0] + nearSix[i][0], tmpPiece[1] + nearSix[i][1])
-                if (not (checkingCoordin in self.state["blocks"])) and self.pieceValid(checkingCoordin):
+                if (not (checkingCoordin in self.state["blocks"] or checkingCoordin in self.state["players"])) and self.pieceValid(checkingCoordin):
                     # tmpCanMovePieces.append(checkingCoordin)
-                    theNew = self._newNode(tmpPiece, checkingCoordin)
-                    theNew.fromLastAction = str(tmpPiece) + " MOVE to " + str(checkingCoordin)
+                    theNew = self._newNode(tmpPiece, checkingCoordin, fromLastAction=str(tmpPiece) + " MOVE to " + str(checkingCoordin))
+                    # theNew.fromLastAction = str(tmpPiece) + " MOVE to " + str(checkingCoordin)
                     allMoveNodes.append(theNew)
                 else:
                     furtherCoordin = (tmpPiece[0] + further[i][0], tmpPiece[1] + further[i][1])
-                    if (not (furtherCoordin in self.state["blocks"])) and self.pieceValid(furtherCoordin):
+                    if (not (furtherCoordin in self.state["blocks"] or furtherCoordin in self.state["players"])) and self.pieceValid(furtherCoordin):
                         # tmpCanMovePieces.append(furtherCoordin)
 
-                        theNew = self._newNode(tmpPiece, furtherCoordin)
-                        theNew.formLastAction = str(tmpPiece) + " JUMP to " + str(furtherCoordin)
+                        theNew = self._newNode(tmpPiece, furtherCoordin, fromLastAction=str(tmpPiece) + " JUMP to " + str(furtherCoordin))
+                        # theNew.formLastAction = str(tmpPiece) + " JUMP to " + str(furtherCoordin)
                         allMoveNodes.append(theNew)
 
 
