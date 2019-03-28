@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import math
-import Node
+import node
 
 def print_board(board_dict:dict, message:str="", debug:bool=False, **kwargs):
     """
@@ -125,5 +125,5 @@ def initialNode(inputBoard: dict):
     initialSt["goals"] = COLORS[inputBoard["color"]]
     initialSt["blocks"] = [tuple(x) for x in inputBoard["blocks"]]
 
-    initialNd = Node.Node(state=initialSt)
+    initialNd = node.Node(state=initialSt)
     return initialNd

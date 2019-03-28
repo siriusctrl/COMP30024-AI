@@ -2,7 +2,7 @@ import math
 from heapq import heappush,heappop
 from node import Node
 
-class traval():
+class Traval():
 
     def __init__(self, root):
         self.root = root
@@ -15,7 +15,7 @@ class traval():
             heappush(self.base, (s.f, s))
 
 
-    def RBFS(self, node:node, flimit:float) -> Node:
+    def RBFS(self, node:Node, flimit:float) -> Node:
         
         successors = node.successors
 

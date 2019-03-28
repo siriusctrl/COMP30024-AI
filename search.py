@@ -9,15 +9,17 @@ Team Name: VanGame
 import sys
 import json
 import utils
+import traval
 
 def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
-    print(data)
-    utils.print_board(data['blocks'])
+    #print(data)
     # TODO: Search for and output winning sequence of moves
-    # ...
-
+    root = utils.initialNode(data)
+    #print(utils.initialNode(data))
+    last = traval.Traval(root)
+    print(last)
 
 # when this module is executed, run the `main` function:
 if __name__ == '__main__':
