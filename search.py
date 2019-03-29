@@ -22,9 +22,14 @@ def main():
     #print(utils.initialNode(data))
     last = traval.Traval(root).Astar_Q()
 
-    while last:
+    totalSteps = 0
+
+    while last != root:
+        totalSteps += 1
         print(last.fromLastAction)
         last = last.preNode
+    
+    print("total steps are:", totalSteps)
 
 # when this module is executed, run the `main` function:
 if __name__ == '__main__':

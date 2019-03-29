@@ -99,7 +99,7 @@ def eud(p1:tuple, p2:tuple) -> float:
     return math.sqrt(sum([(i-j)**2 for i,j in zip(p1,p2)]))
 
 def initialNode(inputBoard: dict):
-    COLORS = {
+    COLOURS = {
         "red": [
             (3, -3),
             (3, -2),
@@ -122,7 +122,7 @@ def initialNode(inputBoard: dict):
 
     initialSt = {}
     initialSt["players"] = [tuple(x) for x in inputBoard["pieces"]]
-    initialSt["goals"] = COLORS[inputBoard["color"]]
+    initialSt["goals"] = COLOURS[inputBoard["colour"]]
     initialSt["blocks"] = [tuple(x) for x in inputBoard["blocks"]]
 
     initialNd = node.Node(state=initialSt)
