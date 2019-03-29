@@ -143,7 +143,7 @@ class Traval():
 
         while True:
             #print(len(self.frontier))
-            print(len(front))
+            #print(len(front))
             currentNode = heappop(front)
             
             if currentNode.goal_test():

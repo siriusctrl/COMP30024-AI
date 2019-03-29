@@ -75,9 +75,11 @@ class Node:
                         tmpHeuri.append(dY + abs(go[0] - newCoor[0]))
                     #print("goal: " + str(go) + str(dY + abs(go[0] - newCoor[0])))
                     
-
-                
-            Heuri.append((min(tmpHeuri) / 2 + 1))
+            minDist = min(tmpHeuri)
+            if minDist % 2 == 0:
+                Heuri.append(minDist / 2 + 1)
+            else:
+                Heuri.append((minDist-1)/2 +2)  
             # print(Heuri)
         return sum(Heuri)
 

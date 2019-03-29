@@ -27,8 +27,8 @@ def print_board(board_dict:dict, message:str="", debug:bool=False, **kwargs):
 
     # Set up the board template:
     if not debug:
-            # Use the normal board template (smaller, not showing coordinates)
-            template = """# {0}
+        # Use the normal board template (smaller, not showing coordinates)
+        template = """# {0}
     #           .-'-._.-'-._.-'-._.-'-.
     #          |{16:}|{23:}|{29:}|{34:}| 
     #        .-'-._.-'-._.-'-._.-'-._.-'-.
@@ -45,8 +45,8 @@ def print_board(board_dict:dict, message:str="", debug:bool=False, **kwargs):
     #          |{04:}|{09:}|{15:}|{22:}|
     #          '-._.-'-._.-'-._.-'-._.-'"""
     else:
-            # Use the debug board template (larger, showing coordinates)
-            template = """# {0}
+        # Use the debug board template (larger, showing coordinates)
+        template = """# {0}
     #              ,-' `-._,-' `-._,-' `-._,-' `-.
     #             | {16:} | {23:} | {29:} | {34:} | 
     #             |  0,-3 |  1,-3 |  2,-3 |  3,-3 |
@@ -74,11 +74,11 @@ def print_board(board_dict:dict, message:str="", debug:bool=False, **kwargs):
     ran = range(-3, +3+1)
     cells = []
     for qr in [(q,r) for q in ran for r in ran if -q-r in ran]:
-            if qr in board_dict:
-                    cell = str(board_dict[qr]).center(5)
-            else:
-                    cell = "     " # 5 spaces will fill a cell
-            cells.append(cell)
+        if qr in board_dict:
+            cell = str(board_dict[qr]).center(5)
+        else:
+            cell = "     " # 5 spaces will fill a cell
+        cells.append(cell)
 
     # fill in the template to create the board drawing, then print!
     board = template.format(message, *cells)
@@ -126,4 +126,10 @@ def initialNode(inputBoard: dict):
     initialSt["blocks"] = [tuple(x) for x in inputBoard["blocks"]]
 
     initialNd = node.Node(state=initialSt)
+
+    # remove unachiavable goals
+    for i in initialSt["blocks"]:
+        if i in initialNd.state['goals']:
+            initialNd.state['goals'].remove(i)
+
     return initialNd
