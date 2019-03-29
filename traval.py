@@ -90,6 +90,7 @@ class Traval():
 
     def Astar(self):
         visited = {}
+        removed = 0
 
         #(object.f, object)
         for b in self.base:
@@ -98,7 +99,7 @@ class Traval():
         
 
         while True:
-            print(len(self.frontier))
+            #print(len(self.frontier))
             self.frontier = self.nodeSort(self.frontier)
 
             currentNode = self.frontier[0][1]
@@ -106,6 +107,7 @@ class Traval():
             
             if currentNode.goal_test():
                 #print(len(self.frontier))
+                print("removed =",removed)
                 return currentNode
             
             if currentNode.f > self.infi:
@@ -116,9 +118,13 @@ class Traval():
             for s in successors:
                 state = str(sorted(s.state["players"]))
                 if state in visited:
+                    # only add in better node
                     if visited[state].g > s.g:
+                        print(visited[state].g, s.g)
                         self.frontier.append((s.f, s))
                         visited[state] = s
+                    else:
+                        removed += 1
                 else:
                     self.frontier.append((s.f, s))
                     visited[state] = s
