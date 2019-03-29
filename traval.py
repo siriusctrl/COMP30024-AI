@@ -137,14 +137,14 @@ class Traval():
 
         #[object.f, object]
         for b in self.base:
-            heappush(front, (b[0], b[1]))
-            visited[str(sorted(b[1].state["players"]))] = b[1]
+            heappush(front, b[1])
+            visited[tuple(sorted(b[1].state["players"]))] = b[1]
         
 
         while True:
             #print(len(self.frontier))
             print(len(front))
-            currentNode = heappop(front)[1]
+            currentNode = heappop(front)
             
             if currentNode.goal_test():
                 #print(len(self.frontier))
@@ -157,17 +157,17 @@ class Traval():
             successors = currentNode.expand()
 
             for s in successors:
-                state = str(sorted(s.state["players"]))
+                state = tuple(sorted(s.state["players"]))
                 if state in visited:
                     # only add in better node
                     if visited[state].g > s.g:
                         #print(visited[state].g, s.g)
-                        heappush(front, (s.f, s))
+                        heappush(front, s)
                         visited[state] = s
                     else:
                         removed += 1
                 else:
-                    heappush(front, (s.f, s))
+                    heappush(front, s)
                     visited[state] = s
 
     def nodeSort(self, nodes:[Node]) -> [Node]:

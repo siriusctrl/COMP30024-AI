@@ -21,7 +21,7 @@ class Node:
         self.successors = []
         self.g = g
         self.state = state
-        self.heuristic({"players": [[-3, 3], [5,5]], "goals": [[-3, 3]]})
+        # self.heuristic({"players": [[-3, 3], [5,5]], "goals": [[-3, 3]]})
         self.f = self.g + self.heuristic(self.state)
         # actions
         # TODO: finish the build of the tree
@@ -77,7 +77,7 @@ class Node:
                     
 
                 
-            Heuri.append(math.floor(min(tmpHeuri) / 2) + 1)
+            Heuri.append((min(tmpHeuri) / 2 + 1))
             # print(Heuri)
         return sum(Heuri)
 
