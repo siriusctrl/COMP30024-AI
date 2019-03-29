@@ -1,6 +1,9 @@
 import math
 import utils
+import functools
 
+
+@functools.total_ordering
 class Node:
 
     def __init__(self, preNode:'node'=None, state: "dict"={}, fromLastAction="", g=0) -> None:
@@ -28,6 +31,12 @@ class Node:
         min_coor = -3
 
         return piece[0] >= min_coor and piece[1] >= min_coor and piece[0] <= max_coor and piece[1] <= max_coor
+
+    def __lt__(self, other):
+        return self.f < other.f
+    
+    def __eq__(self, other):
+        return self.f == other.f and self.g == other.g and self.state == other.state
 
     def heuristic(self, state):
         Heuri = []
