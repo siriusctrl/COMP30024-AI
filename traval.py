@@ -129,6 +129,46 @@ class Traval():
                     self.frontier.append((s.f, s))
                     visited[state] = s
 
+    def Astar_Q(self):
+
+        front = []
+        visited = {}
+        removed = 0
+
+        #[object.f, object]
+        for b in self.base:
+            heappush(front, (b[0], b[1]))
+            visited[str(sorted(b[1].state["players"]))] = b[1]
+        
+
+        while True:
+            #print(len(self.frontier))
+            print(len(front))
+            currentNode = heappop(front)[1]
+            
+            if currentNode.goal_test():
+                #print(len(self.frontier))
+                print("removed =",removed)
+                return currentNode
+            
+            if currentNode.f > self.infi:
+                return "Failed"
+            
+            successors = currentNode.expand()
+
+            for s in successors:
+                state = str(sorted(s.state["players"]))
+                if state in visited:
+                    # only add in better node
+                    if visited[state].g > s.g:
+                        #print(visited[state].g, s.g)
+                        heappush(front, (s.f, s))
+                        visited[state] = s
+                    else:
+                        removed += 1
+                else:
+                    heappush(front, (s.f, s))
+                    visited[state] = s
 
     def nodeSort(self, nodes:[Node]) -> [Node]:
         return sorted(nodes, key=lambda x:x[0])

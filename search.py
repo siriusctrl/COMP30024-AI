@@ -20,7 +20,7 @@ def main():
     print(root)
 
     #print(utils.initialNode(data))
-    last = traval.Traval(root).Astar()
+    last = traval.Traval(root).Astar_Q()
 
     while last:
         print(last.fromLastAction)
