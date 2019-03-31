@@ -14,22 +14,24 @@ import traval
 def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
-    #print(data)
-    # TODO: Search for and output winning sequence of moves
+
     root = utils.initialNode(data)
     print(root)
 
-    #print(utils.initialNode(data))
+    # return the last node of the 
     last = traval.Traval(root).Astar_Q()
 
     totalSteps = 0
 
+    results = ""
+
     while last != root:
         totalSteps += 1
-        print(last.fromLastAction)
+        results = last.fromLastAction + "\n" + results
         last = last.preNode
     
-    print("total steps are:", totalSteps)
+    print("# total steps are:", totalSteps)
+    print(results)
 
 # when this module is executed, run the `main` function:
 if __name__ == '__main__':

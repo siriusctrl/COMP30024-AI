@@ -3,12 +3,15 @@ from heapq import heappush,heappop
 from node import Node
 
 class Traval():
+    """
+    this class define the strategies that we are going to explore the search tree
+    """
 
     def __init__(self, root):
         self.root = root
-        self.infi = 99
-        self.base = []
-        self.frontier = []
+        self.infi = 999  # maximum possible movement if there is really a solution
+        self.base = []  # contains the children of the roots
+        self.frontier = []  # current nodes in memory that we want to explore
         self.fa = "Failure"
 
         for s in root.expand():
@@ -58,6 +61,10 @@ class Traval():
         
 
     def findRBFS(self):
+        """
+        this function is used to maintance the self.base, 
+        to decide which base are going to be explored next.
+        """
         flimit = self.infi - 1
 
         while True:
@@ -89,6 +96,10 @@ class Traval():
 
 
     def Astar(self):
+        """
+        A* search using the list and custom sort alogrithm to maintance the frontier
+        """
+
         visited = {}
         removed = 0
 
@@ -130,25 +141,29 @@ class Traval():
                     visited[state] = s
 
     def Astar_Q(self):
+        """
+        A* search using the Priority Queue to maintance the frontier
+        """
 
+        # frontier list
         front = []
+        # a dictionary to store seen states, if there is a duplication, only 
+        # the one with better g will be kept
         visited = {}
+        # Only for debuging purpose, to see how many nodes are pruned
         removed = 0
 
-        #[object.f, object]
         for b in self.base:
             heappush(front, b[1])
             visited[tuple(sorted(b[1].state["players"]))] = b[1]
         
-
         while True:
-            #print(len(self.frontier))
             #print(len(front))
             currentNode = heappop(front)
             
             if currentNode.goal_test():
                 #print(len(self.frontier))
-                print("removed =",removed)
+                print("# total removed duplicate nodes =",removed)
                 return currentNode
             
             if currentNode.f > self.infi:
@@ -161,10 +176,10 @@ class Traval():
                 if state in visited:
                     # only add in better node
                     if visited[state].g > s.g:
-                        #print(visited[state].g, s.g)
                         heappush(front, s)
                         visited[state] = s
                     else:
+                        # discard the worse one
                         removed += 1
                 else:
                     heappush(front, s)
@@ -172,5 +187,3 @@ class Traval():
 
     def nodeSort(self, nodes:[Node]) -> [Node]:
         return sorted(nodes, key=lambda x:x[0])
-
-sorted([[-3,'b'], [0,'a'], [-3,'c']])

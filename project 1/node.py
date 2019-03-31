@@ -16,7 +16,7 @@ class Node:
             [-1, 0]
         ]
 
-        self.fromLastAction = fromLastAction + "."
+        self.fromLastAction = fromLastAction
         self.preNode = preNode
         self.successors = []
         self.g = g
@@ -134,7 +134,7 @@ class Node:
             # tmpCanMovePieces = []
 
             if tmpPiece in self.state["goals"]:
-                theNew = self._newNode(tmpPiece, fromLastAction=str(tmpPiece) + " EXIT from " + str(tmpPiece))
+                theNew = self._newNode(tmpPiece, fromLastAction="EXIT from " + str(tmpPiece) + ".")
                 # theNew.fromLastAction = str(tmpPiece) + " EXIT from " + str(tmpPiece)
                 allMoveNodes.append(theNew)
                 continue
@@ -143,7 +143,7 @@ class Node:
                 checkingCoordin = (tmpPiece[0] + nearSix[i][0], tmpPiece[1] + nearSix[i][1])
                 if (not (checkingCoordin in self.state["blocks"] or checkingCoordin in self.state["players"])) and self.pieceValid(checkingCoordin):
                     # tmpCanMovePieces.append(checkingCoordin)
-                    theNew = self._newNode(tmpPiece, checkingCoordin, fromLastAction=str(tmpPiece) + " MOVE to " + str(checkingCoordin))
+                    theNew = self._newNode(tmpPiece, checkingCoordin, fromLastAction= "MOVE from " + str(tmpPiece) + " to " + str(checkingCoordin) + ".")
                     # theNew.fromLastAction = str(tmpPiece) + " MOVE to " + str(checkingCoordin)
                     allMoveNodes.append(theNew)
                 else:
@@ -151,37 +151,19 @@ class Node:
                     if (not (furtherCoordin in self.state["blocks"] or furtherCoordin in self.state["players"])) and self.pieceValid(furtherCoordin):
                         # tmpCanMovePieces.append(furtherCoordin)
 
-                        theNew = self._newNode(tmpPiece, furtherCoordin, fromLastAction=str(tmpPiece) + " JUMP to " + str(furtherCoordin))
+                        theNew = self._newNode(tmpPiece, furtherCoordin, fromLastAction="JUMP from " + str(tmpPiece) + " to " + str(furtherCoordin) + ".")
                         # theNew.formLastAction = str(tmpPiece) + " JUMP to " + str(furtherCoordin)
                         allMoveNodes.append(theNew)
 
-
-
-
-            
             # allMoves[tmpPiece] = tmpCanMovePieces
 
-
-        
         # return allMoves
         return allMoveNodes
-    
 
-    def moveTo(self, c1:list, c2:list):
-        """
-        moveTo the next state of the board, creating a new child
-        node to represent.
-
-        * `c1` the current position of the piece you want to move
-
-        * `c2` the position that piece will move to
-        """
-        # TODO: Does not need it for now
-        pass
     
     def goal_test(self):
         """
-        determine whether the current state is the goal state
+        determine if the current state is the goal state
         """
         #TODO: implement this here
         return self.state["players"] == []
