@@ -144,14 +144,14 @@ class Node:
 
             for i in range(numOfAllPossible):
                 checkingCoordin = (tmpPiece[0] + nearSix[i][0], tmpPiece[1] + nearSix[i][1])
-                if (not (checkingCoordin in self.state["blocks"] or checkingCoordin in self.state["players"])) and self.pieceValid(checkingCoordin):
+                if (not (checkingCoordin in self.state["blocks"] or checkingCoordin in self.state["players"])) and utils.pieceValid(checkingCoordin):
                     # tmpCanMovePieces.append(checkingCoordin)
                     theNew = self._newNode(tmpPiece, checkingCoordin, fromLastAction= "MOVE from " + str(tmpPiece) + " to " + str(checkingCoordin) + ".")
                     # theNew.fromLastAction = str(tmpPiece) + " MOVE to " + str(checkingCoordin)
                     allMoveNodes.append(theNew)
                 else:
                     furtherCoordin = (tmpPiece[0] + further[i][0], tmpPiece[1] + further[i][1])
-                    if (not (furtherCoordin in self.state["blocks"] or furtherCoordin in self.state["players"])) and self.pieceValid(furtherCoordin):
+                    if (not (furtherCoordin in self.state["blocks"] or furtherCoordin in self.state["players"])) and utils.pieceValid(furtherCoordin):
                         # tmpCanMovePieces.append(furtherCoordin)
 
                         theNew = self._newNode(tmpPiece, furtherCoordin, fromLastAction="JUMP from " + str(tmpPiece) + " to " + str(furtherCoordin) + ".")
