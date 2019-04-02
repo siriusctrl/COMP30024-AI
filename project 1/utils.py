@@ -1,5 +1,4 @@
-import os
-import numpy as np
+import os, queue
 import math
 import node
 
@@ -84,6 +83,60 @@ def print_board(board_dict:dict, message:str="", debug:bool=False, **kwargs):
     board = template.format(message, *cells)
     print(board, **kwargs)
 
+def pieceValid(piece: tuple) -> bool:
+    max_coor = 3
+    min_coor = -3
+
+    return piece[0] >= min_coor and piece[1] >= min_coor and piece[0] <= max_coor and piece[1] <= max_coor
+
+def expand(piece: tuple, parent: tuple, blocks: list) -> list:
+    """
+    this method are tring to find all the possible movement for
+    all the avaliable pieces on the board as next possible
+    states based on the current position of pieces, and trate
+    them like the child of this node.
+    """
+    # TODO: also need to consider when pieces can exit the board
+    nearSix = [
+        [0, -1],
+        [1, -1],
+        [1, 0],
+        [0, 1],
+        [-1, 1],
+            [-1, 0]
+    ]
+
+    further = [
+        [0, -2],
+        [2, -2],
+        [2, 0],
+        [0, 2],
+        [-2, 2],
+        [-2, 0]
+    ]
+
+    # allMoves = dict()
+    allMoveNodes = []
+    numOfAllPossible = 6
+    tmpPiece = tuple(piece + ())
+        # tmpCanMovePieces = []
+        
+
+    for i in range(numOfAllPossible):
+        checkingCoordin = (tmpPiece[0] + nearSix[i][0], tmpPiece[1] + nearSix[i][1])
+        if (not (checkingCoordin in blocks)) and checkingCoordin != parent and pieceValid(checkingCoordin):
+            allMoveNodes.append((checkingCoordin, 1))
+        else:
+            furtherCoordin = (tmpPiece[0] + further[i][0], tmpPiece[1] + further[i][1])
+            if (not (furtherCoordin in blocks)) and furtherCoordin != parent and pieceValid(furtherCoordin):
+                allMoveNodes.append((furtherCoordin, 2))
+
+    # allMoves[tmpPiece] = tmpCanMovePieces
+
+    # return allMoves
+    return allMoveNodes
+
+
 def harmonic_mean(nums:list) -> float:
     """
     find the harmoic mean of a list a number
@@ -131,5 +184,48 @@ def initialNode(inputBoard: dict):
     for i in initialSt["blocks"]:
         if i in initialNd.state['goals']:
             initialNd.state['goals'].remove(i)
+
+    midPoints = {}
+
+    for go in initialSt["goals"]:
+        currentNode = go
+        nodes = queue.Queue()
+        nodes.put((go, tuple(), 1))
+
+        totalExpanded = set()
+
+        gTwoFlag = False
+        MAX_DP = 2
+
+        while gTwoFlag == False:
+            curNod = nodes.get()
+            theNode = curNod[0]
+
+            expandedNodeList = expand(theNode, curNod[1], initialSt["blocks"])
+
+            if len(expandedNodeList) > 1:
+                if theNode in midPoints:
+                    if midPoints[theNode] > curNod[2]:
+                        midPoints[theNode] = curNod[2]
+                else:
+                    midPoints[theNode] = curNod[2]
+
+            for expanded in expandedNodeList:
+                totalExpanded.add(expanded)
+
+            if len(nodes) == 0:
+                for expanded in totalExpanded:
+
+
+            
+
+            
+
+
+
+
+
+
+
 
     return initialNd

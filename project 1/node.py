@@ -76,6 +76,9 @@ class Node:
                     #print("goal: " + str(go) + str(dY + abs(go[0] - newCoor[0])))
                     
             minDist = min(tmpHeuri)
+
+            # not adding one
+
             if minDist % 2 == 0:
                 Heuri.append(minDist / 2 + 1)
             else:
