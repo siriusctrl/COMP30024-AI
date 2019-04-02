@@ -77,8 +77,7 @@ class Node:
                     #print("goal: " + str(go) + str(dY + abs(go[0] - newCoor[0])))'''
 
             
-            tmpHeuri = [utils.COST[x][pc] for x in state["goals"]]
-            minDist = min(tmpHeuri)
+            minDist = utils.COST[pc]
                     
             # minDist = min(tmpHeuri)
 
@@ -87,7 +86,7 @@ class Node:
             if minDist % 2 == 0:
                 Heuri.append(minDist / 2 + 1)
             else:
-                Heuri.append((minDist-1)/2 +2)  
+                Heuri.append((minDist-1) /2 +2)  
             # print(Heuri)
         return sum(Heuri)
 
@@ -173,7 +172,6 @@ class Node:
         """
         determine if the current state is the goal state
         """
-        #TODO: implement this here
         return self.state["players"] == []
 
 

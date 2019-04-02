@@ -186,9 +186,19 @@ def initialNode(inputBoard: dict):
         if i in initialSt['goals']:
             initialSt['goals'].remove(i)
 
+    distances = {}
 
     for g in initialSt['goals']:
-        COST[g] = costFromGoal(g, initialSt['blocks'])
+        distances[g] = costFromGoal(g, initialSt['blocks'])
+    
+
+    for k,v in distances[initialSt['goals'][0]].items():
+        print(k,v)
+        dis = []
+        for g in initialSt['goals']:
+            dis.append(distances[g][k])
+        COST[k] = min(dis)
+
 
     initialNd = node.Node(state=initialSt)
 
