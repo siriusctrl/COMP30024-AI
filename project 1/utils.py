@@ -2,6 +2,7 @@ import os
 import numpy as np
 import math
 import node
+import heapq
 
 def print_board(board_dict:dict, message:str="", debug:bool=False, **kwargs):
     """
@@ -133,3 +134,39 @@ def initialNode(inputBoard: dict):
             initialNd.state['goals'].remove(i)
 
     return initialNd
+
+
+def findHubNode(destinations:[node.Node]) -> [node.Node]:
+    frontier = []
+    visited = {}
+    findAll = False  # a flag to indicate whether we finish a layer or not if we find a target node
+    res = []
+
+    for i in destinations:
+        visited[tuple(sorted(i.state["players"]))] = i
+        heapq.heappush(frontier, (i.g, i))
+
+    layer = 0
+
+    while True:
+        if len(frontier) == 0:
+            return res
+
+        if findAll and (layer < frontier[0][1]):
+            return res
+
+        current = heapq.heappop(frontier)[1]
+
+        successors = current.expand()
+
+        if (len(successors) > 2):
+            findAll = True
+            layer = current.g
+            res.append(current)
+        
+        if not findAll:
+            for i in successors:
+                if tuple(sorted(i.state["players"])) not in visited:
+                    heapq.heappush(frontier, (i.g, i))
+
+        
