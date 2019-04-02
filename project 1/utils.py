@@ -192,8 +192,7 @@ def initialNode(inputBoard: dict):
         distances[g] = costFromGoal(g, initialSt['blocks'])
     
 
-    for k,v in distances[initialSt['goals'][0]].items():
-        print(k,v)
+    for k in distances[initialSt['goals'][0]].keys():
         dis = []
         for g in initialSt['goals']:
             dis.append(distances[g][k])
