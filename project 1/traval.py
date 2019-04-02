@@ -158,7 +158,7 @@ class Traval():
             visited[tuple(sorted(b[1].state["players"]))] = b[1]
         
         while True:
-            print(len(front))
+            #print(len(front))
             currentNode = heappop(front)
             
             if currentNode.goal_test():
