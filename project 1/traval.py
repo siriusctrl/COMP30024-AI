@@ -158,12 +158,13 @@ class Traval():
             visited[tuple(sorted(b[1].state["players"]))] = b[1]
         
         while True:
-            #print(len(front))
+            print(len(front))
             currentNode = heappop(front)
             
             if currentNode.goal_test():
                 #print(len(self.frontier))
                 print("# total removed duplicate nodes =",removed)
+                print("# current PQ size =", len(front))
                 return currentNode
             
             if currentNode.f > self.infi:

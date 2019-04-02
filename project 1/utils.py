@@ -184,44 +184,44 @@ def initialNode(inputBoard: dict):
         if i in initialNd.state['goals']:
             initialNd.state['goals'].remove(i)
 
-    midPoints = {}
+    # midPoints = {}
 
-    for go in initialSt["goals"]:
-        currentNode = go
-        nodes = queue.Queue()
-        nodes.put((go, tuple(), 1))
+    # for go in initialSt["goals"]:
+    #     currentNode = go
+    #     nodes = queue.Queue()
+    #     nodes.put((go, tuple(), 1))
 
-        totalExpanded = set()
+    #     totalExpanded = set()
 
-        expandedNodes = set({})
+    #     expandedNodes = set({})
 
-        gTwoFlag = False
-        MAX_DP = 3
+    #     gTwoFlag = False
+    #     MAX_DP = 3
 
-        while True:
-            curNod = nodes.get()
+    #     while True:
+    #         curNod = nodes.get()
 
-            if curNod[2] > MAX_DP:
-                break
+    #         if curNod[2] > MAX_DP:
+    #             break
 
-            theNode = curNod[0]
+    #         theNode = curNod[0]
 
-            expandedNodeList = expand(theNode, curNod[1], initialSt["blocks"])
-            expandedInQueue = [(x, theNode, curNod[2] + 1) for x in expandedNodeList]
+    #         expandedNodeList = expand(theNode, curNod[1], initialSt["blocks"])
+    #         expandedInQueue = [(x, theNode, curNod[2] + 1) for x in expandedNodeList]
 
-            for expanded in expandedInQueue:
-                if not (expanded[0] in expandedNodes) and not (expanded[0] in initialSt["goals"]):
-                    expandedNodes.add(expanded[0])
-                    nodes.put(expanded)
+    #         for expanded in expandedInQueue:
+    #             if not (expanded[0] in expandedNodes) and not (expanded[0] in initialSt["goals"]):
+    #                 expandedNodes.add(expanded[0])
+    #                 nodes.put(expanded)
 
-            if len(expandedNodeList) > 1:
-                if theNode in midPoints:
-                    if midPoints[theNode] > curNod[2]:
-                        midPoints[theNode] = curNod[2]
-                else:
-                    midPoints[theNode] = curNod[2]
+    #         if len(expandedNodeList) > 1:
+    #             if theNode in midPoints:
+    #                 if midPoints[theNode] > curNod[2]:
+    #                     midPoints[theNode] = curNod[2]
+    #             else:
+    #                 midPoints[theNode] = curNod[2]
 
-    print(midPoints)
+    # print(midPoints)
 
 
 
