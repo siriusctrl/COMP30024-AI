@@ -3,7 +3,10 @@ import math
 import node
 import heapq
 
+# define the boundary of the board
 CELLS = set([(q,r) for q in range(-3, +3+1) for r in range(-3, +3+1) if -q-r in range(-3, +3+1)])
+
+COST = {}
 
 def print_board(board_dict:dict, message:str="", debug:bool=False, **kwargs):
     """
@@ -103,7 +106,7 @@ def expand(piece: tuple, parent: tuple, blocks: list) -> list:
         [1, 0],
         [0, 1],
         [-1, 1],
-            [-1, 0]
+        [-1, 0]
     ]
 
     further = [
@@ -178,88 +181,45 @@ def initialNode(inputBoard: dict):
     initialSt["goals"] = COLOURS[inputBoard["colour"]]
     initialSt["blocks"] = [tuple(x) for x in inputBoard["blocks"]]
 
-    initialNd = node.Node(state=initialSt)
-
     # remove unachiavable goals
     for i in initialSt["blocks"]:
-        if i in initialNd.state['goals']:
-            initialNd.state['goals'].remove(i)
-
-    # midPoints = {}
-
-    # for go in initialSt["goals"]:
-    #     currentNode = go
-    #     nodes = queue.Queue()
-    #     nodes.put((go, tuple(), 1))
-
-    #     totalExpanded = set()
-
-    #     expandedNodes = set({})
-
-    #     gTwoFlag = False
-    #     MAX_DP = 3
-
-    #     while True:
-    #         curNod = nodes.get()
-
-    #         if curNod[2] > MAX_DP:
-    #             break
-
-    #         theNode = curNod[0]
-
-    #         expandedNodeList = expand(theNode, curNod[1], initialSt["blocks"])
-    #         expandedInQueue = [(x, theNode, curNod[2] + 1) for x in expandedNodeList]
-
-    #         for expanded in expandedInQueue:
-    #             if not (expanded[0] in expandedNodes) and not (expanded[0] in initialSt["goals"]):
-    #                 expandedNodes.add(expanded[0])
-    #                 nodes.put(expanded)
-
-    #         if len(expandedNodeList) > 1:
-    #             if theNode in midPoints:
-    #                 if midPoints[theNode] > curNod[2]:
-    #                     midPoints[theNode] = curNod[2]
-    #             else:
-    #                 midPoints[theNode] = curNod[2]
-
-    # print(midPoints)
+        if i in initialSt['goals']:
+            initialSt['goals'].remove(i)
 
 
+    for g in initialSt['goals']:
+        COST[g] = costFromGoal(g, initialSt['blocks'])
+
+    initialNd = node.Node(state=initialSt)
 
     return initialNd
 
 
-def findHubNode(destinations:[node.Node]) -> [node.Node]:
-    frontier = []
-    visited = {}
-    findAll = False  # a flag to indicate whether we finish a layer or not if we find a target node
-    res = []
+def costFromGoal(goal:tuple, block) -> dict:
+    q = queue.Queue()
+    cost = {}
+    q.put((0,goal))
 
-    for i in destinations:
-        visited[tuple(sorted(i.state["players"]))] = i
-        heapq.heappush(frontier, (i.g, i))
+    cost[goal] = 0
 
-    layer = 0
+    while not q.empty():
 
-    while True:
-        if len(frontier) == 0:
-            return res
+        current = q.get()
+        # (cost, coordinates)
+        successors = expand(current[1], None, block)
+        child_cost = current[0] + 1
 
-        if findAll and (layer < frontier[0][1]):
-            return res
+        for s in successors:
+            if s in cost:
+                if cost[s] > child_cost:
+                    cost[s] = child_cost
+                    q.put((child_cost, s))
+                    print("pass")
+            else:
+                q.put((child_cost, s))
+                cost[s] = child_cost
 
-        current = heapq.heappop(frontier)[1]
-
-        successors = current.expand()
-
-        if (len(successors) > 2):
-            findAll = True
-            layer = current.g
-            res.append(current)
+    return cost
         
-        if not findAll:
-            for i in successors:
-                if tuple(sorted(i.state["players"])) not in visited:
-                    heapq.heappush(frontier, (i.g, i))
 
         

@@ -41,6 +41,7 @@ class Node:
     def heuristic(self, state):
         Heuri = []
         for pc in state["players"]:
+            '''
             tmpHeuri = []
             #print(str(pc))
             for go in state["goals"]:
@@ -73,9 +74,13 @@ class Node:
                     newCoor = [pc[0] + moveToY[0], pc[1] + moveToY[1]]
                     if go[1] == newCoor[1]:
                         tmpHeuri.append(dY + abs(go[0] - newCoor[0]))
-                    #print("goal: " + str(go) + str(dY + abs(go[0] - newCoor[0])))
-                    
+                    #print("goal: " + str(go) + str(dY + abs(go[0] - newCoor[0])))'''
+
+            
+            tmpHeuri = [utils.COST[x][pc] for x in state["goals"]]
             minDist = min(tmpHeuri)
+                    
+            # minDist = min(tmpHeuri)
 
             # not adding one
 

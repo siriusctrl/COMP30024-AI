@@ -18,7 +18,7 @@ def main():
     root = utils.initialNode(data)
     print(root)
 
-    # return the last node of the 
+    #return the last node of the 
     last = traval.Traval(root).Astar_Q()
 
     totalSteps = 0
