@@ -121,7 +121,7 @@ def expand(piece: tuple, parent: tuple, blocks: list) -> list:
     # allMoves = dict()
     allMoveNodes = []
     numOfAllPossible = 6
-    tmpPiece = tuple(piece + ())
+    tmpPiece = piece
         # tmpCanMovePieces = []
         
 
