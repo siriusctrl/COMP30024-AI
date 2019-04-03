@@ -2,24 +2,26 @@ import math
 import utils
 import functools
 
-'''
-    Node class
-    
-    for using search tree and contains state and the action from last move.
-    the cost g and f (g + heuristic) are stored as well!
 
-    built for project pA of COMP30024
-    Authors: Xinyao Niu (900721), Maoting Zuo (901116)
-    Team Name: VanGame
-'''
 @functools.total_ordering
 class Node:
+    '''
+        Node class
+        
+        for using search tree and contains state and the action from last move.
+        the cost g and f (g + heuristic) are stored as well!
 
+        built for project pA of COMP30024
+        Authors: Xinyao Niu (900721), Maoting Zuo (901116)
+        Team Name: VanGame
     '''
-        constructor
-    '''
+
+
     def __init__(self, preNode:'node'=None, state: "dict"={}, 
                             fromLastAction="", g=0) -> None:
+        '''
+            constructor
+        '''
 
         # string of the action that get to this state
         self.fromLastAction = fromLastAction
@@ -31,23 +33,27 @@ class Node:
         self.f = self.g + self.heuristic(self.state)
 
 
-    '''
-        function overrided for using comparasion operators.
-    '''
     def __lt__(self, other):
+        '''
+            function overrided for using comparasion operators.
+        '''
         return self.f < other.f
     
 
     def __eq__(self, other):
+        '''
+            function overrided for using comparasion operators.
+        '''
+        
         return self.f == other.f and \
             self.g == other.g and \
                 self.state == other.state
 
 
-    '''
-        heuristic function
-    '''
     def heuristic(self, state):
+        '''
+            heuristic function
+        '''
 
         # sum of all distance/2 from the position of
         # each piece to their closest goal
@@ -66,10 +72,10 @@ class Node:
         return ovAlHe
 
 
-    ''' 
-        private (well..)function for generating new nodes
-    '''
     def _newNode(self, oldCoor: tuple, newCoor: tuple=None, fromLastAction=""):
+        ''' 
+            private (well..)function for generating new nodes
+        '''
         newState = {}
         newState["players"] = self.state["players"] + []
 
@@ -91,13 +97,13 @@ class Node:
         return newNode
 
 
-    """
-        this method are tring to find all the possible movement for
-        all the avaliable pieces on the board as next possible
-        states based on the current position of pieces, and trate
-        them like the child of this node.
-    """
     def expand(self) -> None:
+        """
+            this method are tring to find all the possible movement for
+            all the avaliable pieces on the board as next possible
+            states based on the current position of pieces, and trate
+            them like the child of this node.
+        """
         
         # delta x and y from any position to its neighbourhood (move)
         nearSix = [
@@ -176,17 +182,18 @@ class Node:
         return allMoveNodes
 
 
-    """
-        determine if the current state is the goal state
-    """
     def goal_test(self):
+        """
+            determine if the current state is the goal state
+        """
         return self.state["players"] == []
 
 
-    '''
-        to string
-    '''
     def __str__(self):
+        '''
+            to string
+        '''
+        
         stateBoard = {
 
         }
