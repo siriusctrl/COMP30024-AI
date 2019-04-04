@@ -2,7 +2,7 @@ import math
 from heapq import heappush,heappop
 from node import Node
 
-class Traval():
+class Travel():
     """
     this class define the strategies that we are going to explore the search tree
     """

@@ -9,7 +9,7 @@ Team Name: VanGame
 import sys
 import json
 import utils
-import traval
+import travel
 
 def main():
     with open(sys.argv[1]) as file:
@@ -19,7 +19,7 @@ def main():
     print(root)
 
     #return the last node of the 
-    last = traval.Traval(root).Astar_Q()
+    last = travel.Travel(root).Astar_Q()
 
     totalSteps = 0
 

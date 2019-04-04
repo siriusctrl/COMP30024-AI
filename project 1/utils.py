@@ -6,9 +6,10 @@ import heapq
 # define the boundary of the board
 CELLS = set([(q,r) for q in range(-3, +3+1) for r in range(-3, +3+1) if -q-r in range(-3, +3+1)])
 
+# steps requirment for one piece move from any grid to the cloest destination
 COST = {}
 
-def print_board(board_dict:dict, message:str="", debug:bool=False, **kwargs):
+def print_board(board_dict:dict, message:str="", debug:bool=False, **kwargs) -> None :
     """
     Helper function to print a drawing of a hexagonal board's contents.
 
@@ -89,18 +90,24 @@ def print_board(board_dict:dict, message:str="", debug:bool=False, **kwargs):
     board = template.format(message, *cells)
     print(board, **kwargs)
 
+
 def pieceValid(piece: tuple) -> bool:
+    """
+    return True only if the given piece are still on the board or 
+    move to a unoccupied grid
+    """
+
     return piece in CELLS
 
-def expand(piece: tuple, parent: tuple, blocks: list) -> list:
+
+def findNext(piece: tuple, parent: tuple, blocks: list) -> list:
     """
     this method are tring to find all the possible movement for
-    all the avaliable pieces on the board as next possible
-    states based on the current position of pieces, and trate
-    them like the child of this node.
+    the give coordinate on the board.
     """
-    # TODO: also need to consider when pieces can exit the board
-    nearSix = [
+    
+    # distance that can be reached by action MOVE
+    move = [
         [0, -1],
         [1, -1],
         [1, 0],
@@ -109,7 +116,8 @@ def expand(piece: tuple, parent: tuple, blocks: list) -> list:
         [-1, 0]
     ]
 
-    further = [
+    # distance that can be reached by action JUMP
+    jump = [
         [0, -2],
         [2, -2],
         [2, 0],
@@ -118,32 +126,33 @@ def expand(piece: tuple, parent: tuple, blocks: list) -> list:
         [-2, 0]
     ]
 
-    allMoveNodes = []
-    numOfAllPossible = 6
-    tmpPiece = piece        
+    nextPositions = []
+    directions = 6
+    currentPosition = piece
 
-
-    for i in range(numOfAllPossible):
+    for i in range(directions):
         # check single move
-        checkingCoordin = (tmpPiece[0] + nearSix[i][0], tmpPiece[1] + nearSix[i][1])
+        checkingCoordin = (currentPosition[0] + move[i][0], currentPosition[1] + move[i][1])
         if (not (checkingCoordin in blocks)) and checkingCoordin != parent and pieceValid(checkingCoordin):
-            allMoveNodes.append(checkingCoordin)
+            nextPositions.append(checkingCoordin)
         else:
             # check jump
-            furtherCoordin = (tmpPiece[0] + further[i][0], tmpPiece[1] + further[i][1])
+            furtherCoordin = (currentPosition[0] + jump[i][0], currentPosition[1] + jump[i][1])
             if (not (furtherCoordin in blocks)) and furtherCoordin != parent and pieceValid(furtherCoordin):
-                allMoveNodes.append(furtherCoordin)
+                nextPositions.append(furtherCoordin)
 
     # return allMoves
-    return allMoveNodes
+    return nextPositions
 
-def eud(p1:tuple, p2:tuple) -> float:
-    """
-    calculate the euclidean distance between two point
-    """
-    return math.sqrt(sum([(i-j)**2 for i,j in zip(p1,p2)]))
 
-def initialRoot(inputBoard: dict):
+def initialRoot(inputBoard: dict) -> node.Node:
+    """
+    the root of the tree will be init here
+    
+    `inputBoard` -- the input board which read from the json file
+
+    """
+
     COLOURS = {
         "red": [
             (3, -3),
@@ -193,7 +202,11 @@ def initialRoot(inputBoard: dict):
     return initialRoot
 
 
-def costFromGoal(goal:tuple, block) -> dict:
+def costFromGoal(goal:tuple, block:dict) -> dict:
+    """
+    Receive a goal coordiate 
+    """
+
     q = queue.Queue()
     cost = {}
     q.put((0,goal))
@@ -204,16 +217,13 @@ def costFromGoal(goal:tuple, block) -> dict:
 
         current = q.get()
         # (cost, coordinates)
-        successors = expand(current[1], None, block)
+        successors = findNext(current[1], None, block)
         child_cost = current[0] + 1
 
         for s in successors:
-            if s in cost:
-                if cost[s] > child_cost:
-                    cost[s] = child_cost
-                    q.put((child_cost, s))
-                    print("pass")
-            else:
+            if s not in cost:
+                # since we are using BFS to findNext the coordinates
+                # better solution will be always expanded first
                 q.put((child_cost, s))
                 cost[s] = child_cost
 
