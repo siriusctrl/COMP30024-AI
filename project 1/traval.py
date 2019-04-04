@@ -24,8 +24,64 @@ class Traval():
             b[1].expand()
 
 
-    def RBFS(self, node:Node, flimit:float) -> Node:
+    def Astar_Q(self) -> Node:
+        """
+        A* search using the Priority Queue to maintance the frontier
+        """
+
+        # frontier list
+        front = []
+        # a dictionary to store seen states, if there is a duplication, only 
+        # the one with better g will be kept
+        visited = {}
+        # Only for debuging purpose, to see how many nodes are pruned
+        removed = 0
+
+        for b in self.base:
+            heappush(front, b[1])
+            visited[tuple(sorted(b[1].state["players"]))] = b[1]
         
+        while True:
+            #print(len(front))
+            currentNode = heappop(front)
+            
+            if currentNode.goal_test():
+                print("# total removed duplicate nodes =",removed)
+                print("# current PQ size =", len(front))
+                return currentNode
+            
+            if currentNode.f > self.infi:
+                return None
+            
+            successors = currentNode.expand()
+
+            for s in successors:
+                state = tuple(sorted(s.state["players"]))
+                if state in visited:
+                    # only record better node
+                    if visited[state].g > s.g:
+                        heappush(front, s)
+                        visited[state] = s
+                    else:
+                        # discard the worse one to reduce space and 
+                        # time complexity
+                        removed += 1
+                else:
+                    heappush(front, s)
+                    visited[state] = s
+
+    # Below, are some search algorithms that I also discoved but not used in this project
+    #####################################################################################
+
+    def RBFS(self, node:Node, flimit:float) -> Node:
+        """
+        main part of RBFS search
+
+        - `node` current node that will be explored
+
+        - `flimit` heuristic limitation for search
+
+        """
         successors = node.successors
 
         # there is no path for base node
@@ -58,7 +114,7 @@ class Traval():
                     self.frontier.append((s.f, s))
             else:
                 return self.fa, currentNode.f
-        
+
 
     def findRBFS(self):
         """
@@ -93,98 +149,6 @@ class Traval():
             
             # update the flimit for the base node
             self.base[0][0] = cost
-
-
-    def Astar(self):
-        """
-        A* search using the list and custom sort alogrithm to maintance the frontier
-        """
-
-        visited = {}
-        removed = 0
-
-        #(object.f, object)
-        for b in self.base:
-            self.frontier.append(b)
-            visited[ str(sorted(b[1].state["players"])) ] = b[1]
-        
-
-        while True:
-            #print(len(self.frontier))
-            self.frontier = self.nodeSort(self.frontier)
-
-            currentNode = self.frontier[0][1]
-            self.frontier = self.frontier[1:]
-            
-            if currentNode.goal_test():
-                #print(len(self.frontier))
-                print("removed =",removed)
-                return currentNode
-            
-            if currentNode.f > self.infi:
-                return "Failed"
-            
-            successors = currentNode.expand()
-
-            for s in successors:
-                state = str(sorted(s.state["players"]))
-                if state in visited:
-                    # only add in better node
-                    if visited[state].g > s.g:
-                        print(visited[state].g, s.g)
-                        self.frontier.append((s.f, s))
-                        visited[state] = s
-                    else:
-                        removed += 1
-                else:
-                    self.frontier.append((s.f, s))
-                    visited[state] = s
-
-    def Astar_Q(self):
-        """
-        A* search using the Priority Queue to maintance the frontier
-        """
-
-        # frontier list
-        front = []
-        # a dictionary to store seen states, if there is a duplication, only 
-        # the one with better g will be kept
-        visited = {}
-        # Only for debuging purpose, to see how many nodes are pruned
-        removed = 0
-
-        for b in self.base:
-            heappush(front, b[1])
-            visited[tuple(sorted(b[1].state["players"]))] = b[1]
-        
-        while True:
-            #print(len(front))
-            currentNode = heappop(front)
-            
-            if currentNode.goal_test():
-                #print(len(self.frontier))
-                print("# total removed duplicate nodes =",removed)
-                print("# current PQ size =", len(front))
-                return currentNode
-            
-            if currentNode.f > self.infi:
-                return "Failed"
-            
-            successors = currentNode.expand()
-
-            for s in successors:
-                state = tuple(sorted(s.state["players"]))
-                if state in visited:
-                    # only add in better node
-                    if visited[state].g > s.g:
-                        heappush(front, s)
-                        visited[state] = s
-                    else:
-                        # discard the worse one
-                        removed += 1
-                else:
-                    heappush(front, s)
-                    visited[state] = s
 
     def nodeSort(self, nodes:[Node]) -> [Node]:
         return sorted(nodes, key=lambda x:x[0])

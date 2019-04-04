@@ -118,35 +118,24 @@ def expand(piece: tuple, parent: tuple, blocks: list) -> list:
         [-2, 0]
     ]
 
-    # allMoves = dict()
     allMoveNodes = []
     numOfAllPossible = 6
-    tmpPiece = piece
-        # tmpCanMovePieces = []
-        
+    tmpPiece = piece        
+
 
     for i in range(numOfAllPossible):
+        # check single move
         checkingCoordin = (tmpPiece[0] + nearSix[i][0], tmpPiece[1] + nearSix[i][1])
         if (not (checkingCoordin in blocks)) and checkingCoordin != parent and pieceValid(checkingCoordin):
             allMoveNodes.append(checkingCoordin)
         else:
+            # check jump
             furtherCoordin = (tmpPiece[0] + further[i][0], tmpPiece[1] + further[i][1])
             if (not (furtherCoordin in blocks)) and furtherCoordin != parent and pieceValid(furtherCoordin):
                 allMoveNodes.append(furtherCoordin)
 
-    # allMoves[tmpPiece] = tmpCanMovePieces
-
     # return allMoves
     return allMoveNodes
-
-
-def harmonic_mean(nums:list) -> float:
-    """
-    find the harmoic mean of a list a number
-    """
-
-    n = len(nums)
-    return n/sum([1/i for i in nums])
 
 def eud(p1:tuple, p2:tuple) -> float:
     """
@@ -154,7 +143,7 @@ def eud(p1:tuple, p2:tuple) -> float:
     """
     return math.sqrt(sum([(i-j)**2 for i,j in zip(p1,p2)]))
 
-def initialNode(inputBoard: dict):
+def initialRoot(inputBoard: dict):
     COLOURS = {
         "red": [
             (3, -3),
@@ -199,9 +188,9 @@ def initialNode(inputBoard: dict):
         COST[k] = min(dis)
 
 
-    initialNd = node.Node(state=initialSt)
+    initialRoot = node.Node(state=initialSt)
 
-    return initialNd
+    return initialRoot
 
 
 def costFromGoal(goal:tuple, block) -> dict:

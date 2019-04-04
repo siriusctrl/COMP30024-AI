@@ -57,22 +57,23 @@ class Node:
 
         # sum of all distance/2 from the position of
         # each piece to their closest goal
-        # (nearly optimal)
-        ovAlHe = 0
+        # (proof of admissible refer to the report)
+        h = 0
+
         for pc in state["players"]:
             minDist = utils.COST[pc]
 
             # get a int of heuristic
             if minDist % 2 == 0:
-                ovAlHe = ovAlHe + (minDist / 2 + 1)
+                h = h + (minDist / 2 + 1)
             else:
-                ovAlHe = ovAlHe + ((minDist - 1) /2 +2)  
+                h = h + ((minDist - 1) /2 +2)  
             # print(Heuri)
         
-        return ovAlHe
+        return h
 
 
-    def _newNode(self, oldCoor: tuple, newCoor: tuple=None, fromLastAction=""):
+    def _newNode(self, oldCoor: tuple, newCoor:tuple=None, fromLastAction=""):
         ''' 
             private (well..)function for generating new nodes
         '''
@@ -80,11 +81,10 @@ class Node:
         newState["players"] = self.state["players"] + []
 
         # remove old position
-        # if exiting then just remove without appending new position
+        # if taken EXIT action, then remove it without appending new position
         newState["players"].remove(oldCoor)
 
-        # if the piece being appling action is moving to other place
-        # but not exiting then append new position
+        # Only append when all the piece has valid position in the next state
         if newCoor:
             newState["players"].append(newCoor)
         
@@ -97,12 +97,14 @@ class Node:
         return newNode
 
 
-    def expand(self) -> None:
+    def expand(self) -> list:
         """
-            this method are tring to find all the possible movement for
-            all the avaliable pieces on the board as next possible
-            states based on the current position of pieces, and trate
-            them like the child of this node.
+            this method are tring to find all the possible movement 
+            (except its parent node state) for all the avaliable pieces on the 
+            board as next possible states based on the current position 
+            of pieces, and trate them like the child of this node. Notice
+            that we assume moving back and forth does not give us a 
+            optimal solution.
         """
         
         # delta x and y from any position to its neighbourhood (move)
@@ -191,7 +193,7 @@ class Node:
 
     def __str__(self):
         '''
-            to string
+            to string, will be invoked when printing the node
         '''
         
         stateBoard = {
@@ -216,6 +218,8 @@ class Node:
         
         return self.fromLastAction
 
+    # make sure that when print a list, the __str__ will also be invoked
+    # only for debug purpose
     __repr__ = __str__
 
 

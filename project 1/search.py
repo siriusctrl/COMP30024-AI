@@ -15,7 +15,7 @@ def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
 
-    root = utils.initialNode(data)
+    root = utils.initialRoot(data)
     print(root)
 
     #return the last node of the 
