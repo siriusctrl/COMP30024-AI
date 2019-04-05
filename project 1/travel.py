@@ -36,6 +36,7 @@ class Travel():
         visited = {}
         # Only for debuging purpose, to see how many nodes are pruned
         removed = 0
+        explored = 0
 
         for b in self.base:
             heappush(front, b[1])
@@ -48,12 +49,14 @@ class Travel():
             if currentNode.goal_test():
                 print("# total removed duplicate nodes =",removed)
                 print("# current PQ size =", len(front))
+                print("# explored node =", explored)
                 return currentNode
             
             if currentNode.f > self.infi:
                 return None
             
             successors = currentNode.expand()
+            explored += 1
 
             for s in successors:
                 state = tuple(sorted(s.state["players"]))
