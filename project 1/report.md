@@ -65,6 +65,5 @@ We made up of some test cases to test how good is our algorithm from different p
   - This problem could represent one kind of question which has multiple pieces that can freely move around without blocks. For less node, although MOVE action may occur more frequently, but reducing node can result in a dramatically decrease in search space. 
   - In conclusion, for this kind of questions, the time complexity are very close to optimal for relatively large number of nodes, and space complexity are much better than the worst case. For small number of nodes, since the dramatically decease in search space, it also performs excellently.
 - Break simple min-distance heuristic
-  - ![](assets/image-20190406114332582.png){width:50px;} 
-  - <img src=“assets/image-20190406114332582.png” alt=“test case 3” width=“200”/>
-  - 
+  - <img src="assets/image-20190406114332582.png" width="400px" />
+  - This is where the pre-defined dict really useful. If the heuristic only consider the distance to the closed non-blocked destination, it will quickly starting to do BFS which is super slow when comparing to $A^*​$ with good heuristic.
