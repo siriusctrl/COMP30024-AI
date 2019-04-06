@@ -204,15 +204,15 @@ class Node:
 
         for l in self.state["goals"]:
             if l in stateBoard:
-                stateBoard[l] = stateBoard[l]+ "*a*"
+                stateBoard[l] = stateBoard[l]+ "*g*"
             else:
-                stateBoard[l] = "*a*"
+                stateBoard[l] = "*g*"
         
         for o in self.state["blocks"]:
             if o in stateBoard:
-                stateBoard[o] = stateBoard[o] + "*o*"
+                stateBoard[o] = stateBoard[o] + "*b*"
             else:
-                stateBoard[o] = "*o*"
+                stateBoard[o] = "*b*"
         utils.print_board(stateBoard, message=self.fromLastAction + 
                     str(self.heuristic(self.state)), debug=True)
         
