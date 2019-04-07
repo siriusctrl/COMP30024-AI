@@ -66,4 +66,5 @@ We made up of some test cases to test how good is our algorithm from different p
   - In conclusion, for this kind of questions, the time complexity are very close to optimal for relatively large number of nodes, and space complexity are much better than the worst case. For small number of nodes, since the dramatically decease in search space, it also performs excellently.
 - Break simple min-distance heuristic
   - <img src="assets/image-20190406114332582.png" width="400px" />
-  - This is where the pre-defined dict really useful. If the heuristic only consider the distance to the closed non-blocked destination, it will quickly starting to do BFS which is super slow when comparing to $A^*​$ with good heuristic.
+  - This is where the pre-defined dict really useful. If the heuristic only consider the distance to the closed non-blocked destination, it will quickly starting to do BFS which is extremely slow when comparing to $A^*​$ with good heuristic.
+

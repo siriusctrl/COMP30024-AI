@@ -67,9 +67,9 @@ class Node:
             if minDist % 2 == 0:
                 h = h + (minDist / 2 + 1)
             else:
-                h = h + ((minDist - 1) /2 +2)  
+                h = h + ((minDist - 1) /2 +2)
             # print(Heuri)
-        
+
         return h
 
 

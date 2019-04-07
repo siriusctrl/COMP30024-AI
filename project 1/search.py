@@ -12,8 +12,12 @@ import utils
 import travel
 
 def main():
-    with open(sys.argv[1]) as file:
-        data = json.load(file)
+    if len(sys.argv) >= 2:
+        with open(sys.argv[1]) as file:
+            data = json.load(file)
+    else:
+        with open("test.json") as file:
+            data = json.load(file)
 
     root = utils.initialRoot(data)
     print(root)
