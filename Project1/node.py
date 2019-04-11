@@ -111,7 +111,7 @@ class Node:
         """
 
         # delta x and y from any position to its neighbourhood (move)
-        nearSix = [
+        move = [
             [0, -1],
             [1, -1],
             [1, 0],
@@ -121,7 +121,7 @@ class Node:
         ]
 
         # delta x and y from any position to its possible move (jump)
-        further = [
+        jump = [
             [0, -2],
             [2, -2],
             [2, 0],
@@ -151,8 +151,8 @@ class Node:
 
                 # by move
                 # 1 step position in this direction
-                check_move = (tmpPiece[0] + nearSix[i][0],
-                              tmpPiece[1] + nearSix[i][1])
+                check_move = (tmpPiece[0] + move[i][0],
+                              tmpPiece[1] + move[i][1])
 
                 # not going back
                 if abs(i - self.direc) == 3:
@@ -164,29 +164,29 @@ class Node:
 
                     # if can reach this direction one step by move
                     # create new node
-                    theNew = self._newNode(tmpPiece, check_move,
-                                           transition_action="MOVE from " + str(tmpPiece)
-                                                             +
-                                                             " to " + str(check_move) + ".",
-                                           jumping=False, direc=i)
-                    successors.append(theNew)
+                    s = self._newNode(tmpPiece, check_move,
+                                      transition_action="MOVE from " + str(tmpPiece)
+                                                        +
+                                                        " to " + str(check_move) + ".",
+                                      jumping=False, direc=i)
+                    successors.append(s)
                 else:
                     # by jump (if 1 step move in this direction can not 
                     # be reached)
                     # 2 step position in this direction
-                    check_jump = (tmpPiece[0] + further[i][0],
-                                  tmpPiece[1] + further[i][1])
+                    check_jump = (tmpPiece[0] + jump[i][0],
+                                  tmpPiece[1] + jump[i][1])
 
                     if (not (check_jump in self.state["blocks"] or
                              check_jump in self.state["players"])) and \
                             utils.pieceValid(check_jump):
                         # if can reach this direction one step by jump
                         # create new node
-                        theNew = self._newNode(tmpPiece, check_jump,
-                                               transition_action="JUMP from " + str(tmpPiece)
-                                                                 + " to " + str(check_jump) + ".",
-                                               jumping=True, direc=i)
-                        successors.append(theNew)
+                        s = self._newNode(tmpPiece, check_jump,
+                                          transition_action="JUMP from " + str(tmpPiece)
+                                                            + " to " + str(check_jump) + ".",
+                                          jumping=True, direc=i)
+                        successors.append(s)
 
         return successors
 
