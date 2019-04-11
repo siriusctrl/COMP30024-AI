@@ -231,11 +231,9 @@ def costFromGoal(goal:tuple, block:list) -> dict:
                 # if the cost less then update
                 if ((s in COST) and sum(COST[s[0]]) > child_cost):
                     COST[s[0]] = toSuc
-                if not s in COST:
+                if s not in COST:
                     COST[s[0]] = toSuc
-                
-
+                    
     return 0
-        
 
         
