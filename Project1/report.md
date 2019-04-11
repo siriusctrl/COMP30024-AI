@@ -17,6 +17,7 @@ We regard this game as a search problem from the following perspective
 - **Actions**: There are three possible actions, MOVE, JUMP, EXIT.
 - **Goal tests**: If there are no player pieces on board, we say that we reached the final state.
 - **Action cost**: Each action cost 1 (MOVE, JUMP, EXIT)
+- In this case, our problem environment is a discrete, deterministic, sequential, static and fully observable one.
 
 #### Algorithms
 
@@ -46,7 +47,7 @@ We regard this game as a search problem from the following perspective
 
 - Data structure for arranging the frontier
 
-  We use priority queue to maintain the frontier. The cost for that is $O(nlogn)$ for the whole search, whereas, using a custom search method take up to $O(n^2logn)$ which is horrible.
+  We use priority queue to maintain the frontier. The cost for that is $O(nlogn)$ for the whole search, whereas, using a custom search method take up to $O(n^2logn)​$ which is horrible.
 
 - Method for removing duplicate nodes
 
