@@ -176,9 +176,9 @@ def initialRoot(inputBoard: dict) -> node.Node:
     }
 
     initialSt = {}
-    initialSt["players"] = [tuple(x) for x in inputBoard["pieces"]]
+    initialSt["players"] = set([tuple(x) for x in inputBoard["pieces"]])
     initialSt["goals"] = COLOURS[inputBoard["colour"]]
-    initialSt["blocks"] = [tuple(x) for x in inputBoard["blocks"]]
+    initialSt["blocks"] = set([tuple(x) for x in inputBoard["blocks"]])
 
     # remove unachiavable goals
     for i in initialSt["blocks"]:
@@ -224,6 +224,7 @@ def costFromGoal(goal:tuple, block:list) -> dict:
                 # 1 for move and 2 for jump
                 # used when calculating heuristic g
                 # which separately consider jump and moves
+                # toSuc = (move, jump) <- counting both moves and jumps
                 if s[1] == 1:
                     toSuc = (current[1][0][0] + 1, current[1][0][1])
                 elif s[1] == 2:
@@ -232,6 +233,7 @@ def costFromGoal(goal:tuple, block:list) -> dict:
 
                 q.put((child_cost, (toSuc, s[0])))
                 cost[s[0]] = child_cost
+
 
                 # if the cost less then update
                 if ((s in COST) and sum(COST[s[0]]) > child_cost):

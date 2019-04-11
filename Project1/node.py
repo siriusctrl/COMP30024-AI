@@ -61,7 +61,7 @@ class Node:
             heuristic function
         '''
 
-        # sum of all distance/2 from the position of
+        # sum of all move/2 + jump from the position of
         # each piece to their closest goal
         # (proof of admissible refer to the report)
         h = 0
@@ -73,7 +73,7 @@ class Node:
             if minDist[0] % 2 == 0:
                 h = h + (minDist[0] / 2 + minDist[1] + 1)
             else:
-                h = h + ((minDist[0] - 1) /2 + minDist[1] +2)
+                h = h + ((minDist[0] - 1) /2 + minDist[1] + 2)
             # print(Heuri)
 
         return h
@@ -84,7 +84,7 @@ class Node:
             private (well..)function for generating new nodes
         '''
         newState = {}
-        newState["players"] = self.state["players"] + []
+        newState["players"] = self.state["players"].copy()
 
         # remove old position
         # if taken EXIT action, then remove it without appending new position
@@ -92,7 +92,7 @@ class Node:
 
         # Only append when all the piece has valid position in the next state
         if newCoor:
-            newState["players"].append(newCoor)
+            newState["players"].add(newCoor)
         
         newState["goals"] = self.state["goals"]
         newState["blocks"] = self.state["blocks"]
@@ -136,10 +136,10 @@ class Node:
         allMoveNodes = []
         numOfAllPossible = 6
 
-        for piece in range(len(self.state["players"])):
+        for piece in self.state["players"]:
 
             # same position but different tuple
-            tmpPiece = tuple(self.state["players"][piece] + ())
+            tmpPiece = piece + ()
 
             # if piece is on the goal then exit
             if tmpPiece in self.state["goals"]:
@@ -200,7 +200,7 @@ class Node:
         """
             determine if the current state is the goal state
         """
-        return self.state["players"] == []
+        return len(self.state["players"]) == 0
 
 
     def __str__(self):
