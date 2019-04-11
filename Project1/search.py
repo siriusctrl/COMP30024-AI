@@ -11,6 +11,7 @@ import json
 import utils
 import travel
 
+
 def main():
     if len(sys.argv) >= 2:
         with open(sys.argv[1]) as file:
@@ -21,20 +22,21 @@ def main():
 
     root = utils.initialRoot(data)
 
-    #return the last node of the 
+    # return the goal state (node) so that we can back trace to get the result
     last = travel.Travel(root).Astar_Q()
 
-    totalSteps = 0
+    total_steps = 0
 
-    results = ""
+    moves = ""
 
     while last != root:
-        totalSteps += 1
-        results = last.fromLastAction + "\n" + results
-        last = last.preNode
-    
-    print("# total steps are:", totalSteps)
-    print(results)
+        total_steps += 1
+        moves = last.transition_action + "\n" + moves
+        last = last.pre_node
+
+    print("# total steps are:", total_steps)
+    print(moves)
+
 
 # when this module is executed, run the `main` function:
 if __name__ == '__main__':
