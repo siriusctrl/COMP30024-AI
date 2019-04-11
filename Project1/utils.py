@@ -201,6 +201,10 @@ def costFromGoal(goal:tuple, block:list) -> dict:
     q = queue.Queue()
     q.put((0, ((0, 0),goal)))
 
+    cost = {}
+
+    cost[goal] = 0
+
     COST[goal] = (0, 0)
 
     while not q.empty():
@@ -211,7 +215,7 @@ def costFromGoal(goal:tuple, block:list) -> dict:
         child_cost = current[0] + 1
 
         for s in successors:
-            if s[0] not in COST:
+            if s[0] not in cost:
                 # since we are using BFS to findNext the coordinates
                 # better solution will be always expanded first
 
@@ -227,13 +231,16 @@ def costFromGoal(goal:tuple, block:list) -> dict:
 
 
                 q.put((child_cost, (toSuc, s[0])))
+                cost[s[0]] = child_cost
 
                 # if the cost less then update
                 if ((s in COST) and sum(COST[s[0]]) > child_cost):
                     COST[s[0]] = toSuc
-                if s not in COST:
+                if not s in COST:
                     COST[s[0]] = toSuc
-                    
+                
+
     return 0
+        
 
         
