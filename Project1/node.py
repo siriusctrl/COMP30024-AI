@@ -18,7 +18,7 @@ class Node:
 
 
     def __init__(self, preNode:'node'=None, state: "dict"={}, 
-                            fromLastAction="", g=0) -> None:
+                            fromLastAction="", g=0, jumping=False, direc=9) -> None:
         '''
             constructor
         '''
@@ -28,6 +28,12 @@ class Node:
         self.preNode = preNode
         self.g = g
         self.state = state
+
+        # if the state is reached by jump
+        self.jumping = jumping
+
+        # last move or jump's direction
+        self.direc = direc
 
         # calculate heuristic when initializing the node
         self.f = self.g + self.heuristic(self.state)
@@ -64,16 +70,16 @@ class Node:
             minDist = utils.COST[pc]
 
             # get a int of heuristic
-            if minDist % 2 == 0:
-                h = h + (minDist / 2 + 1)
+            if minDist[0] % 2 == 0:
+                h = h + (minDist[0] / 2 + minDist[1] + 1)
             else:
-                h = h + ((minDist - 1) /2 +2)
+                h = h + ((minDist[0] - 1) /2 + minDist[1] +2)
             # print(Heuri)
 
         return h
 
 
-    def _newNode(self, oldCoor: tuple, newCoor:tuple=None, fromLastAction=""):
+    def _newNode(self, oldCoor: tuple, newCoor:tuple=None, fromLastAction="", jumping=False, direc=9):
         ''' 
             private (well..)function for generating new nodes
         '''
@@ -92,7 +98,7 @@ class Node:
         newState["blocks"] = self.state["blocks"]
 
         newNode = Node(self, newState, g=(self.g + 1), 
-                        fromLastAction=fromLastAction)
+                        fromLastAction=fromLastAction, jumping=jumping, direc=direc)
 
         return newNode
 
@@ -152,6 +158,10 @@ class Node:
                 checkingCoordin = (tmpPiece[0] + nearSix[i][0], 
                                         tmpPiece[1] + nearSix[i][1])
 
+                # not going back
+                if abs(i - self.direc) == 3:
+                    continue
+
                 if (not (checkingCoordin in self.state["blocks"] or \
                         checkingCoordin in self.state["players"]))      \
                                 and utils.pieceValid(checkingCoordin):
@@ -161,7 +171,8 @@ class Node:
                     theNew = self._newNode(tmpPiece, checkingCoordin, 
                                     fromLastAction= "MOVE from " + str(tmpPiece)
                                      + 
-                                        " to " + str(checkingCoordin) + ".")
+                                        " to " + str(checkingCoordin) + ".",
+                                            jumping=False, direc=i)
                     allMoveNodes.append(theNew)
                 else:
                     # by jump (if 1 step move in this direction can not 
@@ -178,7 +189,8 @@ class Node:
                         # create new node
                         theNew = self._newNode(tmpPiece, furtherCoordin, 
                                     fromLastAction="JUMP from " + str(tmpPiece)
-                                     + " to " + str(furtherCoordin) + ".")
+                                     + " to " + str(furtherCoordin) + ".",
+                                        jumping=True, direc=i)
                         allMoveNodes.append(theNew)
 
         return allMoveNodes
