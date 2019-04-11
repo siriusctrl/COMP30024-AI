@@ -160,7 +160,7 @@ class Node:
 
                 if (not (check_move in self.state["blocks"] or
                          check_move in self.state["players"])) \
-                        and utils.pieceValid(check_move):
+                        and utils.piece_validation(check_move):
 
                     # if can reach this direction one step by move
                     # create new node
@@ -179,7 +179,7 @@ class Node:
 
                     if (not (check_jump in self.state["blocks"] or
                              check_jump in self.state["players"])) and \
-                            utils.pieceValid(check_jump):
+                            utils.piece_validation(check_jump):
                         # if can reach this direction one step by jump
                         # create new node
                         s = self._newNode(tmpPiece, check_jump,

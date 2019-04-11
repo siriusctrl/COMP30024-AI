@@ -20,7 +20,7 @@ def main():
         with open("test.json") as file:
             data = json.load(file)
 
-    root = utils.initialRoot(data)
+    root = utils.root_init(data)
 
     # return the goal state (node) so that we can back trace to get the result
     last = travel.Travel(root).Astar_Q()

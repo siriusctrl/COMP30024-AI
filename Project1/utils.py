@@ -90,7 +90,7 @@ def print_board(board_dict: dict, message: str = "", debug: bool = False, **kwar
     print(board, **kwargs)
 
 
-def pieceValid(piece: tuple) -> bool:
+def piece_validation(piece: tuple) -> bool:
     """
     return True only if the given piece are still on the board or 
     move to a unoccupied grid
@@ -99,7 +99,7 @@ def pieceValid(piece: tuple) -> bool:
     return piece in CELLS
 
 
-def findNext(piece: tuple, parent: tuple, blocks: list) -> list:
+def find_next(piece: tuple, parent: tuple, blocks: list) -> list:
     """
     this method are trying to find all the possible movement for
     the give coordinate on the board.
@@ -133,12 +133,12 @@ def findNext(piece: tuple, parent: tuple, blocks: list) -> list:
         # check move action
         move_action = (current_coord[0] + move[i][0], current_coord[1] + move[i][1])
 
-        if (move_action not in blocks) and move_action != parent and pieceValid(move_action):
+        if (move_action not in blocks) and move_action != parent and piece_validation(move_action):
             next_coords.append((move_action, 1))
         else:
             # check jump action
             jump_action = (current_coord[0] + jump[i][0], current_coord[1] + jump[i][1])
-            if (jump_action not in blocks) and jump_action != parent and pieceValid(jump_action):
+            if (jump_action not in blocks) and jump_action != parent and piece_validation(jump_action):
                 next_coords.append((jump_action, 2))
 
     # return allMoves and the flag indicates if they can be achieved by move or jump
@@ -146,7 +146,7 @@ def findNext(piece: tuple, parent: tuple, blocks: list) -> list:
     return next_coords
 
 
-def initialRoot(input_board: dict) -> 'node':
+def root_init(input_board: dict) -> 'node':
     """
     the root of the tree will be init here
     
@@ -211,12 +211,12 @@ def costFromGoal(goal: tuple, block: list) -> dict:
 
         current = q.get()
 
-        successors = findNext(current[1][1], None, block)
+        successors = find_next(current[1][1], None, block)
         child_cost = current[0] + 1
 
         for s in successors:
             if s[0] not in cost:
-                # since we are using BFS to findNext the coordinates
+                # since we are using BFS to find_next the coordinates
                 # better solution will be always expanded first
 
                 # s[1] indicates if the next move s is achieved by move (1) or jump (2)
