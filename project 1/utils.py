@@ -134,14 +134,15 @@ def findNext(piece: tuple, parent: tuple, blocks: list) -> list:
         # check single move
         checkingCoordin = (currentPosition[0] + move[i][0], currentPosition[1] + move[i][1])
         if (not (checkingCoordin in blocks)) and checkingCoordin != parent and pieceValid(checkingCoordin):
-            nextPositions.append(checkingCoordin)
+            nextPositions.append((checkingCoordin, 1))
         else:
             # check jump
             furtherCoordin = (currentPosition[0] + jump[i][0], currentPosition[1] + jump[i][1])
             if (not (furtherCoordin in blocks)) and furtherCoordin != parent and pieceValid(furtherCoordin):
-                nextPositions.append(furtherCoordin)
+                nextPositions.append((furtherCoordin, 2))
 
-    # return allMoves
+    # return allMoves and the flag indicates if they can be achieved by move or jump
+    # 1 or 2
     return nextPositions
 
 
@@ -184,50 +185,57 @@ def initialRoot(inputBoard: dict) -> node.Node:
         if i in initialSt['goals']:
             initialSt['goals'].remove(i)
 
-    distances = {}
-
     for g in initialSt['goals']:
-        distances[g] = costFromGoal(g, initialSt['blocks'])
-    
-
-    for k in distances[initialSt['goals'][0]].keys():
-        dis = []
-        for g in initialSt['goals']:
-            dis.append(distances[g][k])
-        COST[k] = min(dis)
-
+        costFromGoal(g, initialSt["blocks"])
 
     initialRoot = node.Node(state=initialSt)
 
     return initialRoot
 
 
-def costFromGoal(goal:tuple, block:dict) -> dict:
+def costFromGoal(goal:tuple, block:list) -> dict:
     """
     Receive a goal coordiate 
     """
 
     q = queue.Queue()
-    cost = {}
-    q.put((0,goal))
+    q.put((0, ((0, 0),goal)))
 
-    cost[goal] = 0
+    COST[goal] = (0, 0)
 
     while not q.empty():
 
         current = q.get()
         # (cost, coordinates)
-        successors = findNext(current[1], None, block)
+        successors = findNext(current[1][1], None, block)
         child_cost = current[0] + 1
 
         for s in successors:
-            if s not in cost:
+            if s[0] not in COST:
                 # since we are using BFS to findNext the coordinates
                 # better solution will be always expanded first
-                q.put((child_cost, s))
-                cost[s] = child_cost
 
-    return cost
+                # s[1] indicates if the next move s is achieved by
+                # move or jump
+                # 1 for move and 2 for jump
+                # used when calculating heuristic g
+                # which separately consider jump and moves
+                if s[1] == 1:
+                    toSuc = (current[1][0][0] + 1, current[1][0][1])
+                elif s[1] == 2:
+                    toSuc = (current[1][0][0], current[1][0][1] + 1)
+
+
+                q.put((child_cost, (toSuc, s[0])))
+
+                # if the cost less then update
+                if ((s in COST) and sum(COST[s[0]]) > child_cost):
+                    COST[s[0]] = toSuc
+                if not s in COST:
+                    COST[s[0]] = toSuc
+                
+
+    return 0
         
 
         
