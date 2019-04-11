@@ -13,21 +13,22 @@
 
 We regard this game as a search problem from the following perspective
 
-- **State**: Each node contains a state, different node contains different state. How board looks like described a state, every times the board changed, we regard it as a new state.
+- **State**: Each node contains a state, different node contains different state. How board looks like described a state, every times the board changed, we regard it as a new state. (Unless there is already a better duplicate node in dict already)
 - **Actions**: There are three possible actions, MOVE, JUMP, EXIT.
 - **Goal tests**: If there are no player pieces on board, we say that we reached the final state.
 - **Action cost**: Each action cost 1 (MOVE, JUMP, EXIT)
+- In this case, our problem is a discrete, deterministic, sequential, static and fully observable.
 
 #### Algorithms
 
 ---
 
 - Why A*
-  For this project, we explored two different algorithms which are **A*** and **RBFS**, A* was chosen at the end. The reason for that is RBFS is a kind of algorithms that have an excellent space complexity but keep the similar time complexity theoretically, since only one branch is expanded at a time. From a practical perspective, it is much slower than A* . The worst case for the space complexity is that there are $C^{37}_4 = 66045$ nodes (we have our own way to remove duplications, refer to the following section) in memory, but for all the case we tried, we even did not reach half of it. Even if each node takes up to 10kb memory, there are only 660 MB memory required for the worst case which is affordable for most of the modern computers. Therefore, we chose A* for better performance.
+  - For this project, we explored two different algorithms which are **A*** and **RBFS**, A* was chosen at the end. The reason for that is RBFS is a kind of algorithms that have an excellent space complexity but keep the similar time complexity theoretically, since only one branch is expanded at a time. From a practical perspective, it is much slower than A* . The worst case for the space complexity is that there are $C^{37}_4 = 66045$ nodes (we have our own way to remove duplications, refer to the following section) in memory, but for all the case we tried, we even did not reach half of it. Even if each node takes up to 10kb memory, there are only 660 MB memory required for the worst case which is affordable for most of the modern computers. Therefore, we chose A* for better performance.
 
 - Pre-processing
 
-  Before the start of searching, we construct an important dictionary for the current board. For each reachable destination, we obtain the cost from any reachable position on the board to that goal by using BFS and each action (including MOVE and JUMP) cost 1. We do it at most four times, which can be done in constant time (same as explore $4*37 = 148$ coordinates) for all test cases. After that, we merge those dict to obtain a single dict and only keep the lowest cost for each coordinate. In this case, the values for that dictionary represent the lowest cost for moving a single piece from that place to one of the reachable destination including the effect of the blockes.
+  - Before the start of searching, we construct an important dictionary for the current board. For each reachable destination, we obtain the cost from any reachable position on the board to that goal by using BFS and each action (including MOVE and JUMP) cost 1. We do it at most four times, which can be done in constant time (same as explore $4*37 = 148$ coordinates) for all test cases. After that, we merge those dict to obtain a single dict and only keep the lowest cost for each coordinate. In this case, the values for that dictionary represent the lowest cost for moving a single piece from that place to one of the reachable destination including the effect of the blockes.
 
 - Heuristic
 
@@ -46,11 +47,11 @@ We regard this game as a search problem from the following perspective
 
 - Data structure for arranging the frontier
 
-  We use priority queue to maintain the frontier. The cost for that is $O(nlogn)$ for the whole search, whereas, using a custom search method take up to $O(n^2logn)$ which is horrible.
+  - We use priority queue to maintain the frontier. The cost for that is $O(nlogn)$ for the whole search, whereas, using a custom search method take up to $O(n^2logn)$ which is horrible.
 
 - Method for removing duplicate nodes
 
-  We use a dictionary to keep all visited state, once a same state has been reached by expanding another different node on the tree, we starting to compare the g (cost to reach this state so far). If it has a lower g, we update our dict, expand the node and put it successor into the frontier, otherwise, we simply ignore that node since we already have a better way to reach this state. This method dramatically reduce the time complexity and space complexity of our search in practice, since less node are explored and millions of duplicate nodes are not been added to our frontier. More practical data will be listed in the next section.
+  - We use a dictionary to keep all visited state, once a same state has been reached by expanding another different node on the tree, we starting to compare the g (cost to reach this state so far). If it has a lower g, we update our dict, expand the node and put it successor into the frontier, otherwise, we simply ignore that node since we already have a better way to reach this state. This method dramatically reduce the time complexity and space complexity of our search in practice, since less node are explored and millions of duplicate nodes are not been added to our frontier. More practical data will be listed in the next section.
 
 #### Test cases
 
@@ -66,5 +67,5 @@ We made up of some test cases to test how good is our algorithm from different p
   - In conclusion, for this kind of questions, the time complexity are very close to optimal for relatively large number of nodes, and space complexity are much better than the worst case. For small number of nodes, since the dramatically decease in search space, it also performs excellently.
 - Break simple min-distance heuristic
   - <img src="assets/image-20190406114332582.png" width="400px" />
-  - This is where the pre-defined dict really useful. If the heuristic only consider the distance to the closed non-blocked destination, it will quickly starting to do BFS which is extremely slow when comparing to $A^*​$ with good heuristic.
+  - This is where the pre-defined dict really useful. If the heuristic only consider the distance to the closest non-blocked destination, it will quickly starting to do BFS which is extremely slow when comparing to $A^*$ with good heuristic.
 

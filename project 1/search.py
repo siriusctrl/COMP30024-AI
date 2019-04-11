@@ -20,7 +20,6 @@ def main():
             data = json.load(file)
 
     root = utils.initialRoot(data)
-    print(root)
 
     #return the last node of the 
     last = travel.Travel(root).Astar_Q()
