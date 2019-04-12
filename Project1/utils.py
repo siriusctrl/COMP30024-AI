@@ -90,9 +90,9 @@ def print_board(board_dict: dict, message: str = "", debug: bool = False, **kwar
     print(board, **kwargs)
 
 
-def piece_validation(piece: tuple) -> bool:
+def piece_valid(piece: tuple) -> bool:
     """
-    return True only if the given piece are still on the board or 
+    return True only if the given piece are still on the board or
     move to a unoccupied grid
     """
 
@@ -133,12 +133,12 @@ def find_next(piece: tuple, parent: tuple, blocks: list) -> list:
         # check move action
         move_action = (current_coord[0] + move[i][0], current_coord[1] + move[i][1])
 
-        if (move_action not in blocks) and move_action != parent and piece_validation(move_action):
+        if (move_action not in blocks) and move_action != parent and piece_valid(move_action):
             next_coords.append((move_action, 1))
         else:
             # check jump action
             jump_action = (current_coord[0] + jump[i][0], current_coord[1] + jump[i][1])
-            if (jump_action not in blocks) and jump_action != parent and piece_validation(jump_action):
+            if (jump_action not in blocks) and jump_action != parent and piece_valid(jump_action):
                 next_coords.append((jump_action, 2))
 
     # return allMoves and the flag indicates if they can be achieved by move or jump
@@ -149,7 +149,7 @@ def find_next(piece: tuple, parent: tuple, blocks: list) -> list:
 def root_init(input_board: dict) -> 'node':
     """
     the root of the tree will be init here
-    
+
     `inputBoard` -- the input board which read from the json file
     """
 
@@ -186,14 +186,16 @@ def root_init(input_board: dict) -> 'node':
             initial_state['goals'].remove(i)
 
     for g in initial_state['goals']:
-        costFromGoal(g, initial_state["blocks"])
+        cost_from_goal(g, initial_state["blocks"])
+
+    print_board(COST)
 
     initial_root = node.Node(state=initial_state)
 
     return initial_root
 
 
-def costFromGoal(goal: tuple, block: list) -> dict:
+def cost_from_goal(goal: tuple, block: list) -> None:
     """
     Receive a goal coordinate and block list then calculate a pre
     """
@@ -205,7 +207,7 @@ def costFromGoal(goal: tuple, block: list) -> dict:
 
     cost = {goal: 0}
 
-    COST[goal] = (0, 0)
+    COST[goal] = 1
 
     while not q.empty():
 
@@ -216,7 +218,7 @@ def costFromGoal(goal: tuple, block: list) -> dict:
 
         for s in successors:
             if s[0] not in cost:
-                # since we are using BFS to find_next the coordinates
+                # since we are using BFS to findNext the coordinates
                 # better solution will be always expanded first
 
                 # s[1] indicates if the next move s is achieved by move (1) or jump (2)
@@ -233,9 +235,17 @@ def costFromGoal(goal: tuple, block: list) -> dict:
                 cost[s[0]] = child_cost
 
                 # if the cost less then update the closest cost
-                if s not in COST:
-                    COST[s[0]] = s_counter
-                elif sum(COST[s[0]]) > child_cost:
-                    COST[s[0]] = s_counter
+                h = 0
 
-    return 0
+                if s_counter[0] % 2 == 0:
+                    h = h + (s_counter[0] / 2 + s_counter[1] + 1)
+                else:
+                    h = h + ((s_counter[0] - 1) / 2 + s_counter[1] + 2)
+
+                if s[0] not in COST:
+                    COST[s[0]] = h
+                elif COST[s[0]] > h:
+                    COST[s[0]] = h
+
+    return
+
