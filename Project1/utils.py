@@ -188,8 +188,6 @@ def root_init(input_board: dict) -> 'node':
     for g in initial_state['goals']:
         cost_from_goal(g, initial_state["blocks"])
 
-    print_board(COST)
-
     initial_root = node.Node(state=initial_state)
 
     return initial_root
