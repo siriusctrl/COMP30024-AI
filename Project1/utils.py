@@ -1,15 +1,14 @@
-import os, queue
-import math
+import queue
 import node
-import heapq
 
 # define the boundary of the board
-CELLS = set([(q,r) for q in range(-3, +3+1) for r in range(-3, +3+1) if -q-r in range(-3, +3+1)])
+CELLS = set([(q, r) for q in range(-3, +3 + 1) for r in range(-3, +3 + 1) if -q - r in range(-3, +3 + 1)])
 
-# steps requirment for one piece move from any grid to the cloest destination
+# steps requirement for one piece move from any grid to the closest destination
 COST = {}
 
-def print_board(board_dict:dict, message:str="", debug:bool=False, **kwargs) -> None :
+
+def print_board(board_dict: dict, message: str = "", debug: bool = False, **kwargs) -> None:
     """
     Helper function to print a drawing of a hexagonal board's contents.
 
@@ -77,13 +76,13 @@ def print_board(board_dict:dict, message:str="", debug:bool=False, **kwargs) -> 
     #              `-._,-' `-._,-' `-._,-' `-._,-'     `-._,-'"""
 
     # prepare the provided board contents as strings, formatted to size.
-    ran = range(-3, +3+1)
+    ran = range(-3, +3 + 1)
     cells = []
-    for qr in [(q,r) for q in ran for r in ran if -q-r in ran]:
+    for qr in [(q, r) for q in ran for r in ran if -q - r in ran]:
         if qr in board_dict:
             cell = str(board_dict[qr]).center(5)
         else:
-            cell = "     " # 5 spaces will fill a cell
+            cell = "     "  # 5 spaces will fill a cell
         cells.append(cell)
 
     # fill in the template to create the board drawing, then print!
@@ -91,21 +90,21 @@ def print_board(board_dict:dict, message:str="", debug:bool=False, **kwargs) -> 
     print(board, **kwargs)
 
 
-def pieceValid(piece: tuple) -> bool:
+def piece_valid(piece: tuple) -> bool:
     """
-    return True only if the given piece are still on the board or 
+    return True only if the given piece are still on the board or
     move to a unoccupied grid
     """
 
     return piece in CELLS
 
 
-def findNext(piece: tuple, parent: tuple, blocks: list) -> list:
+def find_next(piece: tuple, parent: tuple, blocks: list) -> list:
     """
-    this method are tring to find all the possible movement for
+    this method are trying to find all the possible movement for
     the give coordinate on the board.
     """
-    
+
     # distance that can be reached by action MOVE
     move = [
         [0, -1],
@@ -126,31 +125,32 @@ def findNext(piece: tuple, parent: tuple, blocks: list) -> list:
         [-2, 0]
     ]
 
-    nextPositions = []
+    next_coords = []
     directions = 6
-    currentPosition = piece
+    current_coord = piece
 
     for i in range(directions):
-        # check single move
-        checkingCoordin = (currentPosition[0] + move[i][0], currentPosition[1] + move[i][1])
-        if (not (checkingCoordin in blocks)) and checkingCoordin != parent and pieceValid(checkingCoordin):
-            nextPositions.append(checkingCoordin)
+        # check move action
+        move_action = (current_coord[0] + move[i][0], current_coord[1] + move[i][1])
+
+        if (move_action not in blocks) and move_action != parent and piece_valid(move_action):
+            next_coords.append((move_action, 1))
         else:
-            # check jump
-            furtherCoordin = (currentPosition[0] + jump[i][0], currentPosition[1] + jump[i][1])
-            if (not (furtherCoordin in blocks)) and furtherCoordin != parent and pieceValid(furtherCoordin):
-                nextPositions.append(furtherCoordin)
+            # check jump action
+            jump_action = (current_coord[0] + jump[i][0], current_coord[1] + jump[i][1])
+            if (jump_action not in blocks) and jump_action != parent and piece_valid(jump_action):
+                next_coords.append((jump_action, 2))
 
-    # return allMoves
-    return nextPositions
+    # return allMoves and the flag indicates if they can be achieved by move or jump
+    # 1 or 2
+    return next_coords
 
 
-def initialRoot(inputBoard: dict) -> node.Node:
+def root_init(input_board: dict) -> 'node':
     """
     the root of the tree will be init here
-    
-    `inputBoard` -- the input board which read from the json file
 
+    `inputBoard` -- the input board which read from the json file
     """
 
     COLOURS = {
@@ -174,60 +174,76 @@ def initialRoot(inputBoard: dict) -> node.Node:
         ]
     }
 
-    initialSt = {}
-    initialSt["players"] = [tuple(x) for x in inputBoard["pieces"]]
-    initialSt["goals"] = COLOURS[inputBoard["colour"]]
-    initialSt["blocks"] = [tuple(x) for x in inputBoard["blocks"]]
+    initial_state = {
+        "players": set([tuple(x) for x in input_board["pieces"]]),
+        "goals": COLOURS[input_board["colour"]],
+        "blocks": set([tuple(x) for x in input_board["blocks"]])
+    }
 
-    # remove unachiavable goals
-    for i in initialSt["blocks"]:
-        if i in initialSt['goals']:
-            initialSt['goals'].remove(i)
+    # remove unachievable goals
+    for i in initial_state["blocks"]:
+        if i in initial_state['goals']:
+            initial_state['goals'].remove(i)
 
-    distances = {}
+    for g in initial_state['goals']:
+        cost_from_goal(g, initial_state["blocks"])
 
-    for g in initialSt['goals']:
-        distances[g] = costFromGoal(g, initialSt['blocks'])
-    
+    initial_root = node.Node(state=initial_state)
 
-    for k in distances[initialSt['goals'][0]].keys():
-        dis = []
-        for g in initialSt['goals']:
-            dis.append(distances[g][k])
-        COST[k] = min(dis)
+    return initial_root
 
 
-    initialRoot = node.Node(state=initialSt)
-
-    return initialRoot
-
-
-def costFromGoal(goal:tuple, block:dict) -> dict:
+def cost_from_goal(goal: tuple, block: list) -> None:
     """
-    Receive a goal coordiate 
+    Receive a goal coordinate and block list then calculate a pre
     """
 
     q = queue.Queue()
-    cost = {}
-    q.put((0,goal))
 
-    cost[goal] = 0
+    # (cost_from_goal, ((MOVE_counter, JUMP_counter), coordinates))
+    q.put((0, ((0, 0), goal)))
+
+    cost = {goal: 0}
+
+    COST[goal] = 1
 
     while not q.empty():
 
         current = q.get()
-        # (cost, coordinates)
-        successors = findNext(current[1], None, block)
+
+        successors = find_next(current[1][1], None, block)
         child_cost = current[0] + 1
 
         for s in successors:
-            if s not in cost:
+            if s[0] not in cost:
                 # since we are using BFS to findNext the coordinates
                 # better solution will be always expanded first
-                q.put((child_cost, s))
-                cost[s] = child_cost
 
-    return cost
-        
+                # s[1] indicates if the next move s is achieved by move (1) or jump (2)
+                # used in calculating heuristic g
+                # which separately consider jump and moves since jump does not need to /2
+                # to reach a admissible heuristic
+                # toSuc = (MOVE_counter, JUMP_counter) <- counting both moves and jumps
+                if s[1] == 1:
+                    s_counter = (current[1][0][0] + 1, current[1][0][1])
+                elif s[1] == 2:
+                    s_counter = (current[1][0][0], current[1][0][1] + 1)
 
-        
+                q.put((child_cost, (s_counter, s[0])))
+                cost[s[0]] = child_cost
+
+                # if the cost less then update the closest cost
+                h = 0
+
+                if s_counter[0] % 2 == 0:
+                    h = h + (s_counter[0] / 2 + s_counter[1] + 1)
+                else:
+                    h = h + ((s_counter[0] - 1) / 2 + s_counter[1] + 2)
+
+                if s[0] not in COST:
+                    COST[s[0]] = h
+                elif COST[s[0]] > h:
+                    COST[s[0]] = h
+
+    return
+

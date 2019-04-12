@@ -1,114 +1,104 @@
-import math
 import utils
 import functools
 
 
 @functools.total_ordering
 class Node:
-    '''
+    """
         Node class
-        
+
         for using search tree and contains state and the action from last move.
         the cost g and f (g + heuristic) are stored as well!
 
         built for project pA of COMP30024
         Authors: Xinyao Niu (900721), Maoting Zuo (901116)
         Team Name: VanGame
-    '''
+    """
 
-
-    def __init__(self, preNode:'node'=None, state: "dict"={}, 
-                            fromLastAction="", g=0) -> None:
-        '''
+    def __init__(self, pre_node: 'node' = None, state: dict = {},
+                 transition_action: str = "", g=0) -> None:
+        """
             constructor
-        '''
+            * pre_node -- parent node on the tree (None by default)
+            * state -- current state (empty by default)
+            * transition_action -- output string for this node, will be used in backtrace
+            * g -- cost so far to achieve this state
+        """
 
-        # string of the action that get to this state
-        self.fromLastAction = fromLastAction
-        self.preNode = preNode
+        # string of the action that how state are transfer from last node to this node
+        self.transition_action = transition_action
+        self.pre_node = pre_node
         self.g = g
         self.state = state
 
         # calculate heuristic when initializing the node
         self.f = self.g + self.heuristic(self.state)
 
-
     def __lt__(self, other):
-        '''
-            function overrided for using comparasion operators.
-        '''
+        """
+            function override for using comparision operators.
+        """
         return self.f < other.f
-    
 
     def __eq__(self, other):
-        '''
-            function overrided for using comparasion operators.
-        '''
-        
-        return self.f == other.f and \
-            self.g == other.g and \
-                self.state == other.state
+        """
+            function override for using comparision operators.
+        """
 
+        return self.f == other.f and self.g == other.g and self.state == other.state
 
     def heuristic(self, state):
-        '''
+        """
             heuristic function
-        '''
+        """
 
-        # sum of all distance/2 from the position of
+        # sum of all move/2 + jump from the position of
         # each piece to their closest goal
         # (proof of admissible refer to the report)
         h = 0
 
-        for pc in state["players"]:
-            minDist = utils.COST[pc]
+        for p in state["players"]:
 
-            # get a int of heuristic
-            if minDist % 2 == 0:
-                h = h + (minDist / 2 + 1)
-            else:
-                h = h + ((minDist - 1) /2 +2)
-            # print(Heuri)
+            min_distance_from_goal = utils.COST[p]
+            h = h + min_distance_from_goal
 
         return h
 
-
-    def _newNode(self, oldCoor: tuple, newCoor:tuple=None, fromLastAction=""):
-        ''' 
+    def _newNode(self, old_coord: tuple, new_coord: tuple = None, transition_action=""):
+        """
             private (well..)function for generating new nodes
-        '''
-        newState = {}
-        newState["players"] = self.state["players"] + []
+        """
+
+        new_state = {"players": self.state["players"].copy()}
 
         # remove old position
         # if taken EXIT action, then remove it without appending new position
-        newState["players"].remove(oldCoor)
+        new_state["players"].remove(old_coord)
 
         # Only append when all the piece has valid position in the next state
-        if newCoor:
-            newState["players"].append(newCoor)
-        
-        newState["goals"] = self.state["goals"]
-        newState["blocks"] = self.state["blocks"]
+        if new_coord:
+            new_state["players"].add(new_coord)
 
-        newNode = Node(self, newState, g=(self.g + 1), 
-                        fromLastAction=fromLastAction)
+        new_state["goals"] = self.state["goals"]
+        new_state["blocks"] = self.state["blocks"]
 
-        return newNode
+        new_node = Node(self, new_state, g=(self.g + 1),
+                        transition_action=transition_action)
 
+        return new_node
 
     def expand(self) -> list:
         """
-            this method are tring to find all the possible movement 
-            (except its parent node state) for all the avaliable pieces on the 
-            board as next possible states based on the current position 
-            of pieces, and trate them like the child of this node. Notice
-            that we assume moving back and forth does not give us a 
+            this method are trying to find all the possible movement
+            (except its parent node state) for all the available pieces on the
+            board as next possible states based on the current position
+            of pieces, and regard them as the child of this node. Notice
+            that we assume moving back and forth does not give us a
             optimal solution.
         """
-        
+
         # delta x and y from any position to its neighbourhood (move)
-        nearSix = [
+        move = [
             [0, -1],
             [1, -1],
             [1, 0],
@@ -118,7 +108,7 @@ class Node:
         ]
 
         # delta x and y from any position to its possible move (jump)
-        further = [
+        jump = [
             [0, -2],
             [2, -2],
             [2, 0],
@@ -127,96 +117,93 @@ class Node:
             [-2, 0]
         ]
 
-        allMoveNodes = []
-        numOfAllPossible = 6
+        successors = []
+        max_directions = 6
 
-        for piece in range(len(self.state["players"])):
+        for piece in self.state["players"]:
 
             # same position but different tuple
-            tmpPiece = tuple(self.state["players"][piece] + ())
+            tmpPiece = piece + ()
 
             # if piece is on the goal then exit
             if tmpPiece in self.state["goals"]:
-
-                theNew = self._newNode(tmpPiece, 
-                    fromLastAction="EXIT from " + str(tmpPiece) + ".")
-                allMoveNodes.append(theNew)
+                s = self._newNode(tmpPiece,
+                                  transition_action="EXIT from " + str(tmpPiece) + ".")
+                successors.append(s)
                 continue
 
             # check position of next possible moves
             # one direction at a time, check both move and jump
-            for i in range(numOfAllPossible):
+            for i in range(max_directions):
 
                 # by move
                 # 1 step position in this direction
-                checkingCoordin = (tmpPiece[0] + nearSix[i][0], 
-                                        tmpPiece[1] + nearSix[i][1])
+                check_move = (tmpPiece[0] + move[i][0],
+                              tmpPiece[1] + move[i][1])
 
-                if (not (checkingCoordin in self.state["blocks"] or \
-                        checkingCoordin in self.state["players"]))      \
-                                and utils.pieceValid(checkingCoordin):
+                if (not (check_move in self.state["blocks"] or
+                         check_move in self.state["players"])) \
+                        and utils.piece_valid(check_move):
 
                     # if can reach this direction one step by move
                     # create new node
-                    theNew = self._newNode(tmpPiece, checkingCoordin, 
-                                    fromLastAction= "MOVE from " + str(tmpPiece)
-                                     + 
-                                        " to " + str(checkingCoordin) + ".")
-                    allMoveNodes.append(theNew)
+                    s = self._newNode(tmpPiece, check_move,
+                                      transition_action="MOVE from " + str(tmpPiece)
+                                                        +
+                                                        " to " + str(check_move) + ".",
+                                      )
+                    successors.append(s)
                 else:
-                    # by jump (if 1 step move in this direction can not 
+                    # by jump (if 1 step move in this direction can not
                     # be reached)
                     # 2 step position in this direction
-                    furtherCoordin = (tmpPiece[0] + further[i][0], 
-                                        tmpPiece[1] + further[i][1])
+                    check_jump = (tmpPiece[0] + jump[i][0],
+                                  tmpPiece[1] + jump[i][1])
 
-                    if (not (furtherCoordin in self.state["blocks"] or \
-                        furtherCoordin in self.state["players"])) and \
-                                utils.pieceValid(furtherCoordin):
-
+                    if (not (check_jump in self.state["blocks"] or
+                             check_jump in self.state["players"])) and \
+                            utils.piece_valid(check_jump):
                         # if can reach this direction one step by jump
                         # create new node
-                        theNew = self._newNode(tmpPiece, furtherCoordin, 
-                                    fromLastAction="JUMP from " + str(tmpPiece)
-                                     + " to " + str(furtherCoordin) + ".")
-                        allMoveNodes.append(theNew)
+                        s = self._newNode(tmpPiece, check_jump,
+                                          transition_action="JUMP from " + str(tmpPiece)
+                                                            + " to " + str(check_jump) + ".",
+                                          )
+                        successors.append(s)
 
-        return allMoveNodes
-
+        return successors
 
     def goal_test(self):
         """
             determine if the current state is the goal state
         """
-        return self.state["players"] == []
-
+        return len(self.state["players"]) == 0
 
     def __str__(self):
-        '''
+        """
             to string, will be invoked when printing the node
-        '''
-        
-        stateBoard = {
+        """
 
-        }
+        state_board = {}
+
         for p in self.state["players"]:
-            stateBoard[p] = "*p*"
+            state_board[p] = "*p*"
 
         for l in self.state["goals"]:
-            if l in stateBoard:
-                stateBoard[l] = stateBoard[l]+ "*g*"
+            if l in state_board:
+                state_board[l] = state_board[l] + "*g*"
             else:
-                stateBoard[l] = "*g*"
-        
+                state_board[l] = "*g*"
+
         for o in self.state["blocks"]:
-            if o in stateBoard:
-                stateBoard[o] = stateBoard[o] + "*b*"
+            if o in state_board:
+                state_board[o] = state_board[o] + "*b*"
             else:
-                stateBoard[o] = "*b*"
-        utils.print_board(stateBoard, message=self.fromLastAction + 
-                    str(self.heuristic(self.state)), debug=True)
-        
-        return self.fromLastAction
+                state_board[o] = "*b*"
+
+        utils.print_board(state_board, message=self.transition_action + str(self.heuristic(self.state)), debug=True)
+
+        return self.transition_action
 
     # make sure that when print a list, the __str__ will also be invoked
     # only for debug purpose

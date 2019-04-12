@@ -32,17 +32,20 @@ We regard this game as a search problem from the following perspective
 
 - Heuristic
 
-  - Our heuristic function is equivalent to $math.ceil(cost/2 ) + 1 $, we assume that we can JUMP at every state when we moving our pieces. For odd number of cost, at least you need to MOVE once, therefore, we are trying to find the ceil of the float. The +1 at the end means that one cost required for the piece to exit the board. As we assume that the piece only JUMP (the fastest way of moving any piece under the rule of this game) at each turn, we can conclude that $h^*$ is dominating $h$. Therefore, our heuristic is admissible.
+  - Our heuristic function are split into two part, one is the moving part the other is the jumping part. When we are calculating the min cost from any place on the map toward closest destination, we recording to reach a place how many JUMP and MOVE do we need. 
+  - For the **MOVE** part, our heuristic is equivalent to $math.ceil(cost/2) + 1$, we assume that we can JUMP at every state when we moving our pieces. For odd number of cost, at least you need to MOVE once, therefore, we are trying to find the ceil of the float. The +1 at the end means that one cost required for the piece to exit the board. 
+  - For **JUMP** part, we simple add them to the result of move, since it cannot be any faster. 
+  - In that stage, we only consider the interaction with blocks, that means the real action should be less or equivalent to the sum of pieces min cost. Additionally, we assume that the piece only JUMP (the fastest way of moving any piece under the rule of this game) at each turn, we can conclude that $h^*$ is dominating $h​$. Therefore, our heuristic is admissible.
   - The reason that we chose this function
     - Easy to use and calculate
-    - Decent performance when there are many pieces, since around $\frac{1}{3}$ actions are JUMP.
+    - Decent performance when there are many pieces, since more than $\frac{1}{4}​$ actions are JUMP.
     - Worse case are vary easy to solve in practice. To make sure all actions are MOVE, either a large proportion grids on board are blocked or there are only 1 piece. Both problems have very small search space.
 
 - Properties of A*
 
-  - Completeness: Yes, unless infinite nodes with $f \leq f(goal)$ , in this project, we can always assume this is true.
+  - Completeness: Yes, unless infinite nodes with $f \leq f(goal)​$ , in this project, we can always assume this is true.
   - Optimality: admissible are proved, therefore, the optimality can be guaranteed.
-  - Time complexity: $O(b^{\epsilon d})​$ for constant step cost which I use 1 for all movements, where $\epsilon = (h^* - h)/h^*​$ , for the best case, which the true optimal path is that piece JUMP for each turn, the answer will be find in linear time $O(d)​$ . For the worst case, which piece have to move at each turn, the time complexity is $O(b^{\frac{1}{2}d})​$, which is still a significant improve in real problem solving.
+  - Time complexity: $O((b^{\epsilon})^d) $ for constant step cost which I use 1 for all movements, where $\epsilon = (h^* - h)/h^*$ , for the best case, which the true optimal path is that piece JUMP for each turn, the answer will be find in linear time $O(d)$ . For the worst case, which piece have to move at each turn, the time complexity is $O(b^{\frac{1}{2}d})$, which is still a significant improve in real problem solving.
   - Space Complexity: $O(b^d)$ , since it keeps all the node in memory. As I side in previous sections, this is acceptable even for the worst case.
 
 - Data structure for arranging the frontier
@@ -61,11 +64,12 @@ We made up of some test cases to test how good is our algorithm from different p
 
 - How good is our heuristic and frontier update strategy
   - {"colour" : "red", "pieces" : [[0,-3],[-3,0],[-3,3],[0,3]], "blocks": []}
-  - Optimal solution: 18 steps, explored nodes: 7741, node in frontier: 20760, takes 1.6s in dimefox
-  - During 4 EXIT and 5 JUMP actions (9 in total), our heuristic function are same as $h^*$ 
-  - This problem could represent one kind of question which has multiple pieces that can freely move around without blocks. For less node, although MOVE action may occur more frequently, but reducing node can result in a dramatically decrease in search space. 
+  - Optimal solution: 18 steps, explored nodes: 5121, node in frontier: 14408. Without a good heuristic, the time complexity here is $5^{18}$ , but we reduce it to $5^{5.3}$ . Branching factor (relative error) here $\approx​$ 0.29.
+  - This problem could represent one kind of question which has multiple pieces that can freely move around without blocks. For less node, although MOVE action may occur more frequently, but reducing node can result in a dramatically decrease in search space.
   - In conclusion, for this kind of questions, the time complexity are very close to optimal for relatively large number of nodes, and space complexity are much better than the worst case. For small number of nodes, since the dramatically decease in search space, it also performs excellently.
 - Break simple min-distance heuristic
-  - <img src="assets/image-20190406114332582.png" width="400px" />
-  - This is where the pre-defined dict really useful. If the heuristic only consider the distance to the closest non-blocked destination, it will quickly starting to do BFS which is extremely slow when comparing to $A^*$ with good heuristic.
+  - <img src="assets/image-20190406114332582.png" width="200px" />
+  - Optimal solution: 22 steps, explored nodes: 6482, node in frontier: 11149. Without a good heuristic, the time complexity here is $5^{22}$ , but we reduce it to $5^{5.5}$ . Branching factor (relative error) here $\approx ​$ 0.25.
+  - This is where the pre-defined dict really useful. If the heuristic only consider the distance to the closed non-blocked destination, it will quickly starting to do BFS which is extremely slow when comparing to with good heuristic.
+  - This is a question that need to test whether the algorithm can find the long term better solution. As we calculated the min cost before the start so we can correctly direct the search.
 
