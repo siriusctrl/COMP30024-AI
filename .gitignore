@@ -8,3 +8,9 @@ project 1/assets/\.DS_Store
 \.DS_Store
 
 \.idea/
+
+Project1/\.vscode/
+
+*.bin
+
+\.vscode/
