@@ -24,14 +24,16 @@ This a project repo for game chexers which introduced by course COMP30024 Semest
       - Solution:
         - Not find yet
   - advantages
-    - No need of human knowledges
+    - No need of human knowledge
     - Make decision very quick
+    
 - Min-max algorithms
   - What we learnt on the class
   - Problems
     - How to extend this to multi-agent
       - Using three tuples
         - But decision making process might become really long, so we need to make some cut down rules
+    - slow decision making, since we only have 60s computational time overall.
 - DQN
   - Haven't have a try yet
 - Find Nash equilibrium
