@@ -22,11 +22,10 @@ This a project repo for game chexers which introduced by course COMP30024 Semest
     - Need quite long computational power
     - Don't know how to update the hyper-parameters by using the reinforcement learning policy
       - Solution:
-        - Not find yet
+        - ==Not find yet==
   - advantages
     - No need of human knowledge
     - Make decision very quick
-    
 - Min-max algorithms
   - What we learnt on the class
   - Problems
@@ -35,5 +34,13 @@ This a project repo for game chexers which introduced by course COMP30024 Semest
         - But decision making process might become really long, so we need to make some cut down rules
     - slow decision making, since we only have 60s computational time overall.
 - DQN
-  - Haven't have a try yet
+  - ==Haven't have a try yet==
 - Find Nash equilibrium
+- Evolution algorithm
+  - Randomly assign parameter to evaluation function and starting to play the game
+  - Each turn, collect the winner's data as the final result
+  - At the beginning of each turn, distributed 3 version of the data, each of them contains a slight change.
+  - We can assume that for a long enough time, we could find the best parameter for the evaluation function.
+  - Problem
+    - Need **really long** time to learn the parameters, since there maybe a lot of parameters
+    - How to determine what condition should be included in the evaluation function is a big problem.
