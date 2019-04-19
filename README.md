@@ -9,10 +9,7 @@ This a project repo for game chexers which introduced by course COMP30024 Semest
 - Monte Carlo Tree search
   - [550 line python MCTS for go](<https://github.com/pasky/michi>)
 - Basic reinforcement learning
-  - [Markov Decison Process and Q-learning](<https://itnext.io/reinforcement-learning-with-q-tables-5f11168862c8>)
-  - 
-
-
+  - [Markov Decison Process and Q-learning](<https://itnext.io/reinforcement-learning-with-q-tables-5f11168862c8>) 
 
 ### Some idea
 
@@ -35,7 +32,11 @@ This a project repo for game chexers which introduced by course COMP30024 Semest
     - slow decision making, since we only have 60s computational time overall.
 - DQN
   - ==Haven't have a try yet==
+- TDleaf
+    - [thesis about TDleaf](https://app.lms.unimelb.edu.au/bbcswebdav/pid-6960316-dt-content-rid-59764375_2/courses/COMP30024_2019_SM1/TDLeafLambda.pdf)
+    - [TD learning, the easier way](<https://towardsdatascience.com/td-in-reinforcement-learning-the-easy-way-f92ecfa9f3ce>)
 - Find Nash equilibrium
+  - Very hard as well
 - Evolution algorithm
   - Randomly assign parameter to evaluation function and starting to play the game
   - Each turn, collect the winner's data as the final result
