@@ -1,3 +1,7 @@
+import VanGame.utils as utils
+import VanGame.strategy as strategy
+import copy
+
 class Player:
     def __init__(self, colour):
         """
@@ -11,6 +15,20 @@ class Player:
         strings "red", "green", or "blue" correspondingly.
         """
         self.colour = colour
+
+        # player's goal
+        self.goal = {}
+
+        # player's starting point
+        self.colour_p = {}
+
+        # board in each turn
+        self.current_board = {}
+
+        self.colour_exit = {}
+
+        self.initial(colour)
+
         # TODO: Set up state representation.
 
     def action(self):
@@ -25,7 +43,9 @@ class Player:
         actions.
         """
         # TODO: Decide what action to take.
-        return "PASS", None
+
+        return strategy.get_possible_moves(self.current_board, self.colour, self.colour_p, self.goal)
+    
 
     def update(self, colour, action):
         """
@@ -46,3 +66,43 @@ class Player:
         the action/pass against the game rules).
         """
         # TODO: Update state representation in response to action.
+        self.update_board(action, colour)
+
+
+    def update_board(self, action, colour):
+        if action[0] in ("MOVE", "JUMP"):
+            self.current_board[action[1][0]] = "empty"
+            self.current_board[action[1][1]] = colour
+            self.colour_p[colour].remove(action[1][0])
+            self.colour_p[colour].append(action[1][1])
+            if action[0] in ("JUMP", ):
+                fr = action[1][0]
+                to = action[1][1]
+                sk = (fr[0] + (to[0] - fr[0]) / 2, fr[1] + (to[1] - fr[1]) / 2)
+
+                # well I dont freaking know what im thinking about
+                if self.current_board[sk] != "empty" and self.current_board[sk] != colour:
+                    self.colour_p[self.current_board[sk]].remove(sk)
+                    self.colour_p[colour].append(sk)
+                    self.current_board[sk] = colour
+
+        elif action[0] in ("EXIT", ):
+            self.current_board[action[1]] = "empty"
+            self.colour_p[colour].remove(action[1])
+        return
+
+    def initial(self, colour):
+        starting_ps = utils.START[colour]
+        self.colour_p = copy.deepcopy(utils.START)
+        for a in utils.CELLS:
+            self.current_board[a] = "empty"
+        for c in utils.START.keys():
+            for o in utils.START[c]:
+                self.current_board[o] = c
+
+        self.goal = utils.GOALS[colour]
+
+        print(self.colour_p)
+        print(self.current_board)
+        print(self.goal)
+
