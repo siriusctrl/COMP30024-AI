@@ -28,3 +28,12 @@ def get_possible_moves(current_board, colour, colour_p, goal):
         return "PASS", None
 
     pass
+
+
+def hard_code_eva_function(possible_safe : int, reduced_heuristic : float, danger_pieces : int) -> float:
+    """
+    1. # possible safety movement (*1)
+    2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)
+    3. # of piece in danger (could be taken by opponent by one JUMP action) *(-5)
+    """
+    return possible_safe + (-2)*reduced_heuristic + danger_pieces * (-5)

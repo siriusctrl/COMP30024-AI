@@ -2,7 +2,9 @@ import VanGame.utils as utils
 import VanGame.strategy as strategy
 import copy
 
+
 class Player:
+
     def __init__(self, colour):
         """
         This method is called once at the beginning of the game to initialise
@@ -17,7 +19,7 @@ class Player:
         self.colour = colour
 
         # player's goal
-        self.goal = {}
+        self.goal = utils.GOALS[colour]
 
         # player's starting point
         self.colour_p = {}
@@ -30,6 +32,17 @@ class Player:
         self.initial(colour)
 
         # TODO: Set up state representation.
+
+        self.colour_p = copy.deepcopy(utils.START)
+        for a in utils.CELLS:
+            self.current_board[a] = "empty"
+        for c in utils.START.keys():
+            for o in utils.START[c]:
+                self.current_board[o] = c
+
+        print(self.colour_p)
+        print(self.current_board)
+        print(self.goal)
 
     def action(self):
         """
@@ -44,7 +57,6 @@ class Player:
         """
         # TODO: Decide what action to take.
         return strategy.get_possible_moves(self.current_board, self.colour, self.colour_p, self.goal)
-    
 
     def update(self, colour, action):
         """
@@ -67,7 +79,6 @@ class Player:
         # TODO: Update state representation in response to action.
         self.update_board(action, colour)
 
-
     def update_board(self, action, colour):
         if action[0] in ("MOVE", "JUMP"):
             self.current_board[action[1][0]] = "empty"
@@ -85,23 +96,8 @@ class Player:
                     self.colour_p[colour].append(sk)
                     self.current_board[sk] = colour
 
-        elif action[0] in ("EXIT", ):
+        elif action[0] in ("EXIT",):
             self.current_board[action[1]] = "empty"
             self.colour_p[colour].remove(action[1])
         return
-
-    def initial(self, colour):
-        starting_ps = utils.START[colour]
-        self.colour_p = copy.deepcopy(utils.START)
-        for a in utils.CELLS:
-            self.current_board[a] = "empty"
-        for c in utils.START.keys():
-            for o in utils.START[c]:
-                self.current_board[o] = c
-
-        self.goal = utils.GOALS[colour]
-
-        print(self.colour_p)
-        print(self.current_board)
-        print(self.goal)
 
