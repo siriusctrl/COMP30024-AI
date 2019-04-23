@@ -1,4 +1,4 @@
-from VanGame.player import Player as Player
+from HardCode.player import Player
 
 
 def test():

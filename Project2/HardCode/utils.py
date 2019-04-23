@@ -1,7 +1,7 @@
 import queue
 
 # define the boundary of the board
-CELLS = set([(q, r) for q in range(-3, +3 + 1) for r in range(-3, +3 + 1) if -q - r in range(-3, +3 + 1)])
+CELLS = [(q, r) for q in range(-3, +3 + 1) for r in range(-3, +3 + 1) if -q - r in range(-3, +3 + 1)]
 
 P_MAPPING = {
     "red": 1,
@@ -137,11 +137,11 @@ def find_next(piece: tuple, current_board: dict) -> list:
         jump_action = (piece[0] + 2 * move[i][0], piece[1] + 2 * move[i][1])
 
         if move_action in current_board and current_board[move_action] == "empty" and piece_valid(move_action):
-            next_coords.append((piece, move_action, 1))
+            next_coords.append((piece, move_action, 1, (-1, -1)))
         else:
             # check jump action
             if jump_action in current_board and current_board[jump_action] == "empty" and piece_valid(jump_action):
-                next_coords.append((piece, jump_action, 2))
+                next_coords.append((piece, jump_action, 2, (move_action)))
 
     # return allMoves and the flag indicates if they can be achieved by move or jump
     # 1 or 2

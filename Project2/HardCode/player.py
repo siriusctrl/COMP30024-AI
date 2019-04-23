@@ -1,5 +1,5 @@
-import VanGame.utils as utils
-import VanGame.strategy as strategy
+import HardCode.utils as utils
+import HardCode.strategy as strategy
 import copy
 
 
@@ -16,6 +16,7 @@ class Player:
         program will play as (Red, Green or Blue). The value will be one of the 
         strings "red", "green", or "blue" correspondingly.
         """
+        print(colour)
         self.colour = colour
 
         # player's goal
@@ -29,7 +30,8 @@ class Player:
 
         self.colour_exit = {}
 
-        self.initial(colour)
+
+        self.strategy = strategy.Strategy(self.goal)
 
         # TODO: Set up state representation.
 
@@ -56,7 +58,7 @@ class Player:
         actions.
         """
         # TODO: Decide what action to take.
-        return strategy.get_possible_moves(self.current_board, self.colour, self.colour_p, self.goal)
+        return self.strategy.get_possible_moves(self.current_board, self.colour, self.colour_p, self.goal)
 
     def update(self, colour, action):
         """
