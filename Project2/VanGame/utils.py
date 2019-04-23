@@ -1,4 +1,4 @@
-import queue
+import numpy as np
 
 # define the boundary of the board
 CELLS = set([(q, r) for q in range(-3, +3 + 1) for r in range(-3, +3 + 1) if -q - r in range(-3, +3 + 1)])
@@ -146,3 +146,21 @@ def find_next(piece: tuple, current_board: dict) -> list:
     # return allMoves and the flag indicates if they can be achieved by move or jump
     # 1 or 2
     return next_coords
+
+
+def generate_record(record) -> None:
+    """
+    TODO:  open the file add the record to the end of the file and then close it
+    """
+    with open("replay.txt", 'w+') as f:
+        for r in record:
+            f.writelines(r)
+
+
+def discount_rewards(rewards, discount_rate):
+    discounted_rewards = np.empty(len(rewards))
+    cumulative_reward = 0
+    for step in reversed(range(len(rewards))):
+        cumulative_rewards = rewards[step] + cumulative_reward * discount_rate
+        discounted_rewards[step] = cumulative_rewards
+    return discounted_rewards
