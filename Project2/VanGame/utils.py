@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 import json
 
@@ -172,9 +173,24 @@ def discount_rewards(rewards, discount_rate):
 
 
 def load_l(path):
-    with open(path, "r") as e:
-        str_data = e.read()
-        data = json.loads(str_data)
-        datafin = [{tuple(m): data[m] for m in x.keys()} for x in data]
+    rex = {'green': 1, 'red': 2, 'blue': 3, 'empty': 0}
+    fn = os.path.basename(path)
+    a_ca = fn.split("cao")
+    t = a_ca[1]
+    colour = t[:t.index("jiba")]
+
+    with open(path, "r") as f:
+        data = json.load(f)
+        for m in range(len(data)):
+            data[m][0] = {to_t(a): rex[data[m][0][a]] for a in data[m][0].keys()}
+
+        datafin = data
     
-    return datafin
+    return datafin, rex[colour]
+
+def to_t(s_t):
+    spltd = s_t.split(", ")
+    first = spltd[0][1:]
+    secon = spltd[1][:-1]
+
+    return (int(first), int(secon))
