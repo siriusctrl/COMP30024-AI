@@ -1,8 +1,13 @@
 import VanGame.utils as utils
 import VanGame.strategy as strategy
-import copy
+import copy, datetime
+import json, time
+import math
+import os
+
 
 class Player:
+
     def __init__(self, colour):
         """
         This method is called once at the beginning of the game to initialise
@@ -14,10 +19,11 @@ class Player:
         program will play as (Red, Green or Blue). The value will be one of the 
         strings "red", "green", or "blue" correspondingly.
         """
+        print(colour)
         self.colour = colour
 
         # player's goal
-        self.goal = {}
+        self.goal = utils.GOALS[colour]
 
         # player's starting point
         self.colour_p = {}
@@ -27,9 +33,23 @@ class Player:
 
         self.colour_exit = {}
 
-        self.initial(colour)
+
+        self.strategy = strategy.Strategy(self.goal)
 
         # TODO: Set up state representation.
+
+        self.colour_p = copy.deepcopy(utils.START)
+        for a in utils.CELLS:
+            self.current_board[a] = "empty"
+        for c in utils.START.keys():
+            for o in utils.START[c]:
+                self.current_board[o] = c
+
+
+
+        print(self.colour_p)
+        print(self.current_board)
+        print(self.goal)
 
     def action(self):
         """
@@ -43,8 +63,7 @@ class Player:
         actions.
         """
         # TODO: Decide what action to take.
-        return strategy.get_possible_moves(self.current_board, self.colour, self.colour_p, self.goal)
-    
+        return self.strategy.get_possible_moves(self.current_board, self.colour, self.colour_p, self.goal)
 
     def update(self, colour, action):
         """
@@ -67,6 +86,17 @@ class Player:
         # TODO: Update state representation in response to action.
         self.update_board(action, colour)
 
+        for n in self.colour_exit.keys():
+            if self.colour_exit[n] == 4:
+                r = -500
+                if n == self.colour:
+                    r += 1000
+                self.strategy.add_log(self.current_board, self.colour, action=("NONE", None), utility=0, rew=r)
+                os.mkdir
+                with open(os.path.join("./rec", str(time.mktime(datetime.datetime.now().timetuple() )) + "cao" + self.colour + "jiba" + ".txt"), "w+") as e:
+                    e.write(json.dumps(self.strategy.log))
+
+        
 
     def update_board(self, action, colour):
         if action[0] in ("MOVE", "JUMP"):
@@ -81,27 +111,34 @@ class Player:
 
                 # well I dont freaking know what im thinking about
                 if self.current_board[sk] != "empty" and self.current_board[sk] != colour:
+                    
+                    
                     self.colour_p[self.current_board[sk]].remove(sk)
                     self.colour_p[colour].append(sk)
+
+                    lst = self.current_board[sk]
                     self.current_board[sk] = colour
 
-        elif action[0] in ("EXIT", ):
+                    tmp_tbr = self.current_board
+                    pl = [m for m in tmp_tbr.keys() if tmp_tbr[m] == self.colour]
+                    if lst == self.colour:
+                        if(len(pl) >= 4):
+                            self.strategy.log[len(self.strategy.log)-1][1]-=utils.MORE_RW
+                        else:
+                            self.strategy.log[len(self.strategy.log)-1][1] -= utils.LESS_RW
+                    elif lst != self.colour and colour == self.colour:
+                        if(len(pl) > 4):
+                            self.strategy.log[len(self.strategy.log)-1][1]+=utils.MORE_RW
+                        else:
+                            self.strategy.log[len(self.strategy.log)-1][1] += utils.LESS_RW
+
+        elif action[0] in ("EXIT",):
             self.current_board[action[1]] = "empty"
             self.colour_p[colour].remove(action[1])
+
+            if colour not in self.colour_exit.keys():
+                self.colour_exit[colour] = 0
+            self.colour_exit[colour] += 1
+
         return
-
-    def initial(self, colour):
-        starting_ps = utils.START[colour]
-        self.colour_p = copy.deepcopy(utils.START)
-        for a in utils.CELLS:
-            self.current_board[a] = "empty"
-        for c in utils.START.keys():
-            for o in utils.START[c]:
-                self.current_board[o] = c
-
-        self.goal = utils.GOALS[colour]
-
-        print(self.colour_p)
-        print(self.current_board)
-        print(self.goal)
 

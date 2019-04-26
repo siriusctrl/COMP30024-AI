@@ -1,6 +1,6 @@
 import HardCode.utils as utils
 import HardCode.strategy as strategy
-import copy
+import copy, datetime
 
 
 class Player:
@@ -94,6 +94,7 @@ class Player:
 
                 # well I dont freaking know what im thinking about
                 if self.current_board[sk] != "empty" and self.current_board[sk] != colour:
+
                     self.colour_p[self.current_board[sk]].remove(sk)
                     self.colour_p[colour].append(sk)
                     self.current_board[sk] = colour
@@ -101,5 +102,10 @@ class Player:
         elif action[0] in ("EXIT",):
             self.current_board[action[1]] = "empty"
             self.colour_p[colour].remove(action[1])
+
+            if colour not in self.colour_exit.keys():
+                self.colour_exit[colour] = 0
+            self.colour_exit[colour] += 1
+
         return
 

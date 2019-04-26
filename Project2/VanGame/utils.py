@@ -1,5 +1,7 @@
 import numpy as np
 
+import json
+
 # define the boundary of the board
 CELLS = set([(q, r) for q in range(-3, +3 + 1) for r in range(-3, +3 + 1) if -q - r in range(-3, +3 + 1)])
 
@@ -38,6 +40,9 @@ GOALS = {
         ]
     }
 
+MORE_RW = 10
+
+LESS_RW = 20
 
 def print_board(board_dict: dict, message: str = "", debug: bool = False, **kwargs) -> None:
     """
@@ -164,3 +169,12 @@ def discount_rewards(rewards, discount_rate):
         cumulative_rewards = rewards[step] + cumulative_reward * discount_rate
         discounted_rewards[step] = cumulative_rewards
     return discounted_rewards
+
+
+def load_l(path):
+    with open(path, "r") as e:
+        str_data = e.read()
+        data = json.loads(str_data)
+        datafin = {tuple(m): data[m] for m in data.keys()}
+    
+    return datafin

@@ -18,6 +18,8 @@ class Strategy:
             self.cost_from_goal(g, tmp_current_board)
         utils.print_board(self.cost)
 
+        self.log = []
+
         print(self.cost)
 
 
@@ -31,6 +33,20 @@ class Strategy:
 
         for a in ps:
             if a in goal:
+                next_board = current_board.copy()
+                next_board[a] = "empty"
+
+                self.log.append(
+                    (next_board, 0, 
+                    
+
+            
+                self.hard_code_eva_function(
+                    self.cal_pdiff(current_board, next_board, colour), 
+                    self.cal_rheu(current_board, next_board, colour), 
+                    self.cal_dpiei(current_board, next_board, colour)), "EXIT"
+                ))
+
                 return "EXIT", a
 
         all_ms = []
@@ -40,32 +56,32 @@ class Strategy:
         if len(all_ms):
             all_state_players = []
             for i in all_ms:
-                tmp_state_play = []
-                tmp_p = ps.copy()
+                '''tmp_p = ps.copy()
 
-                tmp_o=ot.copy()
+                tmp_o=ot.copy()'''
 
-                tmp_p.remove(i[0])
-                tmp_p.append(i[1])
+                ur_b = current_board.copy()
+
+                ur_b[i[0]]="empty"
+                ur_b[i[1]]=colour
+
+                '''tmp_p.remove(i[0])
+                tmp_p.append(i[1])'''
 
                 if i[2] == 2:
-                    if i[3] in tmp_o:
-                        tmp_p.append(i[3])
-                        tmp_o.remove(i[3])
+                    if ur_b[i[3]]!="empty":
+                        ur_b[i[3]]=colour
                 
-                tmp_state_play.append(tmp_p)
-                tmp_state_play.append(tmp_o)
-
-                all_state_players.append(tmp_state_play)
+                all_state_players.append(ur_b)
             print(all_state_players)
             # print(all_state_players, ev)
             ev = []
 
             for p in all_state_players:
-                cn = [ps, ot]
-                pdiff = self.cal_pdiff(cn, p)
-                rheu = self.cal_rheu(cn, p)
-                dpiei = self.cal_dpiei(cn, p)
+                cn = current_board
+                pdiff = self.cal_pdiff(cn, p, colour)
+                rheu = self.cal_rheu(cn, p, colour)
+                dpiei = self.cal_dpiei(cn, p, colour)
 
             
                 ev.append(self.hard_code_eva_function(pdiff, rheu, dpiei))
@@ -75,18 +91,29 @@ class Strategy:
             max_e = max(ev)
             max_ein = ev.index(max_e)
 
-
-
             
             print(all_ms)
 
             cm = all_ms[max_ein]
+
+
+
             if cm[2] == 1:
+                self.log.append(
+                    (all_state_players[max_ein], 0, ev[max_ein], "MOVE")
+                )
                 return "MOVE", (cm[0], cm[1])
+                
             elif cm[2] == 2:
+                self.log.append(
+                    (all_state_players[max_ein], 0, ev[max_ein], "JUMP")
+                )
                 return "JUMP", (cm[0], cm[1])
             # return all_ms[math.floor(random.random() * len(all_ms))]
         else:
+            self.log.append(
+                (current_board.copy(), 0, 0, "PASS")
+            )
             return "PASS", None
 
         pass
@@ -100,21 +127,28 @@ class Strategy:
         return heuri
         pass
 
-    def cal_pdiff(self, cur_state, next_state):
-        return len(next_state[1]) - len(cur_state[1])
+    def cal_pdiff(self, cur_state, next_state, colour):
+        c_or = [k for k in cur_state.keys() if cur_state[k] != "empty" and cur_state[k] != colour]
+        n_r = [k for k in next_state.keys() if next_state[k] != "empty" and next_state[k] != colour]
+
+        c_ors = len(c_or)
+        n_s = len(n_r)
+        return c_ors - n_s
     
-    def cal_rheu(self, cur_state, next_state):
-        cur_pl = cur_state[0]
-        nxt_pl = next_state[0]
+    def cal_rheu(self, cur_state, next_state, colour):
+        cur_pl = [x for x in cur_state.keys() if cur_state[x] == colour]
+        nxt_pl = [x for x in next_state.keys() if next_state[x] == colour]
+        
 
         cur_heuri = self.heuristic(cur_pl)
         nxt_heuri = self.heuristic(nxt_pl)
 
         return nxt_heuri - cur_heuri
 
-    def cal_dpiei(self,cur_state, next_state):
-        nxt_pl = next_state[0]
-        nxt_ot = next_state[1]
+    def cal_dpiei(self,cur_state, next_state,colour):
+        nxt_pl = [k for k in next_state.keys() if next_state[k] == colour]
+        nxt_ot = [k for k in next_state.keys() if next_state[k] != "empty" and next_state[k] != colour]
+        
 
         tmp_current_board = {x: "empty" for x in utils.CELLS}
         for p in nxt_pl:
