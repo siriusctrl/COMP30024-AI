@@ -44,7 +44,7 @@ class Strategy:
                 action = ("PASS", None)
             
 
-        self.add_log(current_board, colour, action)
+        self.add_log(current_board, colour, action=action)
 
         return action
 
