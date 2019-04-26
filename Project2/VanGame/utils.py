@@ -175,6 +175,6 @@ def load_l(path):
     with open(path, "r") as e:
         str_data = e.read()
         data = json.loads(str_data)
-        datafin = {tuple(m): data[m] for m in data.keys()}
+        datafin = [{tuple(m): data[m] for m in x.keys()} for x in data]
     
     return datafin
