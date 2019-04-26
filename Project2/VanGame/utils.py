@@ -182,15 +182,28 @@ def load_l(path):
     with open(path, "r") as f:
         data = json.load(f)
         for m in range(len(data)):
-            data[m][0] = {to_t(a): rex[data[m][0][a]] for a in data[m][0].keys()}
+            data[m][0] = {to_array(a): rex[data[m][0][a]] for a in data[m][0].keys()}
 
         datafin = data
     
     return datafin, rex[colour]
 
-def to_t(s_t):
-    spltd = s_t.split(", ")
-    first = spltd[0][1:]
-    secon = spltd[1][:-1]
+def to_array(s_t):
+    splited_dict = s_t.split(", ")
+    first = splited_dict[0][1:]
+    secon = splited_dict[1][:-1]
 
     return (int(first), int(secon))
+
+
+def chose(options: list):
+    ops = np.array(options)
+    ops = (ops - ops.mean()) / ops.std()
+    prob = softmax(np.array(ops))
+    return np.random.choice(len(options), 1, p=prob)[0]
+
+
+def softmax(x):
+    """Compute softmax values for each sets of scores in x."""
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum(axis=0)
