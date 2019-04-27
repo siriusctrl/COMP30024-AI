@@ -19,7 +19,7 @@ class Player:
         program will play as (Red, Green or Blue). The value will be one of the 
         strings "red", "green", or "blue" correspondingly.
         """
-        print(colour)
+        
         self.colour = colour
 
         # player's goal
@@ -46,10 +46,6 @@ class Player:
                 self.current_board[o] = c
 
 
-
-        print(self.colour_p)
-        print(self.current_board)
-        print(self.goal)
 
     def action(self):
         """

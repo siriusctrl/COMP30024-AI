@@ -7,9 +7,12 @@ import HardCode.strategy as sp
 v.test()
 
 play = p.Player("blue")
-s.get_possible_moves(play.current_board, play.colour, play.colour_p, play.goal)
+sb = s.Strategy(play.goal)
+'''sb.get_possible_moves(play.current_board, play.colour, play.colour_p, play.goal)'''
+sb.get_board(play.current_board, play.colour)
 
 st = sp.Strategy(play.goal)
 
-mv = st.get_possible_moves(play.current_board, play.colour, play.colour_p, play.goal)
-print("cao" + str(mv))
+
+'''mv = st.get_possible_moves(play.current_board, play.colour, play.colour_p, play.goal)
+print("cao" + str(mv))'''

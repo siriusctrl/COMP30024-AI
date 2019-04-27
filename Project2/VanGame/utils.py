@@ -4,7 +4,7 @@ import os
 import json
 
 # define the boundary of the board
-CELLS = set([(q, r) for q in range(-3, +3 + 1) for r in range(-3, +3 + 1) if -q - r in range(-3, +3 + 1)])
+CELLS = sorted([(q, r) for q in range(-3, +3 + 1) for r in range(-3, +3 + 1) if -q - r in range(-3, +3 + 1)])
 
 P_MAPPING = {
     "red": 1,
@@ -144,7 +144,7 @@ def find_next(piece: tuple, current_board: dict) -> list:
 
         if move_action in current_board and current_board[move_action] == "empty" and piece_valid(move_action):
             next_coords.append((piece, move_action, 1))
-        else:
+        elif piece_valid(move_action) and current_board[move_action] != "empty":
             # check jump action
             if jump_action in current_board and current_board[jump_action] == "empty" and piece_valid(jump_action):
                 next_coords.append((piece, jump_action, 2))
@@ -200,6 +200,7 @@ def chose(options: list):
     ops = np.array(options)
     ops = (ops - ops.mean()) / ops.std()
     prob = softmax(np.array(ops))
+    print("\n", options, "\n", prob, "\n")
     return np.random.choice(len(options), 1, p=prob)[0]
 
 
