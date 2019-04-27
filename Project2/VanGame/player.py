@@ -85,11 +85,12 @@ class Player:
         for n in self.colour_exit.keys():
             if self.colour_exit[n] == 4:
                 r = -500
+                s_wi = "[2zzz]"
                 if n == self.colour:
                     r += 1000
+                    s_wi = "[1win]"
                 self.strategy.add_log(self.current_board, self.colour, action=("NONE", None), utility=0, rew=r)
-                os.mkdir
-                with open(os.path.join("./rec", str(time.mktime(datetime.datetime.now().timetuple() )) + "cao" + self.colour + "jiba" + ".txt"), "w+") as e:
+                with open(os.path.join("./rec", s_wi + str(time.mktime(datetime.datetime.now().timetuple() )) + "cao" + self.colour + "jiba" + ".txt"), "w+") as e:
                     e.write(json.dumps(self.strategy.log))
 
         
@@ -119,7 +120,7 @@ class Player:
                     pl = [m for m in tmp_tbr.keys() if tmp_tbr[m] == self.colour]
                     if lst == self.colour:
                         if(len(pl) >= 4):
-                            self.strategy.log[len(self.strategy.log)-1][1]-=utils.MORE_RW
+                            self.strategy.log[len(self.strategy.log)-1][1]-= utils.MORE_RW
                         else:
                             self.strategy.log[len(self.strategy.log)-1][1] -= utils.LESS_RW
                     elif lst != self.colour and colour == self.colour:

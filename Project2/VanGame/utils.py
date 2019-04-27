@@ -40,9 +40,9 @@ GOALS = {
         ]
     }
 
-MORE_RW = 10
+MORE_RW = 100
 
-LESS_RW = 20
+LESS_RW = 200
 
 
 def print_board(board_dict: dict, message: str = "", debug: bool = False, **kwargs) -> None:
@@ -200,7 +200,7 @@ def chose(options: list):
     ops = np.array(options)
     ops = (ops - ops.mean()) / ops.std()
     prob = softmax(np.array(ops))
-    print("\n", options, "\n", prob, "\n")
+    #print("\n", options, "\n", prob, "\n")
     return np.random.choice(len(options), 1, p=prob)[0]
 
 
