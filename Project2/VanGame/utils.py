@@ -1,6 +1,5 @@
 import numpy as np
 import os
-
 import json
 
 # define the boundary of the board
@@ -44,6 +43,7 @@ GOALS = {
 MORE_RW = 10
 
 LESS_RW = 20
+
 
 def print_board(board_dict: dict, message: str = "", debug: bool = False, **kwargs) -> None:
     """
@@ -208,3 +208,43 @@ def softmax(x):
     """Compute softmax values for each sets of scores in x."""
     e_x = np.exp(x - np.max(x))
     return e_x / e_x.sum(axis=0)
+
+
+class Linear:
+
+    @staticmethod
+    def forward(x):
+        return x
+
+    @staticmethod
+    def backward(x):
+        return x
+
+
+class ReLu:
+    """
+    Two additional major benefits of ReLUs are sparsity and a reduced
+    likelihood of vanishing gradient. But first recall the definition
+    of a ReLU is :math:`h=max(0,a)` where :math:`a=Wx+b`.
+    One major benefit is the reduced likelihood of the gradient to vanish.
+    This arises when :math:`a>0`. In this regime the gradient has a constant value.
+    In contrast, the gradient of sigmoid becomes increasingly small as the
+    absolute value of :math:`x` increases. The constant gradient of ReLUs results in
+    faster learning.
+
+    The other benefit of ReLUs is sparsity. Sparsity arises when :math:`a≤0`.
+    The more such units that exist in a layer the more sparse the resulting
+    representation. Sigmoid on the other hand are always likely to generate
+    some non-zero value resulting in dense representations. Sparse representations
+    seem to be more beneficial than dense representations.
+    """
+
+    @staticmethod
+    def forward(x):
+        return np.maximum(0.0, x)
+
+    @staticmethod
+    def backward(a, x):
+        ap = np.array(a, copy=True)
+        ap[x <= 0] = 0
+        return ap
