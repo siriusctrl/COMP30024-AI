@@ -1,5 +1,5 @@
 import queue
-import node
+import node, json
 
 # define the boundary of the board
 CELLS = set([(q, r) for q in range(-3, +3 + 1) for r in range(-3, +3 + 1) if -q - r in range(-3, +3 + 1)])
@@ -246,4 +246,5 @@ def cost_from_goal(goal: tuple, block: list) -> None:
                     COST[s[0]] = h
 
     return
+        
 

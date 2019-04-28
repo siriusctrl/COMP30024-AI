@@ -11,4 +11,8 @@ project 1/assets/\.DS_Store
 
 Project1/\.vscode/
 
+*.bin
+
 \.vscode/
+
+*.zip
