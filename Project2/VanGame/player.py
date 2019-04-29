@@ -90,7 +90,7 @@ class Player:
                 if n == self.colour:
                     r += 1000
                     s_wi = "[1win]"
-                self.strategy.logger.add_log(self.current_board, action=("NONE", None), utility=0, rew=r)
+                self.strategy.logger.update_last_log("rew", r)
                 self.strategy.logger.export_log(s_wi)
                 
 
