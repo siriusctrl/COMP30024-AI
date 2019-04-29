@@ -1,5 +1,6 @@
 import VanGame.utils as utils
 import VanGame.strategy as strategy
+import VanGame.logger as logger
 import copy, datetime
 import json, time
 import math
@@ -34,7 +35,7 @@ class Player:
         self.colour_exit = {}
 
 
-        self.strategy = strategy.Strategy(self.goal)
+        self.strategy = strategy.Strategy(self.goal, self.colour)
 
         # TODO: Set up state representation.
 
@@ -89,9 +90,9 @@ class Player:
                 if n == self.colour:
                     r += 1000
                     s_wi = "[1win]"
-                self.strategy.add_log(self.current_board, self.colour, action=("NONE", None), utility=0, rew=r)
-                with open(os.path.join("./rec", s_wi + str(time.mktime(datetime.datetime.now().timetuple() )) + "cao" + self.colour + "jiba" + ".txt"), "w+") as e:
-                    e.write(json.dumps(self.strategy.log))
+                self.strategy.logger.add_log(self.current_board, action=("NONE", None), utility=0, rew=r)
+                self.strategy.logger.export_log(s_wi)
+                
 
         
 
@@ -120,14 +121,18 @@ class Player:
                     pl = [m for m in tmp_tbr.keys() if tmp_tbr[m] == self.colour]
                     if lst == self.colour:
                         if(len(pl) >= 4):
-                            self.strategy.log[len(self.strategy.log)-1][1]-= utils.MORE_RW
+                            self.strategy.logger.update_last_log("rew", -utils.MORE_RW)
+                            '''self.strategy.log[len(self.strategy.log)-1][1]-= utils.MORE_RW'''
                         else:
-                            self.strategy.log[len(self.strategy.log)-1][1] -= utils.LESS_RW
+                            self.strategy.logger.update_last_log("rew", -utils.LESS_RW)
+                            # self.strategy.log[len(self.strategy.log)-1][1] -= utils.LESS_RW
                     elif lst != self.colour and colour == self.colour:
                         if(len(pl) > 4):
-                            self.strategy.log[len(self.strategy.log)-1][1]+=utils.MORE_RW
+                            self.strategy.logger.update_last_log("rew", utils.MORE_RW)
+                            # self.strategy.log[len(self.strategy.log)-1][1]+=utils.MORE_RW
                         else:
-                            self.strategy.log[len(self.strategy.log)-1][1] += utils.LESS_RW
+                            self.strategy.logger.update_last_log("rew", utils.LESS_RW)
+                            # self.strategy.log[len(self.strategy.log)-1][1] += utils.LESS_RW
 
         elif action[0] in ("EXIT",):
             self.current_board[action[1]] = "empty"

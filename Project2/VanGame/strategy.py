@@ -2,14 +2,18 @@ import VanGame.utils as utils
 import random
 import math, copy
 
+import VanGame.logger as logger
+
 import VanGame.keras_model as ker_m
 import queue
 
 
 class Strategy:
 
-    def __init__(self, goals):
+    def __init__(self, goals, colour):
         self.cost = {}
+
+        self.colour = colour
 
         self.goals = goals
 
@@ -19,7 +23,7 @@ class Strategy:
             self.cost_from_goal(g, tmp_current_board)
         utils.print_board(self.cost)
 
-        self.log = []
+        self.logger = logger.Logger(self.colour)
 
         self.mdl = ker_m.dnn()
     
@@ -60,34 +64,43 @@ class Strategy:
                         m_action = ("MOVE", (ms[0], ms[1]))
                     elif ms[2] == 2:
                         m_action = ("JUMP", (ms[0], ms[1]))
+                    
+                    # add action
                     acs.append(m_action)
                     
+                    # next board after the action
                     next_bor = self.get_next_curbo(current_board, m_action, colour)
 
+                    # delta heuristic
                     d_heurii = self.cal_rheu(current_board, next_bor, colour)
 
+                    # board in num representation used in predicting
                     next_n = self.get_board(next_bor, colour, d_heurii)
 
+                    # add the estimate utility value
                     all_pre.append(self.mdl.predict(next_n))
 
+                    # add the next board to be chosen later
                     all_suc.append(next_bor)
 
+                    # add the heuristic
                     all_heu.append(d_heurii)
 
                     # return all_ms[math.floor(random.random() * len(all_ms))]
                 
+                # get the right action chosen in this status
                 ie = utils.chose(all_pre)
                 action = acs[ie]
             else:
                 action = ("PASS", None)
             
-
+            # get the current successor state and dheuri
             if (ie != -1):
                 suc_bo = all_suc[ie]
                 re = all_heu[ie]
         
 
-        self.add_log(suc_bo, colour, action=action, rew=0, d_heur=re)
+        self.logger.add_log(suc_bo, colour, action=action, rew=0, d_heur=re)
 
         return action
 
@@ -202,34 +215,3 @@ class Strategy:
 
         return
 
-
-    
-    def add_log(self, current_board, colour, action=("NONE", None), utility=0, rew=0, d_heur=0):
-
-
-        nxt_b = copy.deepcopy(current_board)
-
-        if action[0] in ("MOVE", "JUMP"):
-            nxt_b[action[1][0]] = "empty"
-            nxt_b[action[1][1]] = colour
-            if action[0] in ("JUMP", ):
-                fr = action[1][0]
-                to = action[1][1]
-                sk = (fr[0] + (to[0] - fr[0]) / 2, fr[1] + (to[1] - fr[1]) / 2)
-
-                # well I dont freaking know what im thinking about
-                if nxt_b[sk] != "empty" and nxt_b[sk] != colour:
-                    nxt_b[sk] = colour
-
-        elif action[0] in ("EXIT",):
-            nxt_b[action[1]] = "empty"
-
-        new = {str(m): nxt_b[m] for m in nxt_b.keys()}
-        # new = {}
-
-        
-        
-        self.log.append(
-            [
-            new, rew, utility, action, d_heur
-        ])
