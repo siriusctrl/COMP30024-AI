@@ -32,7 +32,11 @@ class Player:
         # board in each turn
         self.current_board = {}
 
-        self.colour_exit = {}
+        self.colour_exit = {
+            "red": 0,
+            "green": 0,
+            "blue": 0
+        }
 
 
         self.strategy = strategy.Strategy(self.goal, self.colour)
@@ -85,13 +89,15 @@ class Player:
 
         for n in self.colour_exit.keys():
             if self.colour_exit[n] == 4:
-                r = -500
+                player_exited = self.colour_exit[self.colour]
+                r = - (4 - player_exited) * 125
                 s_wi = "[2zzz]"
                 if n == self.colour:
-                    r += 1000
+                    r += 0
                     s_wi = "[1win]"
                 self.strategy.logger.update_last_log("rew", r)
                 self.strategy.logger.export_log(s_wi)
+                break
                 
 
         

@@ -40,9 +40,9 @@ GOALS = {
         ]
     }
 
-MORE_RW = 100
+MORE_RW = 50
 
-LESS_RW = 200
+LESS_RW = 70
 
 
 def print_board(board_dict: dict, message: str = "", debug: bool = False, **kwargs) -> None:

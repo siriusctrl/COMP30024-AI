@@ -40,6 +40,7 @@ class Strategy:
 
         suc_bo = current_board
         re = 0
+        rew = 0
         
         if(len(action) == 0):
             all_ms = []
@@ -99,8 +100,11 @@ class Strategy:
                 suc_bo = all_suc[ie]
                 re = all_heu[ie]
         
-
-        self.logger.add_log(suc_bo, colour, action=action, rew=0, d_heur=re)
+        if action[0] == "EXIT":
+            rew = 125
+            re = 1
+        
+        self.logger.add_log(suc_bo, action=action, rew=rew, d_heur=re)
 
         return action
 
