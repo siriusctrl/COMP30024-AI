@@ -1,16 +1,52 @@
-import tensorflow as tf
-from keras import models, layers
 import numpy as np
-from keras.models import load_model
-import keras
-import os
+import VanGame.utils as utils
+import pickle
 
 
-class dnn():
+class NeuralNetwork:
 
-    def __init__(self, name=os.path.join(os.getcwd(), 'VanGame', 'my_model.h5')):
-        self.model = load_model(name)
+    def __init__(self, filename='trained_model'):
 
-    def predict(self, state):
-        s = np.array([state])
-        return self.model.predict(s)[0][0]
+        self.activation_function = {"relu": utils.ReLu.forward, "linear": utils.Linear.forward}
+        self.grad = {"relu": utils.ReLu.forward, "linear": utils.Linear.forward}
+        self.params = {}
+        self.arch = []
+        # load the feed-forward NN weights and bias
+        self.load(filename)
+
+    def forward(self, i, l, prop):
+        activation = self.activation_function[prop['activation']]
+        weights = self.params['weight' + str(l)]
+        bias = self.params['bias' + str(l)]
+        o = np.dot(i, weights) + bias
+        return activation(o)
+
+    def predict(self, init_input):
+        output = np.array([])
+        for level, prop in enumerate(self.arch):
+            if output.shape[0] != 0:
+                output = self.forward(output, level, prop)
+            else:
+                output = self.forward(init_input, level, prop)
+
+        return output
+
+    def load(self, filename) -> None:
+        """
+        load the proper weights
+        :param filename: the name of the file
+        """
+
+        with open(filename, 'rb') as f:
+            m = pickle.load(f)
+
+        for i in range(len(m)):
+            if i % 2 == 0:
+                self.arch.append({"input_size": m[i].shape[0], "output_size": m[i].shape[1], "activation": "relu"})
+                self.params['weight' + str(i // 2)] = m[i]
+            else:
+                self.params['bias' + str(i // 2)] = m[i]
+
+        self.arch[-1]['activation'] = 'linear'
+        # print(self.params)
+
