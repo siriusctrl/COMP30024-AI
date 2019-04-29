@@ -182,7 +182,7 @@ def load_l(path):
     with open(path, "r") as f:
         data = json.load(f)
         for m in range(len(data)):
-            data[m][0] = {to_array(a): rex[data[m][0][a]] for a in data[m][0].keys()}
+            data[m]["board"] = {to_array(a): rex[data[m]["board"][a]] for a in data[m]["board"].keys()}
 
         datafin = data
     
