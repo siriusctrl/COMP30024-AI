@@ -1,9 +1,10 @@
 import numpy as np
 import VanGame.utils as utils
 import pickle
+import os
 
 
-class NeuralNetwork:
+class dnn:
 
     def __init__(self, filename='trained_model'):
 
@@ -12,7 +13,7 @@ class NeuralNetwork:
         self.params = {}
         self.arch = []
         # load the feed-forward NN weights and bias
-        self.load(filename)
+        self.load(os.path.join(os.getcwd(), "VanGame", filename))
 
     def forward(self, i, l, prop):
         activation = self.activation_function[prop['activation']]
