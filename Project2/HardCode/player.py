@@ -30,7 +30,6 @@ class Player:
 
         self.colour_exit = {}
 
-
         self.strategy = strategy.Strategy(self.goal)
 
         # TODO: Set up state representation.
