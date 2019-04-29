@@ -16,11 +16,11 @@ class Strategy:
 
         for g in self.goals:
             self.cost_from_goal(g, tmp_current_board)
-        utils.print_board(self.cost)
+        #utils.print_board(self.cost)
 
         self.log = []
 
-        print(self.cost)
+        # print(self.cost)
 
 
 
@@ -73,7 +73,7 @@ class Strategy:
                         ur_b[i[3]]=colour
                 
                 all_state_players.append(ur_b)
-            print(all_state_players)
+            # print(all_state_players)
             # print(all_state_players, ev)
             ev = []
 
@@ -86,13 +86,13 @@ class Strategy:
             
                 ev.append(self.hard_code_eva_function(pdiff, rheu, dpiei))
             
-            print(ev)
+            # print(ev)
 
             max_e = max(ev)
             max_ein = ev.index(max_e)
 
             
-            print(all_ms)
+            # print(all_ms)
 
             cm = all_ms[max_ein]
 

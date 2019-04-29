@@ -18,3 +18,5 @@ Project1/\.vscode/
 *.zip
 
 Project2/VanGame/\.ipynb_checkpoints/feedforward\.py-checkpoint\.ipynb
+
+Project2/rec/

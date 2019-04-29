@@ -21,7 +21,7 @@ class Strategy:
 
         for g in self.goals:
             self.cost_from_goal(g, tmp_current_board)
-        utils.print_board(self.cost)
+        # utils.print_board(self.cost)
 
         self.logger = logger.Logger(self.colour)
 
