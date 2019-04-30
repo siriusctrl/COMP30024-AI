@@ -11,7 +11,11 @@ import queue
 class Strategy:
 
     def __init__(self, goals, colour):
-        self.cost = {}
+        self.cost = {
+            "red": {},
+            "blue": {},
+            "green": {}
+        }
 
         self.colour = colour
 
@@ -20,8 +24,17 @@ class Strategy:
         tmp_current_board = {x: "empty" for x in utils.CELLS}
 
         for g in self.goals:
-            self.cost_from_goal(g, tmp_current_board)
-        # utils.print_board(self.cost)
+            self.cost_from_goal(g, tmp_current_board, colour)
+        utils.print_board(self.cost[colour])
+
+        for g in utils.GOALS:
+            if g != colour:
+                for go in utils.GOALS[g]:
+                    self.cost_from_goal(go, tmp_current_board, g)
+                utils.print_board(self.cost[g])
+        
+
+
 
         self.logger = logger.Logger(self.colour)
 
@@ -74,7 +87,7 @@ class Strategy:
                     next_bor = self.get_next_curbo(current_board, m_action, colour)
 
                     # delta heuristic
-                    d_heurii = self.cal_rheu(current_board, next_bor, colour)
+                    d_heurii = self.cal_rheu(current_board, next_bor, colour, -1)
 
                     # board in num representation used in predicting
                     next_n = self.get_board(next_bor, colour, d_heurii)
@@ -105,6 +118,12 @@ class Strategy:
             rew += 125
             re = -1
             suc_bo = self.get_next_curbo(current_board, action, colour)
+            colour_e = copy.deepcopy(colour_e)
+            colour_e[colour] += 1
+
+            colour_p = copy.deepcopy(colour_p)
+            colour_p[colour].remove(action[1])
+
         
         if action[0] == "PASS":
             rew += 0
@@ -121,6 +140,8 @@ class Strategy:
                 ]
 
         utility += self.player_es(colour_e, action[0] == "EXIT")
+
+        utility += self.cal_heuristic(colour_p, colour_e)
         
         rew += self.check_heuristic_rew(colour_e, suc_bo, colour, re)
 
@@ -130,10 +151,21 @@ class Strategy:
 
         return action
 
-    def heuristic(self, players):
+    def heuristic(self, players, colour, player_exit):
         heuri = 0
+
+        tmp_h = []
         for p in players:
-            heuri =heuri + self.cost[p]
+            tmp_h.append(self.cost[colour][p])
+
+        tmp_h.sort()
+        if player_exit == -1:
+            return sum(tmp_h)
+        if len(players) + player_exit >= 4:
+            heuri = sum(tmp_h[:4 - (player_exit)])
+        else:
+            heuri = sum(tmp_h)
+            heuri =heuri + (4 - (len(players) + player_exit)) *10
 
         return heuri
 
@@ -162,13 +194,13 @@ class Strategy:
         return t_cur
 
 
-    def cal_rheu(self, cur_state, next_state, colour):
+    def cal_rheu(self, cur_state, next_state, colour, player_exit):
         cur_pl = [x for x in cur_state.keys() if cur_state[x] == colour]
         nxt_pl = [x for x in next_state.keys() if next_state[x] == colour]
         
 
-        cur_heuri = self.heuristic(cur_pl)
-        nxt_heuri = self.heuristic(nxt_pl)
+        cur_heuri = self.heuristic(cur_pl, colour, player_exit)
+        nxt_heuri = self.heuristic(nxt_pl, colour, player_exit)
 
         return nxt_heuri - cur_heuri
 
@@ -188,7 +220,18 @@ class Strategy:
         return rest_ps
 
 
+    def cal_heuristic(self, colour_p, colour_exit):
+        e_c = [
+            "red",
+            "green",
+            "blue"
+        ]
 
+
+
+        heuris = [self.heuristic(colour_p[colour],colour,colour_exit[colour]) for colour in e_c]
+
+        return heuris
 
     def cal_pdiff(self, cur_state, next_state, colour):
         c_or = [k for k in cur_state.keys() if cur_state[k] != "empty" and cur_state[k] == colour]
@@ -254,7 +297,7 @@ class Strategy:
 
         return the_br
 
-    def cost_from_goal(self, goal: tuple, tmp_current_board: dict) -> None:
+    def cost_from_goal(self, goal: tuple, tmp_current_board: dict, colour) -> None:
         """
         Receive a goal coordinate and block list then calculate a pre
         """
@@ -266,7 +309,7 @@ class Strategy:
 
         cost = {goal: 0}
 
-        self.cost[goal] = 1
+        self.cost[colour][goal] = 1
 
         while not q.empty():
 
@@ -301,10 +344,10 @@ class Strategy:
                     else:
                         h = h + ((s_counter[0] - 1) / 2 + s_counter[1] + 2)'''
 
-                    if s[1] not in self.cost:
-                        self.cost[s[1]] = h
-                    elif self.cost[s[1]] > h:
-                        self.cost[s[1]] = h
+                    if s[1] not in self.cost[colour]:
+                        self.cost[colour][s[1]] = h
+                    elif self.cost[colour][s[1]] > h:
+                        self.cost[colour][s[1]] = h
 
         return
 
