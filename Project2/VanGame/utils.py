@@ -40,11 +40,11 @@ GOALS = {
         ]
     }
 
-MORE_RW = 50
-
-LESS_RW = 70
-
-EXIT_RW = 125
+MORE_RW = 5
+LESS_RW = 15
+EXIT_RW = 100
+D_HEURISTIC = -30
+D_HEURISTIC_HORIZONTAL = D_HEURISTIC / 5
 
 
 def print_board(board_dict: dict, message: str = "", debug: bool = False, **kwargs) -> None:

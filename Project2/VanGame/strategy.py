@@ -26,7 +26,6 @@ class Strategy:
         self.logger = logger.Logger(self.colour)
 
         self.mdl = ker_m.dnn()
-    
 
     def get_possible_moves(self, current_board, colour, colour_p, goal, colour_e):
 
@@ -202,14 +201,13 @@ class Strategy:
         
         return len(dengr)
 
-
     def hard_code_eva_function(self, pieces_difference : int, reduced_heuristic : float, danger_pieces : int) -> float:
         """
         1. # possible safety movement (*1)
         2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)
         3. # of piece in danger (could be taken by opponent by one JUMP action) *(-5)
         """
-        print(pieces_difference, reduced_heuristic, danger_pieces)
+        # print(pieces_difference, reduced_heuristic, danger_pieces)
         return (3) *pieces_difference + (-5)*reduced_heuristic + danger_pieces * (-10)
 
     def check_heuristic_rew(self, colour_exit, suc_bo, colour, d_heur):
@@ -218,11 +216,10 @@ class Strategy:
 
         count = exited + len(n_r)
 
-        if count >= 4:
-            if d_heur > 0:
-                return -10
-        else:
-            return 0
+        if d_heur > 0:
+            return utils.D_HEURISTIC
+        elif d_heur == 0:
+            return utils.D_HEURISTIC_HORIZONTAL
 
         return 0
 
