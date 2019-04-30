@@ -46,6 +46,12 @@ EXIT_RW = 100
 D_HEURISTIC = -30
 D_HEURISTIC_HORIZONTAL = D_HEURISTIC / 5
 
+RED_MAIN = [
+            "red",
+            "green",
+            "blue"
+        ]
+
 
 def print_board(board_dict: dict, message: str = "", debug: bool = False, **kwargs) -> None:
     """

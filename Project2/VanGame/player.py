@@ -38,6 +38,8 @@ class Player:
             "blue": 0
         }
 
+        self.turn_count = 0
+
 
         self.strategy = strategy.Strategy(self.goal, self.colour)
 
@@ -64,7 +66,9 @@ class Player:
         actions.
         """
         # TODO: Decide what action to take.
-        return self.strategy.get_possible_moves(self.current_board, self.colour, self.colour_p, self.goal, self.colour_exit)
+
+        self.turn_count += 1
+        return self.strategy.get_possible_moves(self.current_board, self.colour, self.colour_p, self.goal, self.colour_exit, self.turn_count)
 
     def update(self, colour, action):
         """
@@ -147,6 +151,7 @@ class Player:
             if colour not in self.colour_exit.keys():
                 self.colour_exit[colour] = 0
             self.colour_exit[colour] += 1
+        
 
         return
 

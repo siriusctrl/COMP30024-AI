@@ -27,7 +27,7 @@ class Strategy:
 
         self.mdl = ker_m.dnn()
 
-    def get_possible_moves(self, current_board, colour, colour_p, goal, colour_e):
+    def get_possible_moves(self, current_board, colour, colour_p, goal, colour_e, turn_count):
 
         ps = colour_p[colour]
 
@@ -119,12 +119,14 @@ class Strategy:
                     piece_difference,
                     danger_piece
                 ]
+
+        utility += self.player_es(colour_e, action[0] == "EXIT")
         
         rew += self.check_heuristic_rew(colour_e, suc_bo, colour, re)
 
         ev = self.hard_code_eva_function(piece_difference, re, danger_piece)
         
-        self.logger.add_log(suc_bo, action=action, rew=rew, d_heur=re, utility=utility, ev=ev)
+        self.logger.add_log(suc_bo, action=action, rew=rew, d_heur=re, utility=utility, ev=ev, turns=turn_count)
 
         return action
 
@@ -134,7 +136,6 @@ class Strategy:
             heuri =heuri + self.cost[p]
 
         return heuri
-
 
     def get_next_curbo(self, current_board, action, colour):
 
@@ -170,6 +171,24 @@ class Strategy:
         nxt_heuri = self.heuristic(nxt_pl)
 
         return nxt_heuri - cur_heuri
+
+    def player_es(self, colour_e, exit_this):
+        # only red here wait for more colours
+        e_c = [
+            "red",
+            "green",
+            "blue"
+        ]
+
+        rest_ps = [colour_e[k] for k in e_c]
+
+        if exit_this:
+            rest_ps[0] = rest_ps[0] + 1
+
+        return rest_ps
+
+
+
 
     def cal_pdiff(self, cur_state, next_state, colour):
         c_or = [k for k in cur_state.keys() if cur_state[k] != "empty" and cur_state[k] == colour]

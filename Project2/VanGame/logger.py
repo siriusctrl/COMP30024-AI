@@ -30,7 +30,8 @@ class Logger:
             ["utility", []],
             ["rew", 0],
             ["d_heur", 0],
-            ["ev", 0]
+            ["ev", 0],
+            ["turns", 0]
         ]
 
         for [key, value] in keys:

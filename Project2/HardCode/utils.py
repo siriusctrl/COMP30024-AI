@@ -67,7 +67,7 @@ def print_board(board_dict: dict, message: str = "", debug: bool = False, **kwar
         # Use the debug board template (larger, showing coordinates)
         template = """# {0}
     #              ,-' `-._,-' `-._,-' `-._,-' `-.
-    #             | {16:} | {23:} | {29:} | {34:} | 
+    #             | {16:} | {23:} | {29:} | {34:} |  
     #             |  0,-3 |  1,-3 |  2,-3 |  3,-3 |
     #          ,-' `-._,-' `-._,-' `-._,-' `-._,-' `-.
     #         | {10:} | {17:} | {24:} | {30:} | {35:} |
