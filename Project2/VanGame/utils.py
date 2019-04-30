@@ -52,6 +52,24 @@ RED_MAIN = [
             "blue"
         ]
 
+BLUE_MAIN = [
+    "blue",
+    "red",
+    "green"
+]
+
+GREEN_MAIN= [
+    "green",
+    "blue",
+    "red"
+]
+
+MAIN = {
+    "red": RED_MAIN,
+    "green": GREEN_MAIN,
+    "blue": BLUE_MAIN
+}
+
 
 def print_board(board_dict: dict, message: str = "", debug: bool = False, **kwargs) -> None:
     """

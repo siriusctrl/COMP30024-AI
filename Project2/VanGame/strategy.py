@@ -21,6 +21,8 @@ class Strategy:
 
         self.goals = goals
 
+        self.arrange = utils.MAIN[self.colour]
+
         tmp_current_board = {x: "empty" for x in utils.CELLS}
 
         for g in self.goals:
@@ -114,15 +116,14 @@ class Strategy:
                 suc_bo = all_suc[ie]
                 re = all_heu[ie]
         
+        colour_ea = colour_e
+
         if action[0] == "EXIT":
             rew += 125
             re = -1
             suc_bo = self.get_next_curbo(current_board, action, colour)
-            colour_e = copy.deepcopy(colour_e)
-            colour_e[colour] += 1
-
-            colour_p = copy.deepcopy(colour_p)
-            colour_p[colour].remove(action[1])
+            colour_ea = copy.deepcopy(colour_e)
+            colour_ea[colour] += 1
 
         
         if action[0] == "PASS":
@@ -139,11 +140,11 @@ class Strategy:
                     danger_piece
                 ]
 
-        utility += self.player_es(colour_e, action[0] == "EXIT")
+        utility += self.player_es(colour_ea, False)
 
-        utility += self.cal_heuristic(colour_p, colour_e)
+        utility += self.cal_heuristic(suc_bo, colour, colour_ea)
         
-        rew += self.check_heuristic_rew(colour_e, suc_bo, colour, re)
+        rew += self.check_heuristic_rew(colour_ea, suc_bo, colour, re)
 
         ev = self.hard_code_eva_function(piece_difference, re, danger_piece)
         
@@ -206,13 +207,7 @@ class Strategy:
 
     def player_es(self, colour_e, exit_this):
         # only red here wait for more colours
-        e_c = [
-            "red",
-            "green",
-            "blue"
-        ]
-
-        rest_ps = [colour_e[k] for k in e_c]
+        rest_ps = [colour_e[k] for k in self.arrange]
 
         if exit_this:
             rest_ps[0] = rest_ps[0] + 1
@@ -220,16 +215,18 @@ class Strategy:
         return rest_ps
 
 
-    def cal_heuristic(self, colour_p, colour_exit):
+    def cal_heuristic(self, suc_bo, colour, colour_exit):
         e_c = [
             "red",
             "green",
             "blue"
         ]
 
+        
 
+        
 
-        heuris = [self.heuristic(colour_p[colour],colour,colour_exit[colour]) for colour in e_c]
+        heuris = [self.heuristic([x for x in suc_bo.keys() if suc_bo[x] == c],c,colour_exit[c]) for c in self.arrange]
 
         return heuris
 
@@ -239,7 +236,7 @@ class Strategy:
 
         c_ors = len(c_or)
         n_s = len(n_r)
-        return c_ors - n_s
+        return n_s - c_ors
 
     def cal_dpiei(self,cur_state, next_state,colour):
         nxt_pl = [k for k in next_state.keys() if next_state[k] == colour]
