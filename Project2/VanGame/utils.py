@@ -211,7 +211,9 @@ def chose(options: list):
     # print("\n", options, "\n", prob, "\n")
     prob = prob.reshape(len(prob),)
     # print(prob.shape)
+
     return np.random.choice(len(options), 1, p=prob)[0]
+    # return np.argmax(prob)
 
 
 def softmax(x):
