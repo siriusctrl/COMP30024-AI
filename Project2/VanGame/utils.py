@@ -44,6 +44,8 @@ MORE_RW = 50
 
 LESS_RW = 70
 
+EXIT_RW = 125
+
 
 def print_board(board_dict: dict, message: str = "", debug: bool = False, **kwargs) -> None:
     """
@@ -143,11 +145,11 @@ def find_next(piece: tuple, current_board: dict) -> list:
         jump_action = (piece[0] + 2 * move[i][0], piece[1] + 2 * move[i][1])
 
         if move_action in current_board and current_board[move_action] == "empty" and piece_valid(move_action):
-            next_coords.append((piece, move_action, 1))
+            next_coords.append((piece, move_action, 1, (-1, -1)))
         elif piece_valid(move_action) and current_board[move_action] != "empty":
             # check jump action
             if jump_action in current_board and current_board[jump_action] == "empty" and piece_valid(jump_action):
-                next_coords.append((piece, jump_action, 2))
+                next_coords.append((piece, jump_action, 2, (move_action)))
 
     # return allMoves and the flag indicates if they can be achieved by move or jump
     # 1 or 2

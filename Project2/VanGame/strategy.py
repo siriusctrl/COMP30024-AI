@@ -28,7 +28,7 @@ class Strategy:
         self.mdl = ker_m.dnn()
     
 
-    def get_possible_moves(self, current_board, colour, colour_p, goal):
+    def get_possible_moves(self, current_board, colour, colour_p, goal, colour_e):
 
         ps = colour_p[colour]
 
@@ -41,6 +41,8 @@ class Strategy:
         suc_bo = current_board
         re = 0
         rew = 0
+
+        utility = []
         
         if(len(action) == 0):
             all_ms = []
@@ -51,7 +53,7 @@ class Strategy:
             
             acs = []
 
-            all_pre = []
+            all_score = []
 
             all_heu = []
 
@@ -79,7 +81,7 @@ class Strategy:
                     next_n = self.get_board(next_bor, colour, d_heurii)
 
                     # add the estimate utility value
-                    all_pre.append(self.mdl.predict(next_n))
+                    all_score.append(self.mdl.predict(next_n))
 
                     # add the next board to be chosen later
                     all_suc.append(next_bor)
@@ -90,7 +92,7 @@ class Strategy:
                     # return all_ms[math.floor(random.random() * len(all_ms))]
                 
                 # get the right action chosen in this status
-                ie = utils.chose(all_pre)
+                ie = utils.chose(all_score)
                 action = acs[ie]
             else:
                 action = ("PASS", None)
@@ -101,14 +103,31 @@ class Strategy:
                 re = all_heu[ie]
         
         if action[0] == "EXIT":
-            rew = 125
-            re = 1
+            rew += 125
+            re = -1
+            suc_bo = self.get_next_curbo(current_board, action, colour)
         
-        self.logger.add_log(suc_bo, action=action, rew=rew, d_heur=re)
+        if action[0] == "PASS":
+            rew += 0
+            re = 0
+            suc_bo = current_board
+
+        piece_difference = self.cal_pdiff(current_board, suc_bo, colour)
+        danger_piece = self.cal_dpiei(current_board, suc_bo ,colour)
+
+        utility = [
+                    re,
+                    piece_difference,
+                    danger_piece
+                ]
+        
+        rew += self.check_heuristic_rew(colour_e, suc_bo, colour, re)
+
+        ev = self.hard_code_eva_function(piece_difference, re, danger_piece)
+        
+        self.logger.add_log(suc_bo, action=action, rew=rew, d_heur=re, utility=utility, ev=ev)
 
         return action
-
-        pass
 
     def heuristic(self, players):
         heuri = 0
@@ -116,7 +135,6 @@ class Strategy:
             heuri =heuri + self.cost[p]
 
         return heuri
-        pass
 
 
     def get_next_curbo(self, current_board, action, colour):
@@ -153,7 +171,62 @@ class Strategy:
         nxt_heuri = self.heuristic(nxt_pl)
 
         return nxt_heuri - cur_heuri
-    
+
+    def cal_pdiff(self, cur_state, next_state, colour):
+        c_or = [k for k in cur_state.keys() if cur_state[k] != "empty" and cur_state[k] == colour]
+        n_r = [k for k in next_state.keys() if next_state[k] != "empty" and next_state[k] == colour]
+
+        c_ors = len(c_or)
+        n_s = len(n_r)
+        return c_ors - n_s
+
+    def cal_dpiei(self,cur_state, next_state,colour):
+        nxt_pl = [k for k in next_state.keys() if next_state[k] == colour]
+        nxt_ot = [k for k in next_state.keys() if next_state[k] != "empty" and next_state[k] != colour]
+        
+
+        tmp_current_board = {x: "empty" for x in utils.CELLS}
+        for p in nxt_pl:
+            tmp_current_board[p] = "n"
+        for p in nxt_ot:
+            tmp_current_board[p] = "n"
+
+        dengr = set({})
+        
+        for p in nxt_ot:
+            p_nxt = utils.find_next(p, tmp_current_board)
+            for d in p_nxt:
+                if d[2] == 2:
+                    if d[3] in nxt_pl:
+                        dengr.add(d[3])
+        
+        return len(dengr)
+
+
+    def hard_code_eva_function(self, pieces_difference : int, reduced_heuristic : float, danger_pieces : int) -> float:
+        """
+        1. # possible safety movement (*1)
+        2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)
+        3. # of piece in danger (could be taken by opponent by one JUMP action) *(-5)
+        """
+        print(pieces_difference, reduced_heuristic, danger_pieces)
+        return (3) *pieces_difference + (-5)*reduced_heuristic + danger_pieces * (-10)
+
+    def check_heuristic_rew(self, colour_exit, suc_bo, colour, d_heur):
+        n_r = [k for k in suc_bo.keys() if suc_bo[k] != "empty" and suc_bo[k] == colour]
+        exited = colour_exit[colour]
+
+        count = exited + len(n_r)
+
+        if count >= 4:
+            if d_heur > 0:
+                return -10
+        else:
+            return 0
+
+        return 0
+
+
     def get_board(self, current_board, colour, heurii):
 
         jrex = {'green': 1, 'red': 2, 'blue': 3, 'empty': 0}

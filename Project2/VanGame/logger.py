@@ -27,9 +27,10 @@ class Logger:
 
         keys = [
             ["action", ("NONE", None)], 
-            ["utility", 0],
+            ["utility", []],
             ["rew", 0],
-            ["d_heur", 0]
+            ["d_heur", 0],
+            ["ev", 0]
         ]
 
         for [key, value] in keys:

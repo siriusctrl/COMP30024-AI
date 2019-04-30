@@ -64,7 +64,7 @@ class Player:
         actions.
         """
         # TODO: Decide what action to take.
-        return self.strategy.get_possible_moves(self.current_board, self.colour, self.colour_p, self.goal)
+        return self.strategy.get_possible_moves(self.current_board, self.colour, self.colour_p, self.goal, self.colour_exit)
 
     def update(self, colour, action):
         """
@@ -90,7 +90,7 @@ class Player:
         for n in self.colour_exit.keys():
             if self.colour_exit[n] == 4:
                 player_exited = self.colour_exit[self.colour]
-                r = - (4 - player_exited) * 125
+                r = - (4 - player_exited) * utils.EXIT_RW
                 s_wi = "[2zzz]"
                 if n == self.colour:
                     r += 0
