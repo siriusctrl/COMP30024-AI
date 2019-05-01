@@ -25,13 +25,13 @@ class Strategy:
 
         for g in self.goals:
             self.cost_from_goal(g, tmp_current_board, colour)
-        utils.print_board(self.cost[colour])
+        # utils.print_board(self.cost[colour])
 
         for g in config.GOALS:
             if g != colour:
                 for go in config.GOALS[g]:
                     self.cost_from_goal(go, tmp_current_board, g)
-                utils.print_board(self.cost[g])
+                # utils.print_board(self.cost[g])
 
         self.turn = 0
         
@@ -101,7 +101,7 @@ class Strategy:
                     
                     # board in num representation used in predicting
                     next_n = self.get_board(next_bor, colour, d_heurii, uti, self.turn)
-                    print(next_n)
+                    # print(next_n)
 
                     # add the estimate utility value
                     all_score.append(self.mdl.predict(next_n))

@@ -11,7 +11,7 @@ class dnn:
         self.activation_function = {
                                     "relu": utils.ReLu.forward,
                                     "linear": utils.Linear.forward,
-                                    "tanh":utils.Tanh.forward
+                                    "tanh": utils.Tanh.forward
         }
 
         self.params = {}
@@ -34,7 +34,7 @@ class dnn:
             else:
                 output = self.forward(init_input, level, prop)
 
-        return output[0]
+        return output
 
     def load(self, filename) -> None:
         """
@@ -54,4 +54,3 @@ class dnn:
 
         self.arch[-1]['activation'] = 'tanh'
         # print(self.params)
-
