@@ -1,5 +1,6 @@
 import HardCode.utils as utils
 import HardCode.strategy as strategy
+import HardCode.config as config
 import copy, datetime
 
 
@@ -34,7 +35,7 @@ class Player:
             "green": 0
         }
 
-        self.strategy = strategy.Strategy(self.goal)
+        self.strategy = strategy.Strategy(self.goal, self.colour)
 
         # TODO: Set up state representation.
 
@@ -84,6 +85,18 @@ class Player:
         # TODO: Update state representation in response to action.
         self.update_board(action, colour)
 
+        for n in self.colour_exit.keys():
+            if self.colour_exit[n] == 4:
+                player_exited = self.colour_exit[self.colour]
+                r = - (4 - player_exited) * config.EXIT_RW
+                s_wi = "[2zzz]"
+                if n == self.colour:
+                    r += 0
+                    s_wi = "[1win]"
+                self.strategy.logger.update_last_log("rew", r)
+                self.strategy.logger.export_log(s_wi)
+                break
+
     def update_board(self, action, colour):
         if action[0] in ("MOVE", "JUMP"):
             self.current_board[action[1][0]] = "empty"
@@ -100,7 +113,26 @@ class Player:
 
                     self.colour_p[self.current_board[sk]].remove(sk)
                     self.colour_p[colour].append(sk)
+
+                    lst = self.current_board[sk]
                     self.current_board[sk] = colour
+
+                    tmp_tbr = self.current_board
+                    pl = [m for m in tmp_tbr.keys() if tmp_tbr[m] == self.colour]
+                    if lst == self.colour:
+                        if(len(pl) >= 4):
+                            self.strategy.logger.update_last_log("rew", -config.MORE_RW)
+                            '''self.strategy.log[len(self.strategy.log)-1][1]-= config.MORE_RW'''
+                        else:
+                            self.strategy.logger.update_last_log("rew", -config.LESS_RW)
+                            # self.strategy.log[len(self.strategy.log)-1][1] -= utils.LESS_RW
+                    elif lst != self.colour and colour == self.colour:
+                        if(len(pl) > 4):
+                            self.strategy.logger.update_last_log("rew", config.MORE_RW)
+                            # self.strategy.log[len(self.strategy.log)-1][1]+=utils.MORE_RW
+                        else:
+                            self.strategy.logger.update_last_log("rew", config.LESS_RW)
+                            # self.strategy.log[len(self.strategy.log)-1][1] += utils.LESS_RW
 
         elif action[0] in ("EXIT",):
             self.current_board[action[1]] = "empty"

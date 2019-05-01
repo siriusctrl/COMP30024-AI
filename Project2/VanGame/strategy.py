@@ -35,12 +35,10 @@ class Strategy:
 
         self.turn = 0
         
-
-
-
         self.logger = logger.Logger(self.colour)
 
         self.mdl = ker_m.dnn()
+
 
     def get_possible_moves(self, current_board, colour, colour_p, goal, colour_e):
 
@@ -50,38 +48,26 @@ class Strategy:
 
         action = tuple()
 
+        suc_bo = current_board
+
+        final_cald = []
+
         for a in ps:
             if a in goal:
                 action = ("EXIT", a)
-
-        suc_bo = current_board
-        re = 0
-        rew = 0
-
-        ev = 0
-
-        utility = []
-
-        colour_ea = colour_e
+                suc_bo = self.get_next_curbo(current_board, action, colour)
+                final_cald = self.cal_all(current_board, suc_bo, colour, colour_e,colour_p, exit_this=True)
         
         if(len(action) == 0):
             all_ms = []
             for p in ps:
                 all_ms = all_ms + utils.find_next(p, current_board)
-
-
             
             acs = []
 
             all_score = []
-
-            all_heu = []
-
             all_suc = []
-
-            all_uti = []
-
-            all_v = []
+            all_cald = []
 
             ie = -1
 
@@ -97,17 +83,16 @@ class Strategy:
                     
                     # next board after the action
                     next_bor = self.get_next_curbo(current_board, m_action, colour)
-
-                    # delta heuristic
-
                     cald = self.cal_all(current_board, next_bor, colour, colour_e,colour_p)
 
-                    d_heurii = cald[0]
-                    uti = cald[1]
-                    ev = cald[2]
+                    d_heurii = cald[1]
+                    uti = cald[2]
+                    ev = cald[3]
+
+                    all_cald.append(cald)
 
                     # board in num representation used in predicting
-                    next_n = self.get_board(next_bor, colour, d_heurii, uti, self.turn, ev)
+                    next_n = self.get_board(next_bor, colour, self.turn, cald)
                     print(next_n)
 
                     # add the estimate utility value
@@ -116,52 +101,27 @@ class Strategy:
                     # add the next board to be chosen later
                     all_suc.append(next_bor)
 
-                    # add the heuristic
-                    all_heu.append(d_heurii)
-                    all_uti.append(uti)
-                    all_v.append(ev)
-
                     # return all_ms[math.floor(random.random() * len(all_ms))]
                 
                 # get the right action chosen in this status
                 ie = utils.chose(all_score)
                 action = acs[ie]
+                suc_bo = all_suc[ie]
+                final_cald = all_cald[ie]
             else:
                 action = ("PASS", None)
+                suc_bo = current_board
+                final_cald = self.cal_all(current_board, suc_bo, colour, colour_e, colour_p)
             
             # get the current successor state and dheuri
             if (ie != -1):
                 suc_bo = all_suc[ie]
-                re = all_heu[ie]
-                utility = all_uti[ie]
-                ev = all_v[ie]
+                final_cald = all_cald[ie]
 
-        if action[0] == "EXIT":
-            rew += 125
-            re = -1
-            suc_bo = self.get_next_curbo(current_board, action, colour)
-            cald = self.cal_all(current_board, suc_bo, colour, colour_e,colour_p, exit_this=True)
-            utility = cald[1]
-            ev = cald[2]
-
-
-            
-
-        
-        if action[0] == "PASS":
-            rew += 0
-            re = 0
-            suc_bo = current_board
-            
-
-            cald = self.cal_all(current_board, suc_bo, colour, colour_e, colour_p)
-            utility = cald[1]
-            ev = cald[2]
-
-
-        logs = self.get_log(current_board, colour_ea, suc_bo, colour, re, rew, colour_e)
-
-        rew = logs
+        rew = final_cald[0]
+        re = final_cald[1]
+        utility = final_cald[2]
+        ev = final_cald[3]
         
         self.logger.add_log(suc_bo, action=action, rew=rew, d_heur=re, utility=utility, ev=ev, turns=self.turn)
 
@@ -184,35 +144,29 @@ class Strategy:
 
         return utility
 
-    
     def cal_all(self, current_board, next_bor, colour, colour_e, colour_p, exit_this=False):
-        d_heurii = self.cal_rheu(current_board, next_bor, colour, -1)
 
+        rew = 0
+
+        d_heurii = self.cal_rheu(current_board, next_bor, colour, -1)
         
-        
-        
+        colour_ea = colour_e
         if exit_this:
             colour_ea = copy.deepcopy(colour_e)
             colour_ea[colour] += 1
             uti = self.get_utility(current_board, next_bor, colour, d_heurii, colour_ea)
+            rew += config.EXIT_RW
         else:
             uti = self.get_utility(current_board, next_bor, colour, d_heurii, colour_e)
-
 
         piece_difference = self.cal_pdiff(current_board, next_bor, colour)
         danger_piece = self.cal_dpiei(current_board, next_bor,colour)
 
         ev = self.hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour])
 
-        return (d_heurii, uti, ev)
+        rew += self.check_heuristic_rew(colour_ea, next_bor, colour, d_heurii)
 
-
-    def get_log(self, current_board, colour_ea, suc_bo, colour, re, rew, colour_e):
-        rew += self.check_heuristic_rew(colour_ea, suc_bo, colour, re)
-
-        return rew
-
-
+        return (rew, d_heurii, uti, ev)
 
 
     def heuristic(self, players, colour, player_exit):
@@ -246,9 +200,7 @@ class Strategy:
                 sk = (fr[0] + (to[0] - fr[0]) / 2, fr[1] + (to[1] - fr[1]) / 2)
 
                 # well I dont freaking know what im thinking about
-                if t_cur[sk] != "empty" and t_cur[sk] != colour:
-                    
-                    
+                if t_cur[sk] != "empty" and t_cur[sk] != colour:     
 
                     t_cur[sk] = colour
 
@@ -261,7 +213,6 @@ class Strategy:
     def cal_rheu(self, cur_state, next_state, colour, player_exit):
         cur_pl = [x for x in cur_state.keys() if cur_state[x] == colour]
         nxt_pl = [x for x in next_state.keys() if next_state[x] == colour]
-        
 
         cur_heuri = self.heuristic(cur_pl, colour, player_exit)
         nxt_heuri = self.heuristic(nxt_pl, colour, player_exit)
@@ -285,10 +236,6 @@ class Strategy:
             "blue"
         ]
 
-        
-
-        
-
         heuris = [self.heuristic([x for x in suc_bo.keys() if suc_bo[x] == c],c,colour_exit[c]) for c in self.arrange]
 
         return heuris
@@ -304,7 +251,6 @@ class Strategy:
     def cal_dpiei(self,cur_state, next_state,colour):
         nxt_pl = [k for k in next_state.keys() if next_state[k] == colour]
         nxt_ot = [k for k in next_state.keys() if next_state[k] != "empty" and next_state[k] != colour]
-        
 
         tmp_current_board = {x: "empty" for x in config.CELLS}
         for p in nxt_pl:
@@ -336,6 +282,7 @@ class Strategy:
         else:
             return (5) *pieces_difference + (-8)*reduced_heuristic + danger_pieces * (-20)
 
+
     def check_heuristic_rew(self, colour_exit, suc_bo, colour, d_heur):
         n_r = [k for k in suc_bo.keys() if suc_bo[k] != "empty" and suc_bo[k] == colour]
         exited = colour_exit[colour]
@@ -350,7 +297,7 @@ class Strategy:
         return 0
 
 
-    def get_board(self, current_board, colour, heurii, utility, t,v):
+    def get_board(self, current_board, colour, t,cald):
 
         jrex = {'green': 1, 'red': 2, 'blue': 3, 'empty': 0}
 
@@ -360,11 +307,12 @@ class Strategy:
         # the_br.append(jrex[colour])
         # the_br.append(heurii)
         the_br.append(t)
-        the_br += utility
-        the_br.append(v)
+        the_br += cald[2]
+        the_br.append(cald[3])
 
 
         return the_br
+
 
     def cost_from_goal(self, goal: tuple, tmp_current_board: dict, colour) -> None:
         """
