@@ -25,13 +25,13 @@ class Strategy:
 
         for g in self.goals:
             self.cost_from_goal(g, tmp_current_board, colour)
-        # utils.print_board(self.cost[colour])
+        utils.print_board(self.cost[colour])
 
         for g in config.GOALS:
             if g != colour:
                 for go in config.GOALS[g]:
                     self.cost_from_goal(go, tmp_current_board, g)
-                # utils.print_board(self.cost[g])
+                utils.print_board(self.cost[g])
 
         self.turn = 0
         
@@ -101,7 +101,7 @@ class Strategy:
                     
                     # board in num representation used in predicting
                     next_n = self.get_board(next_bor, colour, d_heurii, uti, self.turn)
-                    # print(next_n)
+                    print(next_n)
 
                     # add the estimate utility value
                     all_score.append(self.mdl.predict(next_n))
@@ -144,7 +144,7 @@ class Strategy:
             utility = self.get_utility(current_board, suc_bo, colour, re, colour_ea)
 
 
-        logs = self.get_log(current_board, colour_ea, suc_bo, colour, re, rew)
+        logs = self.get_log(current_board, colour_ea, suc_bo, colour, re, rew, colour_e)
 
         rew = logs[0]
 
@@ -172,13 +172,14 @@ class Strategy:
         return utility
 
 
-    def get_log(self, current_board, colour_ea, suc_bo, colour, re, rew):
+    def get_log(self, current_board, colour_ea, suc_bo, colour, re, rew, colour_e):
+        cur_pl = [x for x in current_board.keys() if current_board[x] == colour]
         piece_difference = self.cal_pdiff(current_board, suc_bo, colour)
         danger_piece = self.cal_dpiei(current_board, suc_bo ,colour)
         
         rew += self.check_heuristic_rew(colour_ea, suc_bo, colour, re)
 
-        ev = self.hard_code_eva_function(piece_difference, re, danger_piece)
+        ev = self.hard_code_eva_function(piece_difference, re, danger_piece, cur_pl, colour_e[colour])
 
         return rew, ev
 
@@ -293,14 +294,18 @@ class Strategy:
         
         return len(dengr)
 
-    def hard_code_eva_function(self, pieces_difference : int, reduced_heuristic : float, danger_pieces : int) -> float:
+    def hard_code_eva_function(self, pieces_difference : int, reduced_heuristic : float, danger_pieces : int, players, player_exit) -> float:
         """
         1. # possible safety movement (*1)
         2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)
         3. # of piece in danger (could be taken by opponent by one JUMP action) *(-5)
         """
         # print(pieces_difference, reduced_heuristic, danger_pieces)
-        return (3) *pieces_difference + (-5)*reduced_heuristic + danger_pieces * (-10)
+        t = len(players) + player_exit
+        if t < 4:
+            return (20) *pieces_difference + (-2)*reduced_heuristic + danger_pieces * (-10)
+        else:
+            return (5) *pieces_difference + (-8)*reduced_heuristic + danger_pieces * (-20)
 
     def check_heuristic_rew(self, colour_exit, suc_bo, colour, d_heur):
         n_r = [k for k in suc_bo.keys() if suc_bo[k] != "empty" and suc_bo[k] == colour]
