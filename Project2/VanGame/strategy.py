@@ -1,11 +1,9 @@
 import VanGame.utils as utils
-import random
-import math, copy
-
+import VanGame.config as config
 import VanGame.logger as logger
-
 import VanGame.keras_model as ker_m
 import queue
+import copy
 
 
 class Strategy:
@@ -21,19 +19,19 @@ class Strategy:
 
         self.goals = goals
 
-        self.arrange = utils.MAIN[self.colour]
+        self.arrange = config.MAIN[self.colour]
 
-        tmp_current_board = {x: "empty" for x in utils.CELLS}
+        tmp_current_board = {x: "empty" for x in config.CELLS}
 
         for g in self.goals:
             self.cost_from_goal(g, tmp_current_board, colour)
-        utils.print_board(self.cost[colour])
+        # utils.print_board(self.cost[colour])
 
-        for g in utils.GOALS:
+        for g in config.GOALS:
             if g != colour:
-                for go in utils.GOALS[g]:
+                for go in config.GOALS[g]:
                     self.cost_from_goal(go, tmp_current_board, g)
-                utils.print_board(self.cost[g])
+                # utils.print_board(self.cost[g])
         
 
 
@@ -243,7 +241,7 @@ class Strategy:
         nxt_ot = [k for k in next_state.keys() if next_state[k] != "empty" and next_state[k] != colour]
         
 
-        tmp_current_board = {x: "empty" for x in utils.CELLS}
+        tmp_current_board = {x: "empty" for x in config.CELLS}
         for p in nxt_pl:
             tmp_current_board[p] = "n"
         for p in nxt_ot:
@@ -276,9 +274,9 @@ class Strategy:
         count = exited + len(n_r)
 
         if d_heur > 0:
-            return utils.D_HEURISTIC
+            return config.D_HEURISTIC
         elif d_heur == 0:
-            return utils.D_HEURISTIC_HORIZONTAL
+            return config.D_HEURISTIC_HORIZONTAL
 
         return 0
 
@@ -288,7 +286,7 @@ class Strategy:
         jrex = {'green': 1, 'red': 2, 'blue': 3, 'empty': 0}
 
         nb = {x: jrex[current_board[x]] for x in current_board.keys()}
-        the_br = [e[1] for e in sorted(nb.items(), key=lambda u: utils.CELLS.index(u[0]))]
+        the_br = [e[1] for e in sorted(nb.items(), key=lambda u: config.CELLS.index(u[0]))]
         the_br.append(jrex[colour])
         the_br.append(heurii)
 

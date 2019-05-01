@@ -1,11 +1,11 @@
 import VanGame.utils as utils
 import VanGame.strategy as strategy
 import VanGame.logger as logger
+import VanGame.config as config
 import copy, datetime
 import json, time
 import math
 import os
-
 
 class Player:
 
@@ -24,7 +24,7 @@ class Player:
         self.colour = colour
 
         # player's goal
-        self.goal = utils.GOALS[colour]
+        self.goal = config.GOALS[colour]
 
         # player's starting point
         self.colour_p = {}
@@ -45,11 +45,11 @@ class Player:
 
         # TODO: Set up state representation.
 
-        self.colour_p = copy.deepcopy(utils.START)
-        for a in utils.CELLS:
+        self.colour_p = copy.deepcopy(config.START)
+        for a in config.CELLS:
             self.current_board[a] = "empty"
-        for c in utils.START.keys():
-            for o in utils.START[c]:
+        for c in config.START.keys():
+            for o in config.START[c]:
                 self.current_board[o] = c
 
 
@@ -94,7 +94,7 @@ class Player:
         for n in self.colour_exit.keys():
             if self.colour_exit[n] == 4:
                 player_exited = self.colour_exit[self.colour]
-                r = - (4 - player_exited) * utils.EXIT_RW
+                r = - (4 - player_exited) * config.EXIT_RW
                 s_wi = "[2zzz]"
                 if n == self.colour:
                     r += 0
@@ -131,17 +131,17 @@ class Player:
                     pl = [m for m in tmp_tbr.keys() if tmp_tbr[m] == self.colour]
                     if lst == self.colour:
                         if(len(pl) >= 4):
-                            self.strategy.logger.update_last_log("rew", -utils.MORE_RW)
-                            '''self.strategy.log[len(self.strategy.log)-1][1]-= utils.MORE_RW'''
+                            self.strategy.logger.update_last_log("rew", -config.MORE_RW)
+                            '''self.strategy.log[len(self.strategy.log)-1][1]-= config.MORE_RW'''
                         else:
-                            self.strategy.logger.update_last_log("rew", -utils.LESS_RW)
+                            self.strategy.logger.update_last_log("rew", -config.LESS_RW)
                             # self.strategy.log[len(self.strategy.log)-1][1] -= utils.LESS_RW
                     elif lst != self.colour and colour == self.colour:
                         if(len(pl) > 4):
-                            self.strategy.logger.update_last_log("rew", utils.MORE_RW)
+                            self.strategy.logger.update_last_log("rew", config.MORE_RW)
                             # self.strategy.log[len(self.strategy.log)-1][1]+=utils.MORE_RW
                         else:
-                            self.strategy.logger.update_last_log("rew", utils.LESS_RW)
+                            self.strategy.logger.update_last_log("rew", config.LESS_RW)
                             # self.strategy.log[len(self.strategy.log)-1][1] += utils.LESS_RW
 
         elif action[0] in ("EXIT",):
