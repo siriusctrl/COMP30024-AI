@@ -99,15 +99,13 @@ class Strategy:
                     next_bor = self.get_next_curbo(current_board, m_action, colour)
 
                     # delta heuristic
-                    d_heurii = self.cal_rheu(current_board, next_bor, colour, -1)
 
-                    uti = self.get_utility(current_board, next_bor, colour, d_heurii, colour_e)
+                    cald = self.cal_all(current_board, next_bor, colour, colour_e,colour_p)
 
-                    piece_difference = self.cal_pdiff(current_board, suc_bo, colour)
-                    danger_piece = self.cal_dpiei(current_board, suc_bo ,colour)
+                    d_heurii = cald[0]
+                    uti = cald[1]
+                    ev = cald[2]
 
-                    ev = self.hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour])
-                    
                     # board in num representation used in predicting
                     next_n = self.get_board(next_bor, colour, d_heurii, uti, self.turn, ev)
                     print(next_n)
@@ -120,9 +118,7 @@ class Strategy:
 
                     # add the heuristic
                     all_heu.append(d_heurii)
-
                     all_uti.append(uti)
-
                     all_v.append(ev)
 
                     # return all_ms[math.floor(random.random() * len(all_ms))]
@@ -144,31 +140,28 @@ class Strategy:
             rew += 125
             re = -1
             suc_bo = self.get_next_curbo(current_board, action, colour)
-            colour_ea = copy.deepcopy(colour_e)
-            colour_ea[colour] += 1
-            utility = self.get_utility(current_board, suc_bo, colour, re, colour_ea)
+            cald = self.cal_all(current_board, suc_bo, colour, colour_e,colour_p, exit_this=True)
+            utility = cald[1]
+            ev = cald[2]
 
-            piece_difference = self.cal_pdiff(current_board, suc_bo, colour)
-            danger_piece = self.cal_dpiei(current_board, suc_bo ,colour)
 
-            ev = self.hard_code_eva_function(piece_difference, re, danger_piece, colour_p[colour], colour_e[colour])
+            
 
         
         if action[0] == "PASS":
             rew += 0
             re = 0
             suc_bo = current_board
-            utility = self.get_utility(current_board, suc_bo, colour, re, colour_ea)
+            
 
-            piece_difference = self.cal_pdiff(current_board, suc_bo, colour)
-            danger_piece = self.cal_dpiei(current_board, suc_bo ,colour)
-
-            ev = self.hard_code_eva_function(piece_difference, re, danger_piece, colour_p[colour], colour_e[colour])
+            cald = self.cal_all(current_board, suc_bo, colour, colour_e, colour_p)
+            utility = cald[1]
+            ev = cald[2]
 
 
         logs = self.get_log(current_board, colour_ea, suc_bo, colour, re, rew, colour_e)
 
-        rew = logs[0]
+        rew = logs
         
         self.logger.add_log(suc_bo, action=action, rew=rew, d_heur=re, utility=utility, ev=ev, turns=self.turn)
 
@@ -190,6 +183,28 @@ class Strategy:
         utility += self.cal_heuristic(suc_bo, colour, colour_ea)
 
         return utility
+
+    
+    def cal_all(self, current_board, next_bor, colour, colour_e, colour_p, exit_this=False):
+        d_heurii = self.cal_rheu(current_board, next_bor, colour, -1)
+
+        
+        
+        
+        if exit_this:
+            colour_ea = copy.deepcopy(colour_e)
+            colour_ea[colour] += 1
+            uti = self.get_utility(current_board, next_bor, colour, d_heurii, colour_ea)
+        else:
+            uti = self.get_utility(current_board, next_bor, colour, d_heurii, colour_e)
+
+
+        piece_difference = self.cal_pdiff(current_board, next_bor, colour)
+        danger_piece = self.cal_dpiei(current_board, next_bor,colour)
+
+        ev = self.hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour])
+
+        return (d_heurii, uti, ev)
 
 
     def get_log(self, current_board, colour_ea, suc_bo, colour, re, rew, colour_e):
