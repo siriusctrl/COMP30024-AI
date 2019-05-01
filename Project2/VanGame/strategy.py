@@ -101,6 +101,7 @@ class Strategy:
 
                     # board in num representation used in predicting
                     next_n = self.get_board(next_bor, colour, d_heurii, uti, self.turn)
+                    print(next_n)
 
                     # add the estimate utility value
                     all_score.append(self.mdl.predict(next_n))
@@ -110,6 +111,8 @@ class Strategy:
 
                     # add the heuristic
                     all_heu.append(d_heurii)
+
+                    all_uti.append(uti)
 
                     # return all_ms[math.floor(random.random() * len(all_ms))]
                 
@@ -123,6 +126,7 @@ class Strategy:
             if (ie != -1):
                 suc_bo = all_suc[ie]
                 re = all_heu[ie]
+                utility = all_uti[ie]
 
         if action[0] == "EXIT":
             rew += 125
@@ -140,10 +144,9 @@ class Strategy:
 
         logs = self.get_log(current_board, colour_ea, suc_bo, colour, re, rew)
 
-        utility = logs[0]
-        rew = logs[1]
+        rew = logs[0]
 
-        ev = logs[2]
+        ev = logs[1]
         
         self.logger.add_log(suc_bo, action=action, rew=rew, d_heur=re, utility=utility, ev=ev, turns=self.turn)
 
@@ -168,6 +171,9 @@ class Strategy:
 
 
     def get_log(self, current_board, colour_ea, suc_bo, colour, re, rew):
+        piece_difference = self.cal_pdiff(current_board, suc_bo, colour)
+        danger_piece = self.cal_dpiei(current_board, suc_bo ,colour)
+        
         rew += self.check_heuristic_rew(colour_ea, suc_bo, colour, re)
 
         ev = self.hard_code_eva_function(piece_difference, re, danger_piece)

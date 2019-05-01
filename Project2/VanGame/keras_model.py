@@ -30,7 +30,7 @@ class dnn:
             else:
                 output = self.forward(init_input, level, prop)
 
-        return output
+        return output[0]
 
     def load(self, filename) -> None:
         """
