@@ -36,11 +36,11 @@ GOALS = {
         ]
     }
 
-MORE_RW = 5
-LESS_RW = 15
-EXIT_RW = 80
-D_HEURISTIC = -10
-D_HEURISTIC_HORIZONTAL = -4
+MORE_RW = 5 / 320
+LESS_RW = 15 / 320
+EXIT_RW = 80 / 320
+D_HEURISTIC = -10 / 320
+D_HEURISTIC_HORIZONTAL = -4 / 320
 
 RED_MAIN = [
             "red",

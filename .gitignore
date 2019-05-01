@@ -17,12 +17,8 @@ Project1/\.vscode/
 
 *.zip
 
-Project2/VanGame/\.ipynb_checkpoints/feedforward\.py-checkpoint\.ipynb
-
 Project2/rec/
 
 Project2/MOSS/
-
-Project2/\.ipynb_checkpoints/model_training-checkpoint\.ipynb
 
 Project2/logtry
