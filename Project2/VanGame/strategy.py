@@ -25,13 +25,15 @@ class Strategy:
 
         for g in self.goals:
             self.cost_from_goal(g, tmp_current_board, colour)
-        # utils.print_board(self.cost[colour])
+        utils.print_board(self.cost[colour])
 
         for g in config.GOALS:
             if g != colour:
                 for go in config.GOALS[g]:
                     self.cost_from_goal(go, tmp_current_board, g)
-                # utils.print_board(self.cost[g])
+                utils.print_board(self.cost[g])
+
+        self.turn = 0
         
 
 
@@ -40,7 +42,9 @@ class Strategy:
 
         self.mdl = ker_m.dnn()
 
-    def get_possible_moves(self, current_board, colour, colour_p, goal, colour_e, turn_count):
+    def get_possible_moves(self, current_board, colour, colour_p, goal, colour_e):
+
+        self.turn += 1
 
         ps = colour_p[colour]
 
@@ -55,6 +59,8 @@ class Strategy:
         rew = 0
 
         utility = []
+
+        colour_ea = colour_e
         
         if(len(action) == 0):
             all_ms = []
@@ -70,6 +76,8 @@ class Strategy:
             all_heu = []
 
             all_suc = []
+
+            all_uti = []
 
             ie = -1
 
@@ -89,8 +97,10 @@ class Strategy:
                     # delta heuristic
                     d_heurii = self.cal_rheu(current_board, next_bor, colour, -1)
 
+                    uti = self.get_utility(current_board, next_bor, colour, d_heurii, colour_e)
+
                     # board in num representation used in predicting
-                    next_n = self.get_board(next_bor, colour, d_heurii)
+                    next_n = self.get_board(next_bor, colour, d_heurii, uti, self.turn)
 
                     # add the estimate utility value
                     all_score.append(self.mdl.predict(next_n))
@@ -113,8 +123,6 @@ class Strategy:
             if (ie != -1):
                 suc_bo = all_suc[ie]
                 re = all_heu[ie]
-        
-        colour_ea = colour_e
 
         if action[0] == "EXIT":
             rew += 125
@@ -129,6 +137,20 @@ class Strategy:
             re = 0
             suc_bo = current_board
 
+
+        logs = self.get_log(current_board, colour_ea, suc_bo, colour, re, rew)
+
+        utility = logs[0]
+        rew = logs[1]
+
+        ev = logs[2]
+        
+        self.logger.add_log(suc_bo, action=action, rew=rew, d_heur=re, utility=utility, ev=ev, turns=self.turn)
+
+        return action
+
+
+    def get_utility(self, current_board, suc_bo, colour, re, colour_ea):
         piece_difference = self.cal_pdiff(current_board, suc_bo, colour)
         danger_piece = self.cal_dpiei(current_board, suc_bo ,colour)
 
@@ -141,14 +163,19 @@ class Strategy:
         utility += self.player_es(colour_ea, False)
 
         utility += self.cal_heuristic(suc_bo, colour, colour_ea)
-        
+
+        return utility
+
+
+    def get_log(self, current_board, colour_ea, suc_bo, colour, re, rew):
         rew += self.check_heuristic_rew(colour_ea, suc_bo, colour, re)
 
         ev = self.hard_code_eva_function(piece_difference, re, danger_piece)
-        
-        self.logger.add_log(suc_bo, action=action, rew=rew, d_heur=re, utility=utility, ev=ev, turns=turn_count)
 
-        return action
+        return rew, ev
+
+
+
 
     def heuristic(self, players, colour, player_exit):
         heuri = 0
@@ -281,14 +308,18 @@ class Strategy:
         return 0
 
 
-    def get_board(self, current_board, colour, heurii):
+    def get_board(self, current_board, colour, heurii, utility, t):
 
         jrex = {'green': 1, 'red': 2, 'blue': 3, 'empty': 0}
 
         nb = {x: jrex[current_board[x]] for x in current_board.keys()}
-        the_br = [e[1] for e in sorted(nb.items(), key=lambda u: config.CELLS.index(u[0]))]
-        the_br.append(jrex[colour])
-        the_br.append(heurii)
+        the_br = []
+        # the_br = [e[1] for e in sorted(nb.items(), key=lambda u: config.CELLS.index(u[0]))]
+        # the_br.append(jrex[colour])
+        # the_br.append(heurii)
+        the_br.append(t)
+        the_br += utility
+
 
         return the_br
 

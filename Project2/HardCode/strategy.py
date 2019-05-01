@@ -5,6 +5,9 @@ import math
 import queue
 
 
+# 2 utility:
+#  pieces less than 4 then up eating utility (include exit pieces)
+#  more or equal to 4 then prevent to be eaten
 class Strategy:
 
     def __init__(self, goals):
@@ -20,11 +23,13 @@ class Strategy:
 
         self.log = []
 
+        
+
         # print(self.cost)
 
 
 
-    def get_possible_moves(self, current_board, colour, colour_p, goal):
+    def get_possible_moves(self, current_board, colour, colour_p, goal, colour_e):
 
         ps = colour_p[colour]
 
@@ -43,8 +48,10 @@ class Strategy:
             
                 self.hard_code_eva_function(
                     self.cal_pdiff(current_board, next_board, colour), 
-                    self.cal_rheu(current_board, next_board, colour), 
-                    self.cal_dpiei(current_board, next_board, colour)), "EXIT"
+                    self.cal_rheu(current_board, next_board, colour, colour_e[colour]), 
+                    self.cal_dpiei(current_board, next_board, colour),
+                    colour_p[colour],
+                    colour_e[colour]), "EXIT",
                 ))
 
                 return "EXIT", a
@@ -80,11 +87,11 @@ class Strategy:
             for p in all_state_players:
                 cn = current_board
                 pdiff = self.cal_pdiff(cn, p, colour)
-                rheu = self.cal_rheu(cn, p, colour)
+                rheu = self.cal_rheu(cn, p, colour, colour_e[colour])
                 dpiei = self.cal_dpiei(cn, p, colour)
 
             
-                ev.append(self.hard_code_eva_function(pdiff, rheu, dpiei))
+                ev.append(self.hard_code_eva_function(pdiff, rheu, dpiei, colour_p[colour], colour_e[colour]))
             
             # print(ev)
 
@@ -119,13 +126,23 @@ class Strategy:
         pass
 
 
-    def heuristic(self, players):
+    def heuristic(self, players, colour, player_exit):
         heuri = 0
+
+        tmp_h = []
         for p in players:
-            heuri =heuri + self.cost[p]
+            tmp_h.append(self.cost[p])
+
+        tmp_h.sort()
+        if player_exit == -1:
+            return sum(tmp_h)
+        if len(players) + player_exit >= 4:
+            heuri = sum(tmp_h[:4 - (player_exit)])
+        else:
+            heuri = sum(tmp_h)
+            heuri =heuri + (4 - (len(players) + player_exit)) *10
 
         return heuri
-        pass
 
     def cal_pdiff(self, cur_state, next_state, colour):
         c_or = [k for k in cur_state.keys() if cur_state[k] != "empty" and cur_state[k] != colour]
@@ -135,13 +152,13 @@ class Strategy:
         n_s = len(n_r)
         return c_ors - n_s
     
-    def cal_rheu(self, cur_state, next_state, colour):
+    def cal_rheu(self, cur_state, next_state, colour, player_exit):
         cur_pl = [x for x in cur_state.keys() if cur_state[x] == colour]
         nxt_pl = [x for x in next_state.keys() if next_state[x] == colour]
         
 
-        cur_heuri = self.heuristic(cur_pl)
-        nxt_heuri = self.heuristic(nxt_pl)
+        cur_heuri = self.heuristic(cur_pl, colour, player_exit)
+        nxt_heuri = self.heuristic(nxt_pl, colour, player_exit)
 
         return nxt_heuri - cur_heuri
 
@@ -168,13 +185,17 @@ class Strategy:
         return len(dengr)
 
 
-    def hard_code_eva_function(self, pieces_difference : int, reduced_heuristic : float, danger_pieces : int) -> float:
+    def hard_code_eva_function(self, pieces_difference : int, reduced_heuristic : float, danger_pieces : int, players, player_exit) -> float:
         """
         1. # possible safety movement (*1)
         2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)
         3. # of piece in danger (could be taken by opponent by one JUMP action) *(-5)
         """
-        return (3) *pieces_difference + (-5)*reduced_heuristic + danger_pieces * (-10)
+        t = len(players) + player_exit
+        if t < 4:
+            return (20) *pieces_difference + (-2)*reduced_heuristic + danger_pieces * (-10)
+        else:
+            return (5) *pieces_difference + (-8)*reduced_heuristic + danger_pieces * (-20)
 
     def cost_from_goal(self, goal: tuple, tmp_current_board: dict) -> None:
         """
