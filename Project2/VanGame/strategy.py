@@ -98,7 +98,7 @@ class Strategy:
                     d_heurii = self.cal_rheu(current_board, next_bor, colour, -1)
 
                     uti = self.get_utility(current_board, next_bor, colour, d_heurii, colour_e)
-
+                    
                     # board in num representation used in predicting
                     next_n = self.get_board(next_bor, colour, d_heurii, uti, self.turn)
                     print(next_n)
@@ -134,12 +134,14 @@ class Strategy:
             suc_bo = self.get_next_curbo(current_board, action, colour)
             colour_ea = copy.deepcopy(colour_e)
             colour_ea[colour] += 1
+            utility = self.get_utility(current_board, suc_bo, colour, re, colour_ea)
 
         
         if action[0] == "PASS":
             rew += 0
             re = 0
             suc_bo = current_board
+            utility = self.get_utility(current_board, suc_bo, colour, re, colour_ea)
 
 
         logs = self.get_log(current_board, colour_ea, suc_bo, colour, re, rew)
