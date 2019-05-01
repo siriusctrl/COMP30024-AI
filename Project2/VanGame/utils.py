@@ -184,6 +184,17 @@ class Linear:
         return x
 
 
+class Tanh:
+
+    @staticmethod
+    def forward(x):
+        return np.tanh(x)
+
+    @staticmethod
+    def backward(x):
+        return None
+
+
 class ReLu:
     """
     Two additional major benefits of ReLUs are sparsity and a reduced

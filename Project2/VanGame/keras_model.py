@@ -8,8 +8,12 @@ class dnn:
 
     def __init__(self, filename='trained_model'):
 
-        self.activation_function = {"relu": utils.ReLu.forward, "linear": utils.Linear.forward}
-        self.grad = {"relu": utils.ReLu.forward, "linear": utils.Linear.forward}
+        self.activation_function = {
+                                    "relu": utils.ReLu.forward,
+                                    "linear": utils.Linear.forward,
+                                    "tanh":utils.Tanh.forward
+        }
+
         self.params = {}
         self.arch = []
         # load the feed-forward NN weights and bias
@@ -48,6 +52,6 @@ class dnn:
             else:
                 self.params['bias' + str(i // 2)] = m[i]
 
-        self.arch[-1]['activation'] = 'linear'
+        self.arch[-1]['activation'] = 'tanh'
         # print(self.params)
 
