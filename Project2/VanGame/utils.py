@@ -2,6 +2,7 @@ import numpy as np
 import os
 import json
 import VanGame.config as config
+import math
 
 
 def print_board(board_dict: dict, message: str = "", debug: bool = False, **kwargs) -> None:
@@ -171,6 +172,9 @@ def softmax(x):
     """Compute softmax values for each sets of scores in x."""
     e_x = np.exp(x - np.max(x))
     return e_x / e_x.sum(axis=0)
+
+def sigmoid(x):
+    return 1/(1 + math.exp(-x))
 
 
 class Linear:
