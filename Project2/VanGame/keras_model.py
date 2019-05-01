@@ -52,5 +52,5 @@ class dnn:
             else:
                 self.params['bias' + str(i // 2)] = m[i]
 
-        self.arch[-1]['activation'] = 'tanh'
+        self.arch[-1]['activation'] = 'linear'
         # print(self.params)
