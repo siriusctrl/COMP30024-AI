@@ -58,6 +58,8 @@ class Strategy:
         re = 0
         rew = 0
 
+        ev = 0
+
         utility = []
 
         colour_ea = colour_e
@@ -79,6 +81,8 @@ class Strategy:
 
             all_uti = []
 
+            all_v = []
+
             ie = -1
 
             if len(all_ms):
@@ -98,9 +102,14 @@ class Strategy:
                     d_heurii = self.cal_rheu(current_board, next_bor, colour, -1)
 
                     uti = self.get_utility(current_board, next_bor, colour, d_heurii, colour_e)
+
+                    piece_difference = self.cal_pdiff(current_board, suc_bo, colour)
+                    danger_piece = self.cal_dpiei(current_board, suc_bo ,colour)
+
+                    ev = self.hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour])
                     
                     # board in num representation used in predicting
-                    next_n = self.get_board(next_bor, colour, d_heurii, uti, self.turn)
+                    next_n = self.get_board(next_bor, colour, d_heurii, uti, self.turn, ev)
                     print(next_n)
 
                     # add the estimate utility value
@@ -113,6 +122,8 @@ class Strategy:
                     all_heu.append(d_heurii)
 
                     all_uti.append(uti)
+
+                    all_v.append(ev)
 
                     # return all_ms[math.floor(random.random() * len(all_ms))]
                 
@@ -127,6 +138,7 @@ class Strategy:
                 suc_bo = all_suc[ie]
                 re = all_heu[ie]
                 utility = all_uti[ie]
+                ev = all_v[ie]
 
         if action[0] == "EXIT":
             rew += 125
@@ -136,6 +148,11 @@ class Strategy:
             colour_ea[colour] += 1
             utility = self.get_utility(current_board, suc_bo, colour, re, colour_ea)
 
+            piece_difference = self.cal_pdiff(current_board, suc_bo, colour)
+            danger_piece = self.cal_dpiei(current_board, suc_bo ,colour)
+
+            ev = self.hard_code_eva_function(piece_difference, re, danger_piece, colour_p[colour], colour_e[colour])
+
         
         if action[0] == "PASS":
             rew += 0
@@ -143,12 +160,15 @@ class Strategy:
             suc_bo = current_board
             utility = self.get_utility(current_board, suc_bo, colour, re, colour_ea)
 
+            piece_difference = self.cal_pdiff(current_board, suc_bo, colour)
+            danger_piece = self.cal_dpiei(current_board, suc_bo ,colour)
+
+            ev = self.hard_code_eva_function(piece_difference, re, danger_piece, colour_p[colour], colour_e[colour])
+
 
         logs = self.get_log(current_board, colour_ea, suc_bo, colour, re, rew, colour_e)
 
         rew = logs[0]
-
-        ev = logs[1]
         
         self.logger.add_log(suc_bo, action=action, rew=rew, d_heur=re, utility=utility, ev=ev, turns=self.turn)
 
@@ -173,15 +193,9 @@ class Strategy:
 
 
     def get_log(self, current_board, colour_ea, suc_bo, colour, re, rew, colour_e):
-        cur_pl = [x for x in current_board.keys() if current_board[x] == colour]
-        piece_difference = self.cal_pdiff(current_board, suc_bo, colour)
-        danger_piece = self.cal_dpiei(current_board, suc_bo ,colour)
-        
         rew += self.check_heuristic_rew(colour_ea, suc_bo, colour, re)
 
-        ev = self.hard_code_eva_function(piece_difference, re, danger_piece, cur_pl, colour_e[colour])
-
-        return rew, ev
+        return rew
 
 
 
@@ -321,7 +335,7 @@ class Strategy:
         return 0
 
 
-    def get_board(self, current_board, colour, heurii, utility, t):
+    def get_board(self, current_board, colour, heurii, utility, t,v):
 
         jrex = {'green': 1, 'red': 2, 'blue': 3, 'empty': 0}
 
@@ -332,6 +346,7 @@ class Strategy:
         # the_br.append(heurii)
         the_br.append(t)
         the_br += utility
+        the_br.append(v)
 
 
         return the_br
