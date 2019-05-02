@@ -128,25 +128,6 @@ class Strategy:
 
         pass
 
-
-    def heuristic(self, players, colour, player_exit):
-        heuri = 0
-
-        tmp_h = []
-        for p in players:
-            tmp_h.append(self.cost[p])
-
-        tmp_h.sort()
-        if player_exit == -1:
-            return sum(tmp_h)
-        if len(players) + player_exit >= 4:
-            heuri = sum(tmp_h[:4 - (player_exit)])
-        else:
-            heuri = sum(tmp_h)
-            heuri =heuri + (4 - (len(players) + player_exit)) *10
-
-        return heuri
-
     def hard_code_eva_function(self, pieces_difference : int, reduced_heuristic : float, danger_pieces : int, players, player_exit) -> float:
         """
         1. # possible safety movement (*1)

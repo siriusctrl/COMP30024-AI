@@ -4,6 +4,7 @@ import os.path
 
 EXPFOPATH = "./hardcode_rec"
 
+
 class Logger:
 
     def __init__(self, colour):
@@ -48,8 +49,6 @@ class Logger:
     def get_last_log(self, index):
         return self.log[len(self.log)-1][index]
 
-
     def export_log(self, status):
         with open(os.path.join(EXPFOPATH, status + str(time.mktime(datetime.datetime.now().timetuple() )) + "cao" + self.colour + "jiba" + ".txt"), "w+") as e:
             e.write(json.dumps(self.log))
-        

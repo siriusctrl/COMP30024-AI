@@ -94,7 +94,7 @@ class Strategy:
                     # board in num representation used in predicting
                     next_n = self.get_board(next_bor, colour, self.turn, cald)
                     # print(next_n)
-
+                    # print(next_n)
                     # add the estimate utility value
                     all_score.append(self.mdl.predict(next_n))
 
