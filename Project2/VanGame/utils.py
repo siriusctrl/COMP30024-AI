@@ -148,10 +148,11 @@ def load_l(path):
     
     return datafin, rex[colour]
 
+
 def to_array(s_t):
-    splited_dict = s_t.split(", ")
-    first = splited_dict[0][1:]
-    secon = splited_dict[1][:-1]
+    split_dict = s_t.split(", ")
+    first = split_dict[0][1:]
+    secon = split_dict[1][:-1]
 
     return (int(first), int(secon))
 
@@ -164,8 +165,8 @@ def chose(options: list):
     prob = prob.reshape(len(prob),)
     # print(prob.shape)
 
-    return np.random.choice(len(options), 1, p=prob)[0]
-    # return np.argmax(prob)
+    #return np.random.choice(len(options), 1, p=prob)[0]
+    return np.argmax(prob)
 
 
 def softmax(x):
