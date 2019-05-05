@@ -47,7 +47,8 @@ class Node:
 
         return self.f == other.f and self.g == other.g and self.state == other.state
 
-    def heuristic(self, state):
+    @staticmethod
+    def heuristic(state):
         """
             heuristic function
         """
@@ -208,13 +209,3 @@ class Node:
     # make sure that when print a list, the __str__ will also be invoked
     # only for debug purpose
     __repr__ = __str__
-
-
-if __name__ == "__main__":
-    thatShitNode = Node(state={
-        "players": [(0, 2), (2, 1)],
-        "goals": [(3, 0), (2, 1), (1, 2), (0, 3)],
-        "blocks": [(2, -1)]
-    })
-
-    print(thatShitNode.expand())

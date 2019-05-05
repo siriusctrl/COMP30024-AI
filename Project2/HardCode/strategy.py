@@ -1,12 +1,7 @@
 import HardCode.utils as utils
-
 import HardCode.config as config
 import HardCode.logger as logger
-import random
-import math
-
 import copy
-
 import queue
 
 
@@ -42,10 +37,7 @@ class Strategy:
 
         self.turn = 0
 
-
         self.logger = logger.Logger(self.colour)
-
-
 
     def get_possible_moves(self, current_board, colour, colour_p, goal, colour_e):
 
@@ -67,7 +59,7 @@ class Strategy:
             if a in goal:
                 action = ("EXIT", a)
                 next_bor = self.get_next_curbo(current_board, action, colour)
-                final_cald = self.cal_all(current_board, next_bor, colour, colour_e,colour_p, True)
+                final_cald = self.cal_all(current_board, next_bor, colour, colour_e, colour_p, True)
                 break
 
         if len(action) == 0:
@@ -128,19 +120,6 @@ class Strategy:
 
         pass
 
-    def hard_code_eva_function(self, pieces_difference : int, reduced_heuristic : float, danger_pieces : int, players, player_exit) -> float:
-        """
-        1. # possible safety movement (*1)
-        2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)
-        3. # of piece in danger (could be taken by opponent by one JUMP action) *(-5)
-        """
-        t = len(players) + player_exit
-        if t < 4:
-            return (20) *pieces_difference + (-2)*reduced_heuristic + danger_pieces * (-10)
-        else:
-            return (5) *pieces_difference + (-8)*reduced_heuristic + danger_pieces * (-20)
-
-
     def get_utility(self, current_board, suc_bo, colour, re, colour_ea):
         piece_difference = self.cal_pdiff(current_board, suc_bo, colour)
         danger_piece = self.cal_dpiei(current_board, suc_bo ,colour)
@@ -157,16 +136,14 @@ class Strategy:
 
         return utility
 
-    
     def cal_all(self, current_board, next_bor, colour, colour_e, colour_p, exit_this=False):
 
         rew = 0
 
         d_heurii = self.cal_rheu(current_board, next_bor, colour, -1)
 
-        
-        
         colour_ea = colour_e
+
         if exit_this:
             colour_ea = copy.deepcopy(colour_e)
             colour_ea[colour] += 1
@@ -175,7 +152,6 @@ class Strategy:
         else:
             uti = self.get_utility(current_board, next_bor, colour, d_heurii, colour_e)
 
-
         piece_difference = self.cal_pdiff(current_board, next_bor, colour)
         danger_piece = self.cal_dpiei(current_board, next_bor,colour)
 
@@ -183,15 +159,10 @@ class Strategy:
 
         rew += self.check_heuristic_rew(colour_ea, next_bor, colour, d_heurii)
 
-        return (rew, d_heurii, uti, ev)
-
-
-
-
-
+        return rew, d_heurii, uti, ev
 
     def heuristic(self, players, colour, player_exit):
-        heuri = 0
+        h = 0
 
         tmp_h = []
         for p in players:
@@ -201,14 +172,15 @@ class Strategy:
         if player_exit == -1:
             return sum(tmp_h)
         if len(players) + player_exit >= 4:
-            heuri = sum(tmp_h[:4 - (player_exit)])
+            h = sum(tmp_h[:4 - player_exit])
         else:
-            heuri = sum(tmp_h)
-            heuri =heuri + (4 - (len(players) + player_exit)) *10
+            h = sum(tmp_h)
+            h += (4 - (len(players) + player_exit)) * 10
 
-        return heuri
+        return h
 
-    def get_next_curbo(self, current_board, action, colour):
+    @staticmethod
+    def get_next_curbo(current_board, action, colour):
 
         t_cur = copy.deepcopy(current_board)
         
@@ -232,11 +204,9 @@ class Strategy:
 
         return t_cur
 
-
     def cal_rheu(self, cur_state, next_state, colour, player_exit):
         cur_pl = [x for x in cur_state.keys() if cur_state[x] == colour]
         nxt_pl = [x for x in next_state.keys() if next_state[x] == colour]
-        
 
         cur_heuri = self.heuristic(cur_pl, colour, player_exit)
         nxt_heuri = self.heuristic(nxt_pl, colour, player_exit)
@@ -252,19 +222,14 @@ class Strategy:
 
         return rest_ps
 
-
     def cal_heuristic(self, suc_bo, colour, colour_exit):
-        e_c = [
-            "red",
-            "green",
-            "blue"
-        ]
 
         heuris = [self.heuristic([x for x in suc_bo.keys() if suc_bo[x] == c],c,colour_exit[c]) for c in self.arrange]
 
         return heuris
 
-    def cal_pdiff(self, cur_state, next_state, colour):
+    @staticmethod
+    def cal_pdiff(cur_state, next_state, colour):
         c_or = [k for k in cur_state.keys() if cur_state[k] != "empty" and cur_state[k] == colour]
         n_r = [k for k in next_state.keys() if next_state[k] != "empty" and next_state[k] == colour]
 
@@ -272,10 +237,10 @@ class Strategy:
         n_s = len(n_r)
         return n_s - c_ors
 
-    def cal_dpiei(self,cur_state, next_state,colour):
+    @staticmethod
+    def cal_dpiei(cur_state, next_state, colour):
         nxt_pl = [k for k in next_state.keys() if next_state[k] == colour]
         nxt_ot = [k for k in next_state.keys() if next_state[k] != "empty" and next_state[k] != colour]
-        
 
         tmp_current_board = {x: "empty" for x in config.CELLS}
         for p in nxt_pl:
@@ -294,7 +259,8 @@ class Strategy:
         
         return len(dengr)
 
-    def hard_code_eva_function(self, pieces_difference : int, reduced_heuristic : float, danger_pieces : int, players, player_exit) -> float:
+    @staticmethod
+    def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, danger_pieces: int, players, player_exit) -> float:
         """
         1. # possible safety movement (*1)
         2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)
@@ -302,12 +268,16 @@ class Strategy:
         """
         # print(pieces_difference, reduced_heuristic, danger_pieces)
         t = len(players) + player_exit
-        if t < 4:
-            return (20) *pieces_difference + (-2)*reduced_heuristic + danger_pieces * (-10)
-        else:
-            return (5) *pieces_difference + (-8)*reduced_heuristic + danger_pieces * (-20)
 
-    def check_heuristic_rew(self, colour_exit, suc_bo, colour, d_heur):
+        if t < 4:
+            return 20 * pieces_difference + (-2) * reduced_heuristic + danger_pieces * (-10)
+        elif t == 4:
+            return 5 * pieces_difference + (-2.4) * reduced_heuristic + danger_pieces * (-20)
+        else:
+            return 5 * pieces_difference + (-2.4) * reduced_heuristic + danger_pieces * (-2)
+
+    @staticmethod
+    def check_heuristic_rew(colour_exit, suc_bo, colour, d_heur):
         n_r = [k for k in suc_bo.keys() if suc_bo[k] != "empty" and suc_bo[k] == colour]
         exited = colour_exit[colour]
 
@@ -320,10 +290,10 @@ class Strategy:
 
         return 0
 
-
     def cost_from_goal(self, goal: tuple, tmp_current_board: dict, colour) -> None:
         """
-        Receive a goal coordinate and block list then calculate a pre
+        Receive a goal coordinate and block list then calculate a pre-define cost which
+        represent the cost from any place to the cost goal
         """
 
         q = queue.Queue()
@@ -346,27 +316,19 @@ class Strategy:
                 if s[1] not in cost:
                     # since we are using BFS to findNext the coordinates
                     # better solution will be always expanded first
-
+                    counter = None
                     # s[1] indicates if the next move s is achieved by move (1) or jump (2)
                     # used in calculating heuristic g
-                    # which separately consider jump and moves since jump does not need to /2
-                    # to reach a admissible heuristic
-                    # toSuc = (MOVE_counter, JUMP_counter) <- counting both moves and jumps
                     if s[2] == 1:
-                        s_counter = (current[1][0][0] + 1, current[1][0][1])
+                        counter = (current[1][0][0] + 1, current[1][0][1])
                     elif s[2] == 2:
-                        s_counter = (current[1][0][0], current[1][0][1] + 1)
+                        counter = (current[1][0][0], current[1][0][1] + 1)
 
-                    q.put((child_cost, (s_counter, s[1])))
+                    q.put((child_cost, (counter, s[1])))
                     cost[s[1]] = child_cost
 
                     # if the cost less then update the closest cost
-                    h = s_counter[0] + 1
-
-                    '''if s_counter[0] % 2 == 0:
-                        h = h + (s_counter[0] / 2 + s_counter[1] + 1)
-                    else:
-                        h = h + ((s_counter[0] - 1) / 2 + s_counter[1] + 2)'''
+                    h = counter[0] + 1
 
                     if s[1] not in self.cost[colour]:
                         self.cost[colour][s[1]] = h

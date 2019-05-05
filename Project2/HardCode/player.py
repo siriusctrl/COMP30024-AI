@@ -1,7 +1,7 @@
 import HardCode.utils as utils
 import HardCode.strategy as strategy
 import HardCode.config as config
-import copy, datetime
+import copy
 
 
 class Player:

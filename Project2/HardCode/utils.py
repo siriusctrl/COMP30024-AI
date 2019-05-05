@@ -1,5 +1,3 @@
-import queue
-
 # define the boundary of the board
 CELLS = [(q, r) for q in range(-3, +3 + 1) for r in range(-3, +3 + 1) if -q - r in range(-3, +3 + 1)]
 
