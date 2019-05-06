@@ -21,7 +21,7 @@ class Player:
         self.colour = colour
 
         # player's goal
-        self.goal = utils.GOALS[colour]
+        self.goal = config.GOALS[colour]
 
         # player's starting point
         self.colour_p = {}
@@ -39,11 +39,11 @@ class Player:
 
         # TODO: Set up state representation.
 
-        self.colour_p = copy.deepcopy(utils.START)
-        for a in utils.CELLS:
+        self.colour_p = copy.deepcopy(config.START)
+        for a in config.CELLS:
             self.current_board[a] = "empty"
-        for c in utils.START.keys():
-            for o in utils.START[c]:
+        for c in config.START.keys():
+            for o in config.START[c]:
                 self.current_board[o] = c
 
         # print(self.colour_p)

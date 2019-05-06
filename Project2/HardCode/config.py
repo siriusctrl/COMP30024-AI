@@ -1,5 +1,4 @@
 import queue
-import HardCode.utils as utils
 
 # define the boundary of the board
 CELLS = sorted([(q, r) for q in range(-3, +3 + 1) for r in range(-3, +3 + 1) if -q - r in range(-3, +3 + 1)])
@@ -75,6 +74,49 @@ COST = {
             "green": {}
         }
 
+def piece_valid(piece: tuple) -> bool:
+    """
+    return True only if the given piece are still on the board or
+    move to a unoccupied grid
+    """
+    return piece in CELLS
+
+
+def find_next(piece: tuple, current_board: dict) -> list:
+    """
+    this method are trying to find all the possible movement for
+    the give coordinate on the board.
+    """
+
+    # distance that can be reached by action MOVE
+    move = [
+        [0, -1],
+        [1, -1],
+        [1, 0],
+        [0, 1],
+        [-1, 1],
+        [-1, 0]
+    ]
+
+    next_coords = []
+    directions = 6
+
+    for i in range(directions):
+        # check move action
+        move_action = (piece[0] + move[i][0], piece[1] + move[i][1])
+        jump_action = (piece[0] + 2 * move[i][0], piece[1] + 2 * move[i][1])
+
+        if move_action in current_board and current_board[move_action] == "empty" and piece_valid(move_action):
+            next_coords.append((piece, move_action, 1, (-1, -1)))
+        else:
+            # check jump action
+            if jump_action in current_board and current_board[jump_action] == "empty" and piece_valid(jump_action):
+                next_coords.append((piece, jump_action, 2, (move_action)))
+
+    # return allMoves and the flag indicates if they can be achieved by move or jump
+    # 1 or 2
+    return next_coords
+
 def cost_from_goal(goal: tuple, tmp_current_board: dict, colour) -> None:
         """
         Receive a goal coordinate and block list then calculate a pre
@@ -93,7 +135,7 @@ def cost_from_goal(goal: tuple, tmp_current_board: dict, colour) -> None:
 
             current = q.get()
 
-            successors = utils.find_next(current[1][1], tmp_current_board)
+            successors = find_next(current[1][1], tmp_current_board)
             child_cost = current[0] + 1
 
             for s in successors:
