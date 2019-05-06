@@ -11,11 +11,7 @@ import queue
 class Strategy:
 
     def __init__(self, goals, colour):
-        self.cost = {
-            "red": {},
-            "blue": {},
-            "green": {}
-        }
+        self.cost = config.COST
 
         self.colour = colour
 
@@ -23,17 +19,11 @@ class Strategy:
 
         self.arrange = config.MAIN[self.colour]
 
-        tmp_current_board = {x: "empty" for x in config.CELLS}
-
-        for g in self.goals:
-            self.cost_from_goal(g, tmp_current_board, colour)
-        # utils.print_board(self.cost[colour])
+        
 
         for g in config.GOALS:
-            if g != colour:
-                for go in config.GOALS[g]:
-                    self.cost_from_goal(go, tmp_current_board, g)
-                # utils.print_board(self.cost[g])
+                
+            utils.print_board(self.cost[g], g)
 
         self.turn = 0
 
@@ -290,13 +280,12 @@ class Strategy:
 
         return 0
 
+
     def cost_from_goal(self, goal: tuple, tmp_current_board: dict, colour) -> None:
         """
-        Receive a goal coordinate and block list then calculate a pre-define cost which
-        represent the cost from any place to the cost goal
+        Receive a goal coordinate and block list then calculate a pre
         """
 
-        q = queue.Queue()
 
         # (cost_from_goal, ((MOVE_counter, JUMP_counter), coordinates))
         q.put((0, ((0, 0), goal)))
@@ -316,19 +305,27 @@ class Strategy:
                 if s[1] not in cost:
                     # since we are using BFS to findNext the coordinates
                     # better solution will be always expanded first
-                    counter = None
+
                     # s[1] indicates if the next move s is achieved by move (1) or jump (2)
                     # used in calculating heuristic g
+                    # which separately consider jump and moves since jump does not need to /2
+                    # to reach a admissible heuristic
+                    # toSuc = (MOVE_counter, JUMP_counter) <- counting both moves and jumps
                     if s[2] == 1:
-                        counter = (current[1][0][0] + 1, current[1][0][1])
+                        s_counter = (current[1][0][0] + 1, current[1][0][1])
                     elif s[2] == 2:
-                        counter = (current[1][0][0], current[1][0][1] + 1)
+                        s_counter = (current[1][0][0], current[1][0][1] + 1)
 
-                    q.put((child_cost, (counter, s[1])))
+                    q.put((child_cost, (s_counter, s[1])))
                     cost[s[1]] = child_cost
 
                     # if the cost less then update the closest cost
-                    h = counter[0] + 1
+                    h = s_counter[0] + 1
+
+                    '''if s_counter[0] % 2 == 0:
+                        h = h + (s_counter[0] / 2 + s_counter[1] + 1)
+                    else:
+                        h = h + ((s_counter[0] - 1) / 2 + s_counter[1] + 2)'''
 
                     if s[1] not in self.cost[colour]:
                         self.cost[colour][s[1]] = h
