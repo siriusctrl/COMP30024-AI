@@ -294,3 +294,15 @@ def check_heuristic_rew(colour_exit, suc_bo, colour, d_heur):
         return config.D_HEURISTIC_HORIZONTAL
 
     return 0
+
+def cal_otherrheu(cur_state, next_state, colour, colour_exit):
+    colours = ["red", "green", "blue"]
+    colours.remove(colour)
+
+    c_rh = {
+    }
+
+    for c in colours:
+        c_rh[c] = cal_rheu(cur_state, next_state, c, colour_exit[c])
+    
+    return c_rh
