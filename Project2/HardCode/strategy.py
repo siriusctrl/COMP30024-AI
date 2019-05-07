@@ -38,13 +38,7 @@ class Strategy:
         node = cnode.CompatNode(current_board, colour, colour_e, turn=self.turn)
 
         succesrs = node.expand()
-        for c in ["red", "green", "blue"]:
-            if c!=colour:
 
-
-                print(c)
-                for uc in node.expand(colour=c):
-                    print(uc.action)
 
 
         max_e = max(succesrs, key=lambda x: x.cald[ 3])
