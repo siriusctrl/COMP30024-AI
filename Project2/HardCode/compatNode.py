@@ -12,6 +12,8 @@ class CompatNode:
         self.cost = config.COST
         self.arrange = config.MAIN[self.colour]
 
+        self.win = 0
+
         self.last_colour_e = last_colour_e
         self.colour_e = copy.deepcopy(last_colour_e)
 
