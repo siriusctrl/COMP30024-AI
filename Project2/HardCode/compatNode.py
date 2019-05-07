@@ -15,7 +15,7 @@ class CompatNode:
         self.last_colour_e = last_colour_e
         self.colour_e = copy.deepcopy(last_colour_e)
 
-        self.goal = config.GOALS[self.colour]
+        self.goal = config.GOALS
 
         if(action[0] == "EXIT"):
             self.colour_e[colour] += 1
@@ -44,22 +44,25 @@ class CompatNode:
             self.cald = []
     
     
-    def expand(self):
+    def expand(self, colour =""):
+
+        if colour == "":
+            colour = self.colour
 
         nxt_turn = self.turn +1
 
-        ps = self.colour_p[self.colour]
+        ps = self.colour_p[colour]
 
         action = tuple()
 
         all_state_players = []
 
         for a in ps:
-            if a in self.goal:
+            if a in self.goal[colour]:
                 action = ("EXIT", a)
-                next_bor =utils.get_next_curbo(self.current_board, action, self.colour)
+                next_bor =utils.get_next_curbo(self.current_board, action, colour)
                 
-                next_node = CompatNode(next_bor, self.colour, self.colour_e, self, action, nxt_turn)
+                next_node = CompatNode(next_bor, colour, self.colour_e, self, action, nxt_turn)
                 all_state_players.append(next_node)
 
 
@@ -77,18 +80,18 @@ class CompatNode:
                     elif ms[2] == 2:
                         m_action = ("JUMP", (ms[0], ms[1]))
                     
-                    next_bor =utils.get_next_curbo(self.current_board, m_action, self.colour)
+                    next_bor =utils.get_next_curbo(self.current_board, m_action, colour)
 
-                    next_node = CompatNode(next_bor, self.colour, self.colour_e, self, m_action, nxt_turn)
+                    next_node = CompatNode(next_bor, colour, self.colour_e, self, m_action, nxt_turn)
 
                     all_state_players.append(next_node)
 
                     # delta heuristic
             else:
                 action = ("PASS", None)
-                next_bor =utils.get_next_curbo(self.current_board, action, self.colour)
+                next_bor =utils.get_next_curbo(self.current_board, action, colour)
                 
-                next_node = CompatNode(next_bor, self.colour, self.colour_e, self, action, nxt_turn)
+                next_node = CompatNode(next_bor, colour, self.colour_e, self, action, nxt_turn)
                 all_state_players.append(next_node)
         
         return all_state_players
