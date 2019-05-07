@@ -131,7 +131,7 @@ def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange
         ev = hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action, other_rheu)
         rew += check_heuristic_rew(colour_e, next_bor, colour, d_heurii)
 
-        return (rew, d_heurii, uti, ev)
+        return rew, d_heurii, uti, ev
 
 
 def get_utility( current_board, suc_bo, colour, re, colour_ea, arrange):
@@ -151,7 +151,7 @@ def get_utility( current_board, suc_bo, colour, re, colour_ea, arrange):
     return utility
 
 
-def heuristic( players, colour, player_exit):
+def heuristic(players, colour, player_exit):
     h = 0
 
     tmp_h = []
@@ -168,7 +168,6 @@ def heuristic( players, colour, player_exit):
         h += (4 - (len(players) + player_exit)) * 10
 
     return h
-
 
 
 def get_next_curbo(current_board, action, colour):
@@ -203,7 +202,7 @@ def player_es( colour_e, exit_this, arrange):
     return rest_ps
 
 
-def cal_heuristic( suc_bo, colour, colour_exit, arrange):
+def cal_heuristic(suc_bo, colour, colour_exit, arrange):
 
     heuris = [heuristic([x for x in suc_bo.keys() if suc_bo[x] == c],c,colour_exit[c]) for c in arrange]
     return heuris
@@ -277,14 +276,14 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
     if action[0] == "EXIT":
         res += 10
 
-    res += 2 * others
+    res += others
 
     if t < 4:
-        res += 30 * pieces_difference + (-2) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-10)
+        res += 30 * pieces_difference + (-1) * reduced_heuristic + danger_pieces * (-20) + others
     elif t == 4:
-        res += 5 * pieces_difference + (-2) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-20)
+        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-20) + others
     else:
-        res += 5 * pieces_difference + (-2) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-2)
+        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-5) + 1.5 * others
 
     return res
 

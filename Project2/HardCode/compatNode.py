@@ -32,7 +32,14 @@ class CompatNode:
             self.colour_p[clr] = [x for x in self.current_board.keys() if self.current_board[x] == clr]
 
         if parent_n != None:
-            self.cald = utils.cal_all(parent_n.current_board, self.current_board, self.colour, self.colour_e, self.colour_p, self.action, self.arrange, self.action[0]=="EXIT")
+            self.cald = utils.cal_all(parent_n.current_board,
+                                      self.current_board,
+                                      self.colour,
+                                      self.colour_e,
+                                      self.colour_p,
+                                      self.action,
+                                      self.arrange,
+                                      self.action[0] == "EXIT")
         else:
             self.cald = []
     
