@@ -38,6 +38,7 @@ GOALS = {
         ]
     }
 
+# related to logger
 MORE_RW = 10
 LESS_RW = 100
 EXIT_RW = 100
@@ -73,6 +74,7 @@ COST = {
             "blue": {},
             "green": {}
         }
+
 
 def piece_valid(piece: tuple) -> bool:
     """
@@ -116,6 +118,7 @@ def find_next(piece: tuple, current_board: dict) -> list:
     # return allMoves and the flag indicates if they can be achieved by move or jump
     # 1 or 2
     return next_coords
+
 
 def cost_from_goal(goal: tuple, tmp_current_board: dict, colour) -> None:
         """
@@ -170,6 +173,7 @@ def cost_from_goal(goal: tuple, tmp_current_board: dict, colour) -> None:
                         COST[colour][s[1]] = h
 
         return
+
 
 tmp_current_board = {x: "empty" for x in CELLS}
 

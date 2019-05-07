@@ -21,7 +21,7 @@ class MaxN:
 
         utils = sorted(utils, key=lambda x: x[0])
 
-        utils = utils[len(utils)//discard_rate:]
+        utils = utils[len(utils) // discard_rate:]
 
         return utils
 
@@ -40,7 +40,7 @@ class MaxN:
         layers['layers1'] = self.choices
 
         for i in range(2, moves):
-            pre_layer = 'layer' + str(i-1)
+            pre_layer = 'layer' + str(i - 1)
             curr_layer = 'layer' + str(i)
             layers[curr_layer] = []
 
@@ -48,11 +48,8 @@ class MaxN:
                 layers[curr_layer] += self.explore_all(node_set)
 
         # back propagate the choice
-        for i in range(moves-1, 1, -1):
+        for i in range(moves - 1, 1, -1):
             curr_layer = 'layer' + str(i)
 
             for node_set in layers[curr_layer]:
                 pass
-
-
-
