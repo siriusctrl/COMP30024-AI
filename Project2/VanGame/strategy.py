@@ -94,7 +94,7 @@ class Strategy:
                     # board in num representation used in predicting
                     next_n = self.get_board(next_bor, colour, self.turn, cald)
                     # print(next_n)
-
+                    # print(next_n)
                     # add the estimate utility value
                     all_score.append(self.mdl.predict(next_n))
 
@@ -228,13 +228,7 @@ class Strategy:
 
         return rest_ps
 
-
     def cal_heuristic(self, suc_bo, colour, colour_exit):
-        e_c = [
-            "red",
-            "green",
-            "blue"
-        ]
 
         heuris = [self.heuristic([x for x in suc_bo.keys() if suc_bo[x] == c],c,colour_exit[c]) for c in self.arrange]
 
@@ -248,7 +242,7 @@ class Strategy:
         n_s = len(n_r)
         return n_s - c_ors
 
-    def cal_dpiei(self,cur_state, next_state,colour):
+    def cal_dpiei(self, cur_state, next_state,colour):
         nxt_pl = [k for k in next_state.keys() if next_state[k] == colour]
         nxt_ot = [k for k in next_state.keys() if next_state[k] != "empty" and next_state[k] != colour]
 

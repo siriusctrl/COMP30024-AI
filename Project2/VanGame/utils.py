@@ -161,18 +161,19 @@ def chose(options: list):
     ops = np.array(options)
     #ops = (ops - ops.mean()) / ops.std()
     prob = softmax(np.array(ops))
-    #print("\n", options, "\n", prob, "\n")
+    # print("\n", options, "\n", prob, "\n")
     prob = prob.reshape(len(prob),)
     # print(prob.shape)
 
-    #return np.random.choice(len(options), 1, p=prob)[0]
-    return np.argmax(prob)
+    return np.random.choice(len(options), 1, p=prob)[0]
+    # return np.argmax(prob)
 
 
 def softmax(x):
     """Compute softmax values for each sets of scores in x."""
     e_x = np.exp(x - np.max(x))
     return e_x / e_x.sum(axis=0)
+
 
 def sigmoid(x):
     return 1/(1 + math.exp(-x))
