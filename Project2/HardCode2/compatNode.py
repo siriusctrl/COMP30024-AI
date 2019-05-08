@@ -123,3 +123,6 @@ class CompatNode:
                 all_state_players.append(next_node)
         
         return all_state_players
+
+    def get_full_utilities(self):
+        return {x: self.calds[x][3] for x in self.calds.keys()}

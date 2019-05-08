@@ -42,9 +42,10 @@ class Strategy:
 
         '''for succr in succesrs:
 
+            print(succr.get_full_utilities())
             if succr.action[0] in ("EXIT", None):
-                max_e = succr
-                '''
+                max_e = succr'''
+                
 
 
         re = max_e.cald[1]
