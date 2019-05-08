@@ -1,4 +1,4 @@
-from HardCode.player import Player
+from HardCode2.player import Player
 
 
 def test():

@@ -1,6 +1,6 @@
-import HardCode.utils as utils
-import HardCode.strategy as strategy
-import HardCode.config as config
+import HardCode2.utils as utils
+import HardCode2.strategy as strategy
+import HardCode2.config as config
 import copy
 
 

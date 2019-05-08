@@ -1,5 +1,5 @@
-import HardCode.config as config
-import HardCode.utils as utils
+import HardCode2.config as config
+import HardCode2.utils as utils
 import copy
 
 class CompatNode:
@@ -34,7 +34,13 @@ class CompatNode:
             self.colour_p[clr] = [x for x in self.current_board.keys() if self.current_board[x] == clr]
 
         if parent_n != None:
-            self.cald = utils.cal_all(parent_n.current_board,
+            self.calds = {
+
+            }
+            for c in ["red", "green", "blue"]:
+
+                if c == self.colour:
+                    self.calds[c] = utils.cal_all(parent_n.current_board,
                                       self.current_board,
                                       self.colour,
                                       self.colour_e,
@@ -42,8 +48,28 @@ class CompatNode:
                                       self.action,
                                       self.arrange,
                                       self.action[0] == "EXIT")
+                else:
+                    self.calds[c] = utils.cal_all(parent_n.current_board,
+                                        self.current_board,
+                                        c,
+                                        self.colour_e,
+                                        self.colour_p,
+                                        ("None", None),
+                                        config.MAIN[c],
+                                        False)
+            self.cald = self.calds[self.colour]
+
         else:
             self.cald = []
+            self.calds = {
+                "red": [],
+                "green": [],
+                "blue": []
+            }
+
+        
+        print(self.calds)
+    
     
     
     def expand(self, colour =""):

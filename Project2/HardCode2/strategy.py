@@ -1,8 +1,8 @@
-import HardCode.utils as utils
-import HardCode.config as config
-import HardCode.logger as logger
+import HardCode2.utils as utils
+import HardCode2.config as config
+import HardCode2.logger as logger
 
-import HardCode.compatNode as cnode
+import HardCode2.compatNode as cnode
 import copy
 import queue
 
@@ -23,10 +23,7 @@ class Strategy:
 
         
 
-        for g in config.GOALS:
-
-            utils.print_board(self.cost[g], g)
-
+        
         self.turn = 0
 
         self.logger = logger.Logger(self.colour)
@@ -38,13 +35,7 @@ class Strategy:
         node = cnode.CompatNode(current_board, colour, colour_e, turn=self.turn)
 
         succesrs = node.expand()
-        for c in ["red", "green", "blue"]:
-            if c!=colour:
-
-
-                print(c)
-                for uc in node.expand(colour=c):
-                    print(uc.action)
+        
 
 
         max_e = max(succesrs, key=lambda x: x.cald[ 3])
