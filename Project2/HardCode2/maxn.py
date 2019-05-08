@@ -9,11 +9,14 @@ class MaxN:
         self.current_state = current_state
         self.next_move = {"red": "green", "green": "blue", "blue": "red"}
         self.choices = [i for i in current_state.expand()]
+        self.root_colour = current_state.colour
+        self.all_colour = {"red":["green", "blue"], "green": ["red", "blue"], "blue": ["red", "green"]}
+        self.next_colour = {"red":"green", "green": "blue", "blue": "red"}
 
     @staticmethod
-    def explore_next(node, discard_rate):
+    def explore_next(node, colour, discard_rate):
 
-        successor = node.expand()
+        successor = node.expand(colour)
         utils = []
 
         for i in successor:
@@ -23,16 +26,7 @@ class MaxN:
 
         utils = utils[len(utils) // discard_rate:]
 
-        return utils
-
-    def explore_all(self, nodes, discard_rate=3):
-        successor = []
-
-        for n in nodes:
-            successor.append([self.explore_next(n, discard_rate)])
-
-        # return [[node_set1], [node_set2]]
-        return successor
+        return [i[-1] for i in utils]
 
     def chose(self, rounds=1):
         depth = 2 + max(rounds - 1, 0) * 3
@@ -41,8 +35,8 @@ class MaxN:
         for c in self.choices:
             further_utils.append((self.chose_next(c, depth), c))
 
-        refactored_utils = sorted(further_utils, key=lambda x: self.evaluate_weights(x[0]))
-        
+        refactored_utils = sorted(further_utils, key=lambda x: self.evaluate_weights(x[0], self.root_colour))
+
         # return the node with highest utility value
         return refactored_utils[-1][-1]
 
@@ -50,15 +44,17 @@ class MaxN:
         if depth < 0:
             return node.get_full_utilities()
 
-        return self.max_value([self.chose_next(n, depth - 1) for n in node.expand()])
+        values = [self.chose_next(n, depth - 1) for n in self.explore_next(node, self.next_colour[node.colour], 3)]
+        return self.max_value(values, node.colour)
 
-    def max_value(self, values):
+    def max_value(self, values, colour):
 
-        refactored_values = sorted(values, key=self.evaluate_weights)
+        refactored_values = sorted(values, key=lambda x: self.evaluate_weights(x, colour))
 
         return refactored_values[-1]
 
-    @staticmethod
-    def evaluate_weights(x):
+    def evaluate_weights(self, x, colour):
         # define how we make trade off between our gain and other opponents lost in utility
-        return x[0] + (x[1] + x[2]) * config.TRADE_OFF
+        opp_one = self.all_colour[self.root_colour][0]
+        opp_two = self.all_colour[self.root_colour][1]
+        return x[colour] + (x[opp_one] + x[opp_two]) * config.TRADE_OFF
