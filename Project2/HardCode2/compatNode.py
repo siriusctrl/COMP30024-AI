@@ -66,9 +66,6 @@ class CompatNode:
                 "green": [],
                 "blue": []
             }
-
-        
-        print(self.calds)
     
     
     

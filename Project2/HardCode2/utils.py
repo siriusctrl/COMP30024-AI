@@ -128,8 +128,24 @@ def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange
 
         other_rheu = cal_otherrheu(current_board, next_bor, colour, colour_e)
 
-        ev = hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action, other_rheu)
+        et = False
+
+        if action[0] in ("JUMP", ):
+            fr = action[1][0]
+            to = action[1][1]
+            sk = (fr[0] + (to[0] - fr[0]) / 2, fr[1] + (to[1] - fr[1]) / 2)
+            if next_bor[sk] == colour and current_board[sk] != next_bor[sk]:
+                et = True
+
+
+        ev = hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action, other_rheu, et=et)
         rew += check_heuristic_rew(colour_e, next_bor, colour, d_heurii)
+
+        #if ev == -1:
+            # print_board(current_board)
+            # print_board(next_bor)
+            # print(colour)
+            # print("============")
 
         return rew, d_heurii, log_uti, ev
 
@@ -246,13 +262,13 @@ def cal_dpiei(cur_state, next_state, colour):
 
 
 def cal_rheu( cur_state, next_state, colour, player_exit):
-    cur_pl = [x for x in cur_state.keys() if cur_state[x] == colour]
+    # cur_pl = [x for x in cur_state.keys() if cur_state[x] == colour]
     nxt_pl = [x for x in next_state.keys() if next_state[x] == colour]
 
-    cur_heuri = heuristic(cur_pl, colour, player_exit)
+    # cur_heuri = heuristic(cur_pl, colour, player_exit)
     nxt_heuri = heuristic(nxt_pl, colour, player_exit)
 
-    return nxt_heuri - cur_heuri
+    return nxt_heuri
 
 
 '''
@@ -260,7 +276,7 @@ def cal_rheu( cur_state, next_state, colour, player_exit):
 '''
 
 
-def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, danger_pieces: int, players, player_exit, action, other_rheu) -> float:
+def hard_code_eva_function(pieces_difference: int, heuristics: float, danger_pieces: int, players, player_exit, action, other_rheu, et=False) -> float:
     """
     1. # possible safety movement (*1)
     2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)
@@ -277,17 +293,26 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
     res = 0
 
     if action[0] == "EXIT":
+        print("exit consider")
+        print(players)
         res += 10
 
-    res += others
-
     if t < 4:
-        res += 30 * pieces_difference + (-1) * reduced_heuristic + danger_pieces * (-20) + others
+        res += (-1) * heuristics + danger_pieces * (-20)
+        if et == True:
+            res += 30
     elif t == 4:
-        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-20) + others
+        res += (-1) * heuristics + danger_pieces * (-20)
+        if et == True:
+            res += 10
     else:
-        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-5) + 1.5 * others
+        res += (-1) * heuristics + danger_pieces * (-20)
+        if et == True:
+            res += 10
 
+    # if res == -2:
+        # print("===============")
+        # print(pieces_difference, reduced_heuristic, danger_pieces, players, player_exit, action, other_rheu)
     return res
 
 def check_heuristic_rew(colour_exit, suc_bo, colour, d_heur):
@@ -311,6 +336,6 @@ def cal_otherrheu(cur_state, next_state, colour, colour_exit):
     }
 
     for c in colours:
-        c_rh[c] = cal_rheu(cur_state, next_state, c, colour_exit[c])
+        c_rh[c] = max(0, cal_rheu(cur_state, next_state, c, colour_exit[c]))
     
     return c_rh

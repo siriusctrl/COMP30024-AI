@@ -5,7 +5,7 @@ import HardCode2.logger as logger
 import HardCode2.compatNode as cnode
 import copy
 import queue
-
+import HardCode2.maxn as maxn
 
 # 2 utility:
 #  pieces less than 4 then up eating utility (include exit pieces)
@@ -29,16 +29,18 @@ class Strategy:
         self.logger = logger.Logger(self.colour)
 
 
+
     def get_possible_moves(self, current_board, colour, colour_p, goal, colour_e):
         self.turn += 1
 
         node = cnode.CompatNode(current_board, colour, colour_e, turn=self.turn)
 
-        succesrs = node.expand()
+        # succesrs = node.expand()
+
+        maxnn = maxn.MaxN(node)
+        max_e = maxnn.chose()
         
 
-
-        max_e = max(succesrs, key=lambda x: x.cald[ 3])
 
         '''for succr in succesrs:
 
