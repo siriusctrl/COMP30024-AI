@@ -115,7 +115,7 @@ def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange
 
         rew = 0
 
-        d_heurii = cal_rheu(current_board, next_bor, colour, -1)
+        d_heurii = cal_rheu(current_board, next_bor, colour, colour_e[colour])
         
         if exit_this:
             rew += config.EXIT_RW
@@ -175,8 +175,6 @@ def heuristic(players, colour, player_exit):
         tmp_h.append(config.COST[colour][p])
 
     tmp_h.sort()
-    if player_exit == -1:
-        return sum(tmp_h)
     if len(players) + player_exit >= 4:
         h = sum(tmp_h[:4 - player_exit])
     else:
@@ -298,17 +296,17 @@ def hard_code_eva_function(pieces_difference: int, heuristics: float, danger_pie
         res += 10
 
     if t < 4:
-        res += (-1) * heuristics + danger_pieces * (0)
-        if et == True:
-            res += 30
+        res += (-1) * heuristics + danger_pieces * (-10)
+        if et:
+            res += 100
     elif t == 4:
-        res += (-1) * heuristics + danger_pieces * (0)
-        if et == True:
+        res += (-1) * heuristics + danger_pieces * (-5)
+        if et:
             res += 10
     else:
-        res += (-1) * heuristics + danger_pieces * (0)
-        if et == True:
-            res += 10
+        res += (-1) * heuristics + danger_pieces * (-3)
+        if et:
+            res += 30
 
     # if res == -2:
         # print("===============")

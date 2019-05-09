@@ -42,25 +42,26 @@ class MaxN:
         for i in refactored_utils:
             utils.print_board(i[-1].current_board, i[-1].calds)
             print(i[0][0])
-            print("\nfrom=\n")
-            utils.print_board(i[0][-1].current_board, i[-1].calds)
+            print("\n from=\n")
+            utils.print_board(i[0][-1].current_board, i[0][-1].calds)
         # return the node with highest utility value
         return refactored_utils[-1][-1]
 
     def chose_next(self, node, depth):
         self.count += 1
         if depth == 0:
-           # if node.calds["green"][-1] > -200:
-                # utils.print_board(node.current_board, node.calds)
-            return (node.get_full_utilities(), node)
+            return node.get_full_utilities(), node
 
         values = [self.chose_next(n, depth - 1) for n in self.explore_next(node, self.next_colour[node.colour], 2)]
         
-        mv = self.max_value(values, node.colour)
+        mv = self.max_value(values, None)
 
         return mv
 
     def max_value(self, values, colour):
+
+        if colour is None:
+            colour = values[0][-1].colour
 
         refactored_values = sorted(values, key=lambda x: self.evaluate_weights(x[0], colour))
 
@@ -68,6 +69,6 @@ class MaxN:
 
     def evaluate_weights(self, x, colour):
         # define how we make trade off between our gain and other opponents lost in utility
-        opp_one = self.all_colour[self.root_colour][0]
-        opp_two = self.all_colour[self.root_colour][1]
+        opp_one = self.all_colour[colour][0]
+        opp_two = self.all_colour[colour][1]
         return x[colour] + (x[opp_one] + x[opp_two]) * config.TRADE_OFF
