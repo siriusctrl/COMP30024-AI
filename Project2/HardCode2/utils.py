@@ -298,15 +298,15 @@ def hard_code_eva_function(pieces_difference: int, heuristics: float, danger_pie
         res += 10
 
     if t < 4:
-        res += (-1) * heuristics + danger_pieces * (-20)
+        res += (-1) * heuristics + danger_pieces * (0)
         if et == True:
             res += 30
     elif t == 4:
-        res += (-1) * heuristics + danger_pieces * (-20)
+        res += (-1) * heuristics + danger_pieces * (0)
         if et == True:
             res += 10
     else:
-        res += (-1) * heuristics + danger_pieces * (-20)
+        res += (-1) * heuristics + danger_pieces * (0)
         if et == True:
             res += 10
 
