@@ -4,30 +4,26 @@ import VanGame.player as p
 
 import HardCode.strategy as sp
 
-BLUE_MAPPING = {
-    (0, -3): (-3, 3),
-    (1, -3): (-3, 2),
-    (2, -3): (-3, 1),
-    (3, -3): (-3, 0),
-    (-1, -2): (-2, 3),
-    (0, -2): (-2, 2),
 
-}
 
-RED_TO_BLUE = {
-    -3: (0, 3),
-    -2: (-1, 3),
-    -1: (-2, 3),
-    0: (-3, 3),
-    1: (-3, 2),
-    2: (-3, 1),
-    3: (-3, 0)
-}
+def cal_py(py, pa):
 
-BLUE_MAPPING = {k: (k[1], range(RED_TO_BLUE[k[1]][0], RED_TO_BLUE[k[1][1]]).index(k[0])) for k in CELLS}
+    thr = pa[0], -(pa[0]+pa[1]), pa[1]
+    din = []
+    for pj in py:
+        pjt = pj[0], -(pj[0]+pj[1]), pj[1]
 
-def to_blue_main(red_main_board):
+        dn = (abs(thr[0] - pjt[0]) + abs(thr[1] - pjt[1]) + abs(thr[2] - pjt[2]))/2
 
+        din.append((pj, dn))
+    
+    return din
+    
+    
+ji = cal_py([(-3, 0), (-3, 1), (-3, 2), (-2, 3)],
+            (-3, 0))
+
+print(ji)
 
 v.test()
 

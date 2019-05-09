@@ -1,6 +1,5 @@
-import HardCode2.config as config
+import HardCode3.config as config
 import copy
-import math
 
 
 def print_board(board_dict: dict, message: str = "", debug: bool = False, **kwargs) -> None:
@@ -138,9 +137,8 @@ def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange
             if next_bor[sk] == colour and current_board[sk] != next_bor[sk]:
                 et = True
 
-        closefuck = cal_clo(current_board, next_bor, colour, colour_e)
 
-        ev = hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action, other_rheu, closefuck, et=et)
+        ev = hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action, other_rheu, et=et)
         rew += check_heuristic_rew(colour_e, next_bor, colour, d_heurii)
 
         #if ev == -1:
@@ -262,13 +260,13 @@ def cal_dpiei(cur_state, next_state, colour):
 
 
 def cal_rheu( cur_state, next_state, colour, player_exit):
-    # cur_pl = [x for x in cur_state.keys() if cur_state[x] == colour]
+    cur_pl = [x for x in cur_state.keys() if cur_state[x] == colour]
     nxt_pl = [x for x in next_state.keys() if next_state[x] == colour]
 
-    # cur_heuri = heuristic(cur_pl, colour, player_exit)
+    cur_heuri = heuristic(cur_pl, colour, player_exit)
     nxt_heuri = heuristic(nxt_pl, colour, player_exit)
 
-    return nxt_heuri
+    return nxt_heuri - cur_heuri
 
 
 '''
@@ -276,7 +274,46 @@ def cal_rheu( cur_state, next_state, colour, player_exit):
 '''
 
 
-def hard_code_eva_function(pieces_difference: int, heuristics: float, danger_pieces: int, players, player_exit, action, other_rheu, closefuck, et=False) -> float:
+def hard_code_eva_functionjiba(pieces_difference: int, heuristics: float, danger_pieces: int, players, player_exit, action, other_rheu, et=False) -> float:
+    """
+    1. # possible safety movement (*1)
+    2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)
+    3. # of piece in danger (could be taken by opponent by one JUMP action) *(-5)
+    """
+    # print(pieces_difference, reduced_heuristic, danger_pieces)
+    t = len(players) + player_exit
+
+    if player_exit == 4:
+        return 99999
+
+    others = sum(other_rheu.values())
+
+    res = 0
+
+    if action[0] == "EXIT":
+        print("exit consider")
+        print(players)
+        res += 11
+
+    if t < 4:
+        res += (-5) * heuristics + danger_pieces * (-30)
+        if et == True:
+            res += 50
+    elif t == 4:
+        res += (-5) * heuristics + danger_pieces * (-20)
+        if et == True:
+            res += 50
+    else:
+        res += (-5) * heuristics + danger_pieces * (-10)
+        if et == True:
+            res += 50
+
+    # if res == -2:
+        # print("===============")
+        # print(pieces_difference, reduced_heuristic, danger_pieces, players, player_exit, action, other_rheu)
+    return res
+
+def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, danger_pieces: int, players, player_exit, action, other_rheu, et=False) -> float:
     """
     1. # possible safety movement (*1)
     2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)
@@ -295,22 +332,15 @@ def hard_code_eva_function(pieces_difference: int, heuristics: float, danger_pie
     if action[0] == "EXIT":
         res += 10
 
-    if t < 4:
-        res += (-1) * heuristics + danger_pieces * (-10)
-        if et:
-            res += 100
-    elif t == 4:
-        res += (-1) * heuristics + danger_pieces * (-5) + closefuck * (-0.45)
-        if et:
-            res += 10
-    else:
-        res += (-1) * heuristics + danger_pieces * (-2) + closefuck * (-0.25)
-        if et:
-            res += 30
+    
 
-    # if res == -2:
-        # print("===============")
-        # print(pieces_difference, reduced_heuristic, danger_pieces, players, player_exit, action, other_rheu)
+    if t < 4:
+        res += 30 * pieces_difference + (-1) * reduced_heuristic + danger_pieces * (-20) + others
+    elif t == 4:
+        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-20) + others
+    else:
+        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-5) + 1.5 * others
+
     return res
 
 def check_heuristic_rew(colour_exit, suc_bo, colour, d_heur):
@@ -334,84 +364,6 @@ def cal_otherrheu(cur_state, next_state, colour, colour_exit):
     }
 
     for c in colours:
-        c_rh[c] = max(0, cal_rheu(cur_state, next_state, c, colour_exit[c]))
+        c_rh[c] = cal_rheu(cur_state, next_state, c, colour_exit[c])
     
     return c_rh
-
-def cal_clo(cur_state, next_state, colour, colour_exit):
-    need = 4 - colour_exit[colour]
-
-    if need == 0:
-        return 0
-    
-    py = [x for x in next_state.keys() if next_state[x] == colour]
-    consider_num = len(py) - need + 1
-    res = 0
-    if consider_num > 0:
-        if len(py) < consider_num:
-            print(py, next_state)
-        for i in range(consider_num):
-            res += (cal_all_distance(py, py[i]))
-    
-    return res
-
-def cal_all_distance(py, pa):
-
-    thr = pa[0], -(pa[0]+pa[1]), pa[1]
-    din = 0
-    for pj in py:
-        pjt = pj[0], -(pj[0]+pj[1]), pj[1]
-
-        dn = (abs(thr[0] - pjt[0]) + abs(thr[1] - pjt[1]) + abs(thr[2] - pjt[2]))/2
-
-        din += dn
-    
-    return din
-
-
-    '''nearSix = [
-        [0, -1],
-        [1, -1],
-        [1, 0],
-        [0, 1],
-        [-1, 1],
-        [-1, 0]
-    ]
-
-    Heuri = []
-    for pc in py:
-        tmpHeuri = []
-        go = pa
-            
-        if pc[1] > go[1]:
-            checkNear = [0, 1]
-        elif pc[1] < go[1]:
-            checkNear = [3, 4]
-        else:
-            tmpHeuri.append(abs(go[0] - pc[0]))
-            continue
-
-        tmppjiba = []
-        
-        for i in checkNear:
-            moveCoor = nearSix[i]
-            dX = abs(go[0] - pc[0])
-            dY = abs(go[1] - pc[1])
-
-            moveToX = [x * dX for x in moveCoor]
-            newCoor = [pc[0] + moveToX[0], pc[1] + moveToX[1]]
-            if go[0] == newCoor[0]:
-                tmppjiba.append(abs(dX + abs(go[1] - newCoor[1])))
-
-
-            moveToY = [x * dY for x in moveCoor]
-            newCoor = [pc[0] + moveToY[0], pc[1] + moveToY[1]]
-            if go[1] == newCoor[1]:
-                tmppjiba.append(dY + abs(go[0] - newCoor[0]))
-
-        
-        tmpHeuri.append(min(tmppjiba))
-
-        
-    Heuri.append(tmpHeuri)
-    return Heuri'''
