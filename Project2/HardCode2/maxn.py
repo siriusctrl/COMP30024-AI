@@ -24,7 +24,6 @@ class MaxN:
             utils.append((i.cald[3], i))
 
         utils = sorted(utils, key=lambda x: x[0])
-
         utils = utils[len(utils) // discard_rate:]
 
         return [i[-1] for i in utils]
@@ -46,8 +45,6 @@ class MaxN:
             utils.print_board(i[0][-1].current_board, i[0][-1].calds)
         # return the node with highest utility value
         return refactored_utils[-1][-1]
-
-    
 
     def chose_next(self, node, depth):
         self.count += 1

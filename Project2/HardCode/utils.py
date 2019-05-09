@@ -279,8 +279,6 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
     if action[0] == "EXIT":
         res += 10
 
-    res += others
-
     if t < 4:
         res += 30 * pieces_difference + (-1) * reduced_heuristic + danger_pieces * (-20) + others
     elif t == 4:
