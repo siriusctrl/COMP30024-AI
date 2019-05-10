@@ -275,45 +275,6 @@ def cal_rheu( cur_state, next_state, colour, player_exit):
 '''
 
 
-def hard_code_eva_functionjiba(pieces_difference: int, heuristics: float, danger_pieces: int, players, player_exit, action, other_rheu, et=False) -> float:
-    """
-    1. # possible safety movement (*1)
-    2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)
-    3. # of piece in danger (could be taken by opponent by one JUMP action) *(-5)
-    """
-    # print(pieces_difference, reduced_heuristic, danger_pieces)
-    t = len(players) + player_exit
-
-    if player_exit == 4:
-        return 99999
-
-    others = sum(other_rheu.values())
-
-    res = 0
-
-    if action[0] == "EXIT":
-        print("exit consider")
-        print(players)
-        res += 11
-
-    if t < 4:
-        res += (-5) * heuristics + danger_pieces * (-30)
-        if et == True:
-            res += 50
-    elif t == 4:
-        res += (-5) * heuristics + danger_pieces * (-20)
-        if et == True:
-            res += 50
-    else:
-        res += (-5) * heuristics + danger_pieces * (-10)
-        if et == True:
-            res += 50
-
-    # if res == -2:
-        # print("===============")
-        # print(pieces_difference, reduced_heuristic, danger_pieces, players, player_exit, action, other_rheu)
-    return res
-
 def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, danger_pieces: int, players, player_exit, action, other_rheu, closefuck, et=False) -> float:
     """
     1. # possible safety movement (*1)
@@ -332,16 +293,14 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
     res = 0
 
     if action[0] == "EXIT":
-        res += 1000
-
-    
+        res += 30
 
     if t < 4:
-        res += 30 * pieces_difference + (-1) * reduced_heuristic + danger_pieces * (-20) + others
+        res += 30 * pieces_difference + (-1) * reduced_heuristic + danger_pieces * (-20) + 1.5 * others
     elif t == 4:
-        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-20) + others + closefuck * (-0.45)
+        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-20) + 1.5 * others + closefuck * (-0.1)
     else:
-        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-5) + 1.5 * others + closefuck * (-0.45)
+        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-5) + 1.5 * others + closefuck * (-0.1)
 
     return res
 
