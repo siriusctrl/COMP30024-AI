@@ -35,15 +35,17 @@ class MaxN:
 
         for c in self.choices:
             further_utils.append((self.chose_next(c, depth), c))
+        print(self.count)
 
         refactored_utils = sorted(further_utils, key=lambda x: x[0][1].calds[self.current_state.colour][3])
         
         for i in refactored_utils:
-            utils.print_board(i[-1].current_board, i[-1].calds)
+            pass
+            #utils.print_board(i[-1].current_board, i[-1].calds)
             # print(i[0][0])
             # print("\nfrom=\n")
-            utils.print_board(i[0][-1].current_board, i[0][-1].calds)
-            print(utils.cal_all(self.current_state.current_board, i[0][1].current_board, i[0][1].colour, i[0][1].colour_e, i[0][1].colour_p, i[0][1].action, i[0][1].arrange, False)[3])
+            #utils.print_board(i[0][-1].current_board, i[0][-1].calds)
+            #print(utils.cal_all(self.current_state.current_board, i[0][1].current_board, i[0][1].colour, i[0][1].colour_e, i[0][1].colour_p, i[0][1].action, i[0][1].arrange, False)[3])
         # return the node with highest utility value
         return refactored_utils[-1][-1]
 
