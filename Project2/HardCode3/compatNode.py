@@ -57,7 +57,11 @@ class CompatNode:
                                         ("None", None),
                                         config.MAIN[c],
                                         False)
+            for c in ["red", "green", "blue"]:
+                if parent_n.cald != []:
+                    self.calds[c][3] += parent_n.calds[c][3]
             self.cald = self.calds[self.colour]
+
 
         else:
             self.cald = []

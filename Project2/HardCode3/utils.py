@@ -136,9 +136,10 @@ def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange
             sk = (fr[0] + (to[0] - fr[0]) / 2, fr[1] + (to[1] - fr[1]) / 2)
             if next_bor[sk] == colour and current_board[sk] != next_bor[sk]:
                 et = True
+        closefuck = cal_clo(current_board, next_bor, colour, colour_e)
 
 
-        ev = hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action, other_rheu, et=et)
+        ev = hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action, other_rheu, closefuck, et=et)
         rew += check_heuristic_rew(colour_e, next_bor, colour, d_heurii)
 
         #if ev == -1:
@@ -147,7 +148,7 @@ def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange
             # print(colour)
             # print("============")
 
-        return rew, d_heurii, log_uti, ev
+        return [rew, d_heurii, log_uti, ev]
 
 
 def get_utility(current_board, suc_bo, colour, re, colour_ea, arrange):
@@ -313,7 +314,7 @@ def hard_code_eva_functionjiba(pieces_difference: int, heuristics: float, danger
         # print(pieces_difference, reduced_heuristic, danger_pieces, players, player_exit, action, other_rheu)
     return res
 
-def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, danger_pieces: int, players, player_exit, action, other_rheu, et=False) -> float:
+def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, danger_pieces: int, players, player_exit, action, other_rheu, closefuck, et=False) -> float:
     """
     1. # possible safety movement (*1)
     2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)
@@ -323,6 +324,7 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
     t = len(players) + player_exit
 
     if player_exit == 4:
+        print("fskjebfsefsegsrgsgdsfgsrhsthbfgbxfdgnxfg xgbx")
         return 99999
 
     others = sum(other_rheu.values())
@@ -330,16 +332,16 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
     res = 0
 
     if action[0] == "EXIT":
-        res += 10
+        res += 1000
 
     
 
     if t < 4:
         res += 30 * pieces_difference + (-1) * reduced_heuristic + danger_pieces * (-20) + others
     elif t == 4:
-        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-20) + others
+        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-20) + others + closefuck * (-0.45)
     else:
-        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-5) + 1.5 * others
+        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-5) + 1.5 * others + closefuck * (-0.45)
 
     return res
 
@@ -356,6 +358,23 @@ def check_heuristic_rew(colour_exit, suc_bo, colour, d_heur):
 
     return 0
 
+def cal_clo(cur_state, next_state, colour, colour_exit):
+    need = 4 - colour_exit[colour]
+
+    if need == 0:
+        return 0
+    
+    py = [x for x in next_state.keys() if next_state[x] == colour]
+    consider_num = len(py) - need + 1
+    res = 0
+    if consider_num > 0:
+        if len(py) < consider_num:
+            print(py, next_state)
+        for i in range(consider_num):
+            res += (cal_all_distance(py, py[i]))
+    
+    return res
+
 def cal_otherrheu(cur_state, next_state, colour, colour_exit):
     colours = ["red", "green", "blue"]
     colours.remove(colour)
@@ -367,3 +386,16 @@ def cal_otherrheu(cur_state, next_state, colour, colour_exit):
         c_rh[c] = cal_rheu(cur_state, next_state, c, colour_exit[c])
     
     return c_rh
+
+def cal_all_distance(py, pa):
+
+    thr = pa[0], -(pa[0]+pa[1]), pa[1]
+    din = 0
+    for pj in py:
+        pjt = pj[0], -(pj[0]+pj[1]), pj[1]
+
+        dn = (abs(thr[0] - pjt[0]) + abs(thr[1] - pjt[1]) + abs(thr[2] - pjt[2]))/2
+
+        din += dn
+    
+    return din

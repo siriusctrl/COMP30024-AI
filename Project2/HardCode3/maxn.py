@@ -20,30 +20,30 @@ class MaxN:
         successor = node.expand(colour)
         utils = []
 
-        for i in successor:
-            utils.append((i.cald[3], i))
+        '''for i in successor:
+            utils.append((i.cald[3], i))'''
 
-        utils = sorted(utils, key=lambda x: x[0])
+        utils = sorted(successor, key=lambda x: x.cald[3])
 
         utils = utils[len(utils) // discard_rate:]
 
-        return [i[-1] for i in utils]
+        return utils
 
     def chose(self, rounds=1):
-        depth = 1 + max(rounds - 1, 0) * 3
+        depth = 2 + max(rounds - 1, 0) * 3
         further_utils = []
 
         for c in self.choices:
             further_utils.append((self.chose_next(c, depth), c))
 
-        refactored_utils = sorted(further_utils, key=lambda x: self.evaluate_weights(x[0][0], self.root_colour))
-        # print("\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$count=", self.count)
-        # print("\nutility=", [i[0] for i in refactored_utils])
+        refactored_utils = sorted(further_utils, key=lambda x: x[0][1].calds[self.current_state.colour][3])
+        
         for i in refactored_utils:
             utils.print_board(i[-1].current_board, i[-1].calds)
-            print(i[0][0])
-            print("\nfrom=\n")
+            # print(i[0][0])
+            # print("\nfrom=\n")
             utils.print_board(i[0][-1].current_board, i[0][-1].calds)
+            print(utils.cal_all(self.current_state.current_board, i[0][1].current_board, i[0][1].colour, i[0][1].colour_e, i[0][1].colour_p, i[0][1].action, i[0][1].arrange, False)[3])
         # return the node with highest utility value
         return refactored_utils[-1][-1]
 
@@ -53,12 +53,14 @@ class MaxN:
            # if node.calds["green"][-1] > -200:
                 # utils.print_board(node.current_board, node.calds)
             return (node.get_full_utilities(), node)
-
+        
         values = [self.chose_next(n, depth - 1) for n in self.explore_next(node, self.next_colour[node.colour], 2)]
         
-        mv = self.max_value(values, node.colour)
+        # mv = self.max_value(values, node.colour)
 
-        return mv
+        mv =sorted(values, key=lambda x: x[1].calds[node.colour][3])
+
+        return mv[-1]
 
     def max_value(self, values, colour):
 
@@ -68,6 +70,6 @@ class MaxN:
 
     def evaluate_weights(self, x, colour):
         # define how we make trade off between our gain and other opponents lost in utility
-        opp_one = self.all_colour[self.root_colour][0]
-        opp_two = self.all_colour[self.root_colour][1]
-        return x[colour]
+        opp_one = self.all_colour[colour][0]
+        opp_two = self.all_colour[colour][1]
+        return x[colour] + (x[opp_one] + x[opp_two]) * config.TRADE_OFF
