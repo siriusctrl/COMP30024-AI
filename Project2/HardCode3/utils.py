@@ -124,7 +124,7 @@ def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange
         log_uti = get_utility(current_board, next_bor, colour, d_heurii, colour_e, arrange)
 
         piece_difference = cal_pdiff(current_board, next_bor, colour)
-        danger_piece = cal_dpiei(current_board, next_bor,colour)
+        danger_piece = cal_dpiei(current_board, next_bor,colour, colour_e)
 
         other_rheu = cal_otherrheu(current_board, next_bor, colour, colour_e)
 
@@ -139,7 +139,7 @@ def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange
         closefuck = cal_clo(current_board, next_bor, colour, colour_e)
 
 
-        ev = hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action, other_rheu, closefuck, et=et)
+        ev = hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action, other_rheu, closefuck)
         rew += check_heuristic_rew(colour_e, next_bor, colour, d_heurii)
 
         #if ev == -1:
@@ -153,7 +153,7 @@ def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange
 
 def get_utility(current_board, suc_bo, colour, re, colour_ea, arrange):
     piece_difference = cal_pdiff(current_board, suc_bo, colour)
-    danger_piece = cal_dpiei(current_board, suc_bo ,colour)
+    danger_piece = cal_dpiei(current_board, suc_bo ,colour, colour_ea)
 
     utility = [
                 re,
@@ -238,8 +238,14 @@ def cal_pdiff(cur_state, next_state, colour):
 
 
 
-def cal_dpiei(cur_state, next_state, colour):
+def cal_dpiei(cur_state, next_state, colour, colour_e):
     nxt_pl = [k for k in next_state.keys() if next_state[k] == colour]
+    nxt_pl.sort(key = lambda x: importance_of_pa(x, colour))
+    
+
+    need = 4 - colour_e[colour]
+    nxt_pl = nxt_pl[:need]
+
     nxt_ot = [k for k in next_state.keys() if next_state[k] != "empty" and next_state[k] != colour]
 
     tmp_current_board = {x: "empty" for x in config.CELLS}
@@ -291,15 +297,15 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
 
     res = 0
 
-    if action[0] == "EXIT":
-        res += 30
+    if action[0] == "EXIT" and (t >= 4):
+        res += 35
 
     if t < 4:
         res += 30 * pieces_difference + (-1) * reduced_heuristic + danger_pieces * (-20) + 1.5 * others + close * (-0.1)
     elif t == 4:
         res += 3 * pieces_difference + (-4) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-20) + 1.5 * others + close * (-0.5)
     else:
-        res += 1 * pieces_difference + (-4) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-5) + 2 * others + close * (-0.5)
+        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-5) + 1.5 * others + close * (-0.1)
 
     return res
 
@@ -321,20 +327,26 @@ def check_heuristic_rew(colour_exit, suc_bo, colour, d_heur):
 def cal_clo(cur_state, next_state, colour, colour_exit):
     need = 4 - colour_exit[colour]
     py = [x for x in next_state.keys() if next_state[x] == colour]
+    
 
     if (need == 0) or (len(py) == 0):
         return 0
 
-    consider_num = max(len(py) - need + 1, 1)
+    py.sort(key = lambda x: importance_of_pa(x, colour))
+
+    py = py[:need]
+
+    # consider_num = max(len(py) - need + 1, 1)
     res = []
-    if consider_num > 0:
-        if len(py) < consider_num:
-            print(py, next_state)
-        for i in range(consider_num):
-            alldist = cal_all_distance(py, py[i])
-            res.append(sum(sorted(alldist)[:need+1]))
+    # if consider_num > 0:
+        # if len(py) < consider_num:
+            # print(py, next_state)
+        # for i in range(consider_num):
+    alldist = cal_all_distance(py, py[0])
+            # shit
+    # res.append(alldist)
     
-    return min(res)
+    return alldist
 
 
 def cal_otherrheu(cur_state, next_state, colour, colour_exit):
@@ -362,3 +374,7 @@ def cal_all_distance(py, pa):
         din += dn
     
     return din
+
+
+def importance_of_pa(pa, colour):
+    return config.COST[colour][pa]
