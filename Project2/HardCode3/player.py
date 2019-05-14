@@ -35,6 +35,8 @@ class Player:
             "green": 0
         }
 
+        self.turn = 0
+
         self.strategy = strategy.Strategy(self.goal, self.colour)
 
         # TODO: Set up state representation.
@@ -62,7 +64,7 @@ class Player:
         actions.
         """
         # TODO: Decide what action to take.
-        return self.strategy.get_possible_moves(self.current_board, self.colour, self.colour_p, self.goal, self.colour_exit)
+        return self.strategy.get_possible_moves(self.current_board, self.colour, self.colour_p, self.goal, self.colour_exit, self.turn)
 
     def update(self, colour, action):
         """
@@ -84,6 +86,8 @@ class Player:
         """
         # TODO: Update state representation in response to action.
         self.update_board(action, colour)
+
+        self.turn = self.turn + 1
 
         for n in self.colour_exit.keys():
             if self.colour_exit[n] == 4:

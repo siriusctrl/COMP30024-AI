@@ -111,7 +111,7 @@ def find_next(piece: tuple, current_board: dict) -> list:
     return next_coords
 
 
-def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange, exit_this=False):
+def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange, tun, exit_this=False):
 
         rew = 0
 
@@ -139,7 +139,7 @@ def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange
         closefuck = cal_clo(current_board, next_bor, colour, colour_e)
 
 
-        ev = hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action, other_rheu, closefuck)
+        ev = hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action, other_rheu, tun, closefuck)
         rew += check_heuristic_rew(colour_e, next_bor, colour, d_heurii)
 
         #if ev == -1:
@@ -281,7 +281,7 @@ def cal_rheu( cur_state, next_state, colour, player_exit):
 '''
 
 
-def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, danger_pieces: int, players, player_exit, action, other_rheu, close) -> float:
+def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, danger_pieces: int, players, player_exit, action, other_rheu, tun, close) -> float:
     """
     1. # possible safety movement (*1)
     2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)

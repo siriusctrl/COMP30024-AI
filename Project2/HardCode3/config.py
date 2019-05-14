@@ -38,6 +38,12 @@ GOALS = {
     ]
 }
 
+NEWGOAL = {
+    "red": [
+        
+    ]
+}
+
 # related to logger
 MORE_RW = 10
 LESS_RW = 100

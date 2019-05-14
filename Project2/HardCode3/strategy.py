@@ -30,8 +30,8 @@ class Strategy:
 
 
 
-    def get_possible_moves(self, current_board, colour, colour_p, goal, colour_e):
-        self.turn += 1
+    def get_possible_moves(self, current_board, colour, colour_p, goal, colour_e, turn):
+        self.turn = turn
 
         node = cnode.CompatNode(current_board, colour, colour_e, turn=self.turn)
 

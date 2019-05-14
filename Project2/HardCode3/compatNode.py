@@ -47,6 +47,7 @@ class CompatNode:
                                       self.colour_p,
                                       self.action,
                                       self.arrange,
+                                      self.turn,
                                       self.action[0] == "EXIT")
                 else:
                     self.calds[c] = utils.cal_all(parent_n.current_board,
@@ -56,6 +57,7 @@ class CompatNode:
                                         self.colour_p,
                                         ("None", None),
                                         config.MAIN[c],
+                                        self.turn,
                                         False)
             for c in ["red", "green", "blue"]:
                 if parent_n.cald != []:
