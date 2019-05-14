@@ -22,7 +22,8 @@ class Strategy:
         self.arrange = config.MAIN[self.colour]
 
         
-
+        for c in config.NEWGOAL.keys():
+            utils.print_board(config.COST[c])
         
         self.turn = 0
 
