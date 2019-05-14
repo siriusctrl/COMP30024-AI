@@ -113,42 +113,50 @@ def find_next(piece: tuple, current_board: dict) -> list:
 
 def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange, tun, exit_this=False):
 
-        rew = 0
+    if current_board[config.current_go[colour]] != colour and current_board[config.current_go[colour]] != "empty":
+        if current_board[config.GOALS[colour][-1]] == colour or current_board[config.GOALS[colour][-1]] == "empty":
+            config.current_go[colour] = config.GOALS[colour][-1]
 
-        d_heurii = cal_rheu(current_board, next_bor, colour, colour_e[colour])
+    if current_board[config.current_go[colour]] != colour and current_board[config.current_go[colour]] != "empty":
+        if current_board[config.GOALS[colour][0]] == colour or current_board[config.GOALS[colour][0]] == "empty":
+            config.current_go[colour] = config.GOALS[colour][0]
+
+    rew = 0
+
+    d_heurii = cal_rheu(current_board, next_bor, colour, colour_e[colour])
         
-        if exit_this:
-            rew += config.EXIT_RW
-        else:
-            pass
-        log_uti = get_utility(current_board, next_bor, colour, d_heurii, colour_e, arrange)
+    if exit_this:
+        rew += config.EXIT_RW
+    else:
+        pass
+    log_uti = get_utility(current_board, next_bor, colour, d_heurii, colour_e, arrange)
 
-        piece_difference = cal_pdiff(current_board, next_bor, colour)
-        danger_piece = cal_dpiei(current_board, next_bor,colour, colour_e)
+    piece_difference = cal_pdiff(current_board, next_bor, colour)
+    danger_piece = cal_dpiei(current_board, next_bor,colour, colour_e)
 
-        other_rheu = cal_otherrheu(current_board, next_bor, colour, colour_e)
+    other_rheu = cal_otherrheu(current_board, next_bor, colour, colour_e)
 
-        et = False
+    et = False
 
-        if action[0] in ("JUMP", ):
-            fr = action[1][0]
-            to = action[1][1]
-            sk = (fr[0] + (to[0] - fr[0]) / 2, fr[1] + (to[1] - fr[1]) / 2)
-            if next_bor[sk] == colour and current_board[sk] != next_bor[sk]:
-                et = True
-        closefuck = cal_clo(current_board, next_bor, colour, colour_e)
+    if action[0] in ("JUMP", ):
+        fr = action[1][0]
+        to = action[1][1]
+        sk = (fr[0] + (to[0] - fr[0]) / 2, fr[1] + (to[1] - fr[1]) / 2)
+        if next_bor[sk] == colour and current_board[sk] != next_bor[sk]:
+            et = True
+    closefuck = cal_clo(current_board, next_bor, colour, colour_e)
 
 
-        ev = hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action, other_rheu, tun, colour, closefuck)
-        rew += check_heuristic_rew(colour_e, next_bor, colour, d_heurii)
+    ev = hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action, other_rheu, tun, colour, closefuck)
+    rew += check_heuristic_rew(colour_e, next_bor, colour, d_heurii)
 
-        #if ev == -1:
-            # print_board(current_board)
-            # print_board(next_bor)
-            # print(colour)
-            # print("============")
+    #if ev == -1:
+        # print_board(current_board)
+        # print_board(next_bor)
+        # print(colour)
+        # print("============")
 
-        return [rew, d_heurii, log_uti, ev]
+    return [rew, d_heurii, log_uti, ev]
 
 
 def get_utility(current_board, suc_bo, colour, re, colour_ea, arrange):
@@ -173,7 +181,7 @@ def heuristic(players, colour, player_exit):
 
     tmp_h = []
     for p in players:
-        tmp_h.append(config.COST[colour][p])
+        tmp_h.append(config.COST[colour][config.current_go[colour]][p])
 
     tmp_h.sort()
     if len(players) + player_exit >= 4:
@@ -379,4 +387,4 @@ def cal_all_distance(py, pa):
 
 
 def importance_of_pa(pa, colour):
-    return config.COST[colour][pa]
+    return config.COST[colour][config.current_go[colour]][pa]

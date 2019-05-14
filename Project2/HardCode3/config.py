@@ -150,7 +150,7 @@ def cost_from_goal(goal: tuple, tmp_current_board: dict, colour) -> None:
 
     cost = {goal: 0}
 
-    COST[colour][goal] = 1
+    COST[colour][goal][goal] = 1
 
     while not q.empty():
 
@@ -185,10 +185,10 @@ def cost_from_goal(goal: tuple, tmp_current_board: dict, colour) -> None:
                 else:
                     h = h + ((s_counter[0] - 1) / 2 + s_counter[1] + 2)'''
 
-                if s[1] not in COST[colour]:
-                    COST[colour][s[1]] = h
-                elif COST[colour][s[1]] > h:
-                    COST[colour][s[1]] = h
+                if s[1] not in COST[colour][goal]:
+                    COST[colour][goal][s[1]] = h
+                elif COST[colour][goal][s[1]] > h:
+                    COST[colour][goal][s[1]] = h
 
     return
 
@@ -197,4 +197,11 @@ tmp_current_board = {x: "empty" for x in CELLS}
 
 for g in NEWGOAL:
     for go in NEWGOAL[g]:
+        COST[g][go] = {}
         cost_from_goal(go, tmp_current_board, g)
+
+current_go = {
+    "red": GOALS["red"][0],
+    "green": GOALS["green"][0],
+    "blue": GOALS["blue"][0]
+}

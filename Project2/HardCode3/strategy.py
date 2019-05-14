@@ -23,7 +23,8 @@ class Strategy:
 
         
         for c in config.NEWGOAL.keys():
-            utils.print_board(config.COST[c])
+            for go in config.COST[c]:
+                utils.print_board(config.COST[c][go])
         
         self.turn = 0
 
