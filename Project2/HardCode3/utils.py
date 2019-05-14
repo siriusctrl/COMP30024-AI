@@ -180,7 +180,7 @@ def heuristic(players, colour, player_exit):
         h = sum(tmp_h[:4 - player_exit])
     else:
         h = sum(tmp_h)
-        h += (4 - (len(players) + player_exit)) * 10
+        h += (4 - (len(players) + player_exit)) * 15
 
     return h
 
@@ -275,7 +275,7 @@ def cal_rheu( cur_state, next_state, colour, player_exit):
 '''
 
 
-def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, danger_pieces: int, players, player_exit, action, other_rheu, closefuck, et=False) -> float:
+def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, danger_pieces: int, players, player_exit, action, other_rheu, close) -> float:
     """
     1. # possible safety movement (*1)
     2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)
@@ -285,7 +285,6 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
     t = len(players) + player_exit
 
     if player_exit == 4:
-        print("fskjebfsefsegsrgsgdsfgsrhsthbfgbxfdgnxfg xgbx")
         return 99999
 
     others = sum(other_rheu.values())
@@ -296,13 +295,14 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
         res += 30
 
     if t < 4:
-        res += 30 * pieces_difference + (-1) * reduced_heuristic + danger_pieces * (-20) + 1.5 * others
+        res += 30 * pieces_difference + (-1) * reduced_heuristic + danger_pieces * (-20) + 1.5 * others + close * (-0.1)
     elif t == 4:
-        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-20) + 1.5 * others + closefuck * (-0.1)
+        res += 3 * pieces_difference + (-4) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-20) + 1.5 * others + close * (-0.5)
     else:
-        res += 5 * pieces_difference + (-6) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-5) + 1.5 * others + closefuck * (-0.1)
+        res += 1 * pieces_difference + (-4) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-5) + 2 * others + close * (-0.5)
 
     return res
+
 
 def check_heuristic_rew(colour_exit, suc_bo, colour, d_heur):
     n_r = [k for k in suc_bo.keys() if suc_bo[k] != "empty" and suc_bo[k] == colour]
@@ -317,22 +317,25 @@ def check_heuristic_rew(colour_exit, suc_bo, colour, d_heur):
 
     return 0
 
+
 def cal_clo(cur_state, next_state, colour, colour_exit):
     need = 4 - colour_exit[colour]
-
-    if need == 0:
-        return 0
-    
     py = [x for x in next_state.keys() if next_state[x] == colour]
-    consider_num = len(py) - need + 1
-    res = 0
+
+    if (need == 0) or (len(py) == 0):
+        return 0
+
+    consider_num = max(len(py) - need + 1, 1)
+    res = []
     if consider_num > 0:
         if len(py) < consider_num:
             print(py, next_state)
         for i in range(consider_num):
-            res += (cal_all_distance(py, py[i]))
+            alldist = cal_all_distance(py, py[i])
+            res.append(sum(sorted(alldist)[:need+1]))
     
-    return res
+    return min(res)
+
 
 def cal_otherrheu(cur_state, next_state, colour, colour_exit):
     colours = ["red", "green", "blue"]
@@ -345,6 +348,7 @@ def cal_otherrheu(cur_state, next_state, colour, colour_exit):
         c_rh[c] = cal_rheu(cur_state, next_state, c, colour_exit[c])
     
     return c_rh
+
 
 def cal_all_distance(py, pa):
 
