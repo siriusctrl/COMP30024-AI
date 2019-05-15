@@ -37,30 +37,22 @@ class MaxN:
             further_utils.append((self.chose_next(c, depth), c))
         print(self.count)
 
-        refactored_utils = sorted(further_utils, key=lambda x: x[0][1].calds[self.current_state.colour][3])
-        
-        for i in refactored_utils:
-            pass
-            #utils.print_board(i[-1].current_board, i[-1].calds)
-            # print(i[0][0])
-            # print("\nfrom=\n")
-            #utils.print_board(i[0][-1].current_board, i[0][-1].calds)
-            #print(utils.cal_all(self.current_state.current_board, i[0][1].current_board, i[0][1].colour, i[0][1].colour_e, i[0][1].colour_p, i[0][1].action, i[0][1].arrange, False)[3])
-        # return the node with highest utility value
+        refactored_utils = sorted(further_utils, key=lambda x: x[0][1].calds[self.current_state.colour][-1])
+
+        best = refactored_utils[-1][0][1]
+
         return refactored_utils[-1][-1]
 
     def chose_next(self, node, depth):
         self.count += 1
         if depth == 0:
-           # if node.calds["green"][-1] > -200:
-                # utils.print_board(node.current_board, node.calds)
-            return (node.get_full_utilities(), node)
+            return node.get_full_utilities(), node
         
         values = [self.chose_next(n, depth - 1) for n in self.explore_next(node, self.next_colour[node.colour], 2)]
         
         # mv = self.max_value(values, node.colour)
 
-        mv =sorted(values, key=lambda x: x[1].calds[node.colour][3])
+        mv = sorted(values, key=lambda x: x[1].calds[node.colour][-1])
 
         return mv[-1]
 
@@ -75,3 +67,17 @@ class MaxN:
         opp_one = self.all_colour[colour][0]
         opp_two = self.all_colour[colour][1]
         return x[colour] + (x[opp_one] + x[opp_two]) * config.TRADE_OFF
+
+
+def softmax_chose(options: list):
+    ops = np.array(options)
+    prob = softmax(np.array(ops))
+    # print("\n", options, "\n", prob, "\n")
+    prob = prob.reshape(len(prob),)
+    return np.random.choice(len(options), 1, p=prob)[0]
+
+
+def softmax(x):
+    """Compute softmax values for each sets of scores in x."""
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum(axis=0)

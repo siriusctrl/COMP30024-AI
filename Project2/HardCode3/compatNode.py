@@ -1,6 +1,8 @@
 import HardCode3.config as config
 import HardCode3.utils as utils
 import copy
+from collections import defaultdict as dd
+
 
 class CompatNode:
 
@@ -11,6 +13,8 @@ class CompatNode:
         self.colour = colour
         self.cost = config.COST
         self.arrange = config.MAIN[self.colour]
+        # do not prefer visited path, unless it is the only choice
+        self.visited = dd(lambda: 0)
 
         self.win = 0
 
@@ -19,7 +23,7 @@ class CompatNode:
 
         self.goal = config.GOALS
 
-        if(action[0] == "EXIT"):
+        if action[0] == "EXIT":
             self.colour_e[colour] += 1
         self.action = action
 
@@ -28,12 +32,11 @@ class CompatNode:
             "green": [],
             "blue": []
         }
-        
 
         for clr in self.colour_p.keys():
             self.colour_p[clr] = [x for x in self.current_board.keys() if self.current_board[x] == clr]
 
-        if parent_n != None:
+        if parent_n is not None:
             self.calds = {
 
             }
@@ -41,30 +44,30 @@ class CompatNode:
 
                 if c == self.colour:
                     self.calds[c] = utils.cal_all(parent_n.current_board,
-                                      self.current_board,
-                                      self.colour,
-                                      self.colour_e,
-                                      self.colour_p,
-                                      self.action,
-                                      self.arrange,
-                                      self.turn,
-                                      self.action[0] == "EXIT")
+                                                  self.current_board,
+                                                  self.colour,
+                                                  self.colour_e,
+                                                  self.colour_p,
+                                                  self.action,
+                                                  self.arrange,
+                                                  self.turn,
+                                                  self.action[0] == "EXIT",
+                                                  self.visited[self.colour_p[self.colour]])
                 else:
                     self.calds[c] = utils.cal_all(parent_n.current_board,
-                                        self.current_board,
-                                        c,
-                                        self.colour_e,
-                                        self.colour_p,
-                                        ("None", None),
-                                        config.MAIN[c],
-                                        self.turn,
-                                        False)
+                                                  self.current_board,
+                                                  c,
+                                                  self.colour_e,
+                                                  self.colour_p,
+                                                  ("None", None),
+                                                  config.MAIN[c],
+                                                  self.turn,
+                                                  False,
+                                                  0)
             for c in ["red", "green", "blue"]:
-                if parent_n.cald != []:
+                if parent_n.cald:
                     self.calds[c][3] += parent_n.calds[c][3]
             self.cald = self.calds[self.colour]
-
-
         else:
             self.cald = []
             self.calds = {
@@ -72,15 +75,13 @@ class CompatNode:
                 "green": [],
                 "blue": []
             }
-    
-    
-    
-    def expand(self, colour =""):
+
+    def expand(self, colour=""):
 
         if colour == "":
             colour = self.colour
 
-        nxt_turn = self.turn +1
+        nxt_turn = self.turn + 1
 
         ps = self.colour_p[colour]
 
@@ -91,11 +92,10 @@ class CompatNode:
         for a in ps:
             if a in self.goal[colour]:
                 action = ("EXIT", a)
-                next_bor =utils.get_next_curbo(self.current_board, action, colour)
-                
+                next_bor = utils.get_next_curbo(self.current_board, action, colour)
+
                 next_node = CompatNode(next_bor, colour, self.colour_e, self, action, nxt_turn)
                 all_state_players.append(next_node)
-
 
         if 2:
             all_ms = []
@@ -110,8 +110,8 @@ class CompatNode:
                         m_action = ("MOVE", (ms[0], ms[1]))
                     elif ms[2] == 2:
                         m_action = ("JUMP", (ms[0], ms[1]))
-                    
-                    next_bor =utils.get_next_curbo(self.current_board, m_action, colour)
+
+                    next_bor = utils.get_next_curbo(self.current_board, m_action, colour)
 
                     next_node = CompatNode(next_bor, colour, self.colour_e, self, m_action, nxt_turn)
 
@@ -120,11 +120,11 @@ class CompatNode:
                     # delta heuristic
             else:
                 action = ("PASS", None)
-                next_bor =utils.get_next_curbo(self.current_board, action, colour)
-                
+                next_bor = utils.get_next_curbo(self.current_board, action, colour)
+
                 next_node = CompatNode(next_bor, colour, self.colour_e, self, action, nxt_turn)
                 all_state_players.append(next_node)
-        
+
         return all_state_players
 
     def get_full_utilities(self):
