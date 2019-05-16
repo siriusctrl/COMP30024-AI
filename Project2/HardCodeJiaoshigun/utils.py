@@ -115,8 +115,12 @@ def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange
 
         rew = 0
 
+        print_board(current_board)
+        print("\n to")
+        print_board(next_bor)
         d_heurii = cal_rheu(current_board, next_bor, colour, colour_e[colour], colour_p)
-        
+        print("d_heurii = ", d_heurii)
+
         if exit_this:
             rew += config.EXIT_RW
         else:
@@ -128,7 +132,7 @@ def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange
 
         other_rheu = cal_otherrheu(current_board, next_bor, colour, colour_e, colour_p)
 
-        ev = hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action, other_rheu, colour, colour_p)
+        ev = evaluate_move(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action, other_rheu, colour, colour_p)
         rew += check_heuristic_rew(colour_e, next_bor, colour, d_heurii)
 
         return rew, d_heurii, log_uti, ev
@@ -152,34 +156,30 @@ def get_utility(current_board, suc_bo, colour, re, colour_ea, arrange, colour_p)
 
 
 def heuristic(players, colour, player_exit, colour_p):
-    h = 0
 
-    tmp_h = []
-    for p in players:
-        # tmp_h.append(config.COST[colour][p])
-        tmp_h.append(10)
+    corner = config.TMPGOALS[colour]
 
-    fuck = config.TMPGOALS[colour]
-
+    # target goal that occupied by other pieces
     ot = [x for c in colour_p.keys() for x in colour_p[c] if c != colour]
+    # find all unoccupied corners
+    unoccupied_corner = [x for x in corner if x not in set(players+ot)]
+    # find our players which are not in corners
+    player_not_in_corner = [x for x in players if x not in corner]
+    print(unoccupied_corner, "players=", player_not_in_corner)
 
-    fuck_am = [x for x in fuck if x not in players]
+    res = 0
 
-    fuck_to = [x for x in players if x not in fuck]
-
-    reduced_heuristic = 0
-
-    for i in fuck_to:
-        tmp_fucks = []
-        for o in fuck_am:
+    for i in player_not_in_corner:
+        available_corner = []
+        for o in unoccupied_corner:
             heuristic_m = config.COST[colour][o]
-            tmp_fucks.append(heuristic_m[i])
-        if len(tmp_fucks) != 0:
-            reduced_heuristic = reduced_heuristic + min(tmp_fucks)
+            #print_board(heuristic_m)
+            available_corner.append(heuristic_m[i])
 
-    tmp_h.sort()
+        if len(available_corner) != 0:
+            res += min(available_corner)
 
-    return reduced_heuristic
+    return res
 
 
 def get_next_curbo(current_board, action, colour):
@@ -257,7 +257,7 @@ def cal_dpiei(cur_state, next_state, colour):
     return len(dengr)
 
 
-def cal_rheu( cur_state, next_state, colour, player_exit, colour_p):
+def cal_rheu(cur_state, next_state, colour, player_exit, colour_p):
     cur_pl = [x for x in cur_state.keys() if cur_state[x] == colour]
     nxt_pl = [x for x in next_state.keys() if next_state[x] == colour]
 
@@ -272,7 +272,7 @@ def cal_rheu( cur_state, next_state, colour, player_exit, colour_p):
 '''
 
 
-def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, danger_pieces: int, players, player_exit, action, other_rheu, colour, colour_p) -> float:
+def evaluate_move(pieces_difference: int, reduced_heuristic: float, danger_pieces: int, players, player_exit, action, other_rheu, colour, colour_p) -> float:
     """
     1. # possible safety movement (*1)
     2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)
@@ -286,22 +286,22 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
 
     others = sum(other_rheu.values())
 
-    
-
-
     res = 0
 
     if action[0] == "EXIT":
         res += 30
 
-    if t < 4:
-        res += 20 * pieces_difference + (-10) * reduced_heuristic + max((danger_pieces - max(0, pieces_difference)), 0) * (-20) + others
-    elif t == 4:
-        res += 20 * pieces_difference + (-10) * reduced_heuristic + max((danger_pieces - max(0, pieces_difference)), 0) * (-20) + others
-    else:
-        res += 20 * pieces_difference + (-10) * reduced_heuristic + max((danger_pieces - max(0, pieces_difference)), 0) * (-5) + 1.5 * others
+    res += -1 * reduced_heuristic
+
+    # if t < 4:
+    #     res += 30 * pieces_difference + (-10) * reduced_heuristic + max((danger_pieces - max(0, pieces_difference)), 0) * (-20) + others
+    # elif t == 4:
+    #     res += 30 * pieces_difference + (-10) * reduced_heuristic + max((danger_pieces - max(0, pieces_difference)), 0) * (-10) + others
+    # else:
+    #     res += 30 * pieces_difference + (-10) * reduced_heuristic + max((danger_pieces - max(0, pieces_difference)), 0) * (-5) + 1.5 * others
 
     return res
+
 
 def check_heuristic_rew(colour_exit, suc_bo, colour, d_heur):
     n_r = [k for k in suc_bo.keys() if suc_bo[k] != "empty" and suc_bo[k] == colour]
@@ -315,6 +315,7 @@ def check_heuristic_rew(colour_exit, suc_bo, colour, d_heur):
         return config.D_HEURISTIC_HORIZONTAL
 
     return 0
+
 
 def cal_otherrheu(cur_state, next_state, colour, colour_exit, colour_p):
     colours = ["red", "green", "blue"]

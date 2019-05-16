@@ -1,6 +1,8 @@
+import copy
+
 import HardCodeJiaoshigun.config as config
 import HardCodeJiaoshigun.utils as utils
-import copy
+
 
 class CompatNode:
 
@@ -19,7 +21,7 @@ class CompatNode:
 
         self.goal = config.GOALS
 
-        if(action[0] == "EXIT"):
+        if action[0] == "EXIT":
             self.colour_e[colour] += 1
         self.action = action
 
@@ -28,12 +30,11 @@ class CompatNode:
             "green": [],
             "blue": []
         }
-        
 
         for clr in self.colour_p.keys():
             self.colour_p[clr] = [x for x in self.current_board.keys() if self.current_board[x] == clr]
 
-        if parent_n != None:
+        if parent_n is not None:
             self.cald = utils.cal_all(parent_n.current_board,
                                       self.current_board,
                                       self.colour,
@@ -44,14 +45,13 @@ class CompatNode:
                                       self.action[0] == "EXIT")
         else:
             self.cald = []
-    
-    
-    def expand(self, colour =""):
+
+    def expand(self, colour=""):
 
         if colour == "":
             colour = self.colour
 
-        nxt_turn = self.turn +1
+        nxt_turn = self.turn + 1
 
         ps = self.colour_p[colour]
 
@@ -62,11 +62,10 @@ class CompatNode:
         for a in ps:
             if a in self.goal[colour]:
                 action = ("EXIT", a)
-                next_bor =utils.get_next_curbo(self.current_board, action, colour)
-                
+                next_bor = utils.get_next_curbo(self.current_board, action, colour)
+
                 next_node = CompatNode(next_bor, colour, self.colour_e, self, action, nxt_turn)
                 all_state_players.append(next_node)
-
 
         if 2:
             all_ms = []
@@ -81,8 +80,8 @@ class CompatNode:
                         m_action = ("MOVE", (ms[0], ms[1]))
                     elif ms[2] == 2:
                         m_action = ("JUMP", (ms[0], ms[1]))
-                    
-                    next_bor =utils.get_next_curbo(self.current_board, m_action, colour)
+
+                    next_bor = utils.get_next_curbo(self.current_board, m_action, colour)
 
                     next_node = CompatNode(next_bor, colour, self.colour_e, self, m_action, nxt_turn)
 
@@ -91,9 +90,9 @@ class CompatNode:
                     # delta heuristic
             else:
                 action = ("PASS", None)
-                next_bor =utils.get_next_curbo(self.current_board, action, colour)
-                
+                next_bor = utils.get_next_curbo(self.current_board, action, colour)
+
                 next_node = CompatNode(next_bor, colour, self.colour_e, self, action, nxt_turn)
                 all_state_players.append(next_node)
-        
+
         return all_state_players

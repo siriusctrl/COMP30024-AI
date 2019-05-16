@@ -31,7 +31,6 @@ class Strategy:
 
         self.logger = logger.Logger(self.colour)
 
-
     def get_possible_moves(self, current_board, colour, colour_p, goal, colour_e):
         self.turn += 1
 
