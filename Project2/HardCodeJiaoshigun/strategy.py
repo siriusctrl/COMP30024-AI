@@ -31,10 +31,10 @@ class Strategy:
 
         self.logger = logger.Logger(self.colour)
 
-    def get_possible_moves(self, current_board, colour, colour_p, goal, colour_e):
+    def get_possible_moves(self, current_board, colour, colour_p, goal, colour_e, player_nums):
         self.turn += 1
 
-        node = cnode.CompatNode(current_board, colour, colour_e, turn=self.turn)
+        node = cnode.CompatNode(current_board, colour, colour_e, player_nums, turn=self.turn)
 
         succesrs = node.expand()
 

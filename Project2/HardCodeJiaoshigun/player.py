@@ -29,6 +29,8 @@ class Player:
         # board in each turn
         self.current_board = {}
 
+        self.player_nums = {}
+
         self.colour_exit = {
             "red": 0,
             "blue": 0,
@@ -62,7 +64,7 @@ class Player:
         actions.
         """
         # TODO: Decide what action to take.
-        return self.strategy.get_possible_moves(self.current_board, self.colour, self.colour_p, self.goal, self.colour_exit)
+        return self.strategy.get_possible_moves(self.current_board, self.colour, self.colour_p, self.goal, self.colour_exit, self.player_nums)
 
     def update(self, colour, action):
         """
@@ -96,6 +98,9 @@ class Player:
                 self.strategy.logger.update_last_log("rew", r)
                 self.strategy.logger.export_log(s_wi)
                 break
+
+        if action[0] in ("JUMP", "MOVE", ""):
+            self.update_player_nums(colour, action[1][0], action[1][1])
 
     def update_board(self, action, colour):
         if action[0] in ("MOVE", "JUMP"):
@@ -142,5 +147,10 @@ class Player:
                 self.colour_exit[colour] = 0
             self.colour_exit[colour] += 1
 
+        return
+
+    
+    def update_player_nums(self, colour, pre_loc, loc):
+        # update self.player_nums
         return
 

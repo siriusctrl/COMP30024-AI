@@ -44,7 +44,7 @@ PIECES_PLACE = {
     "blue": START['blue']
 }
 
-TEMGOALS = {
+TMPGOALS = {
     "red": [
         (-3, 3),
         (0, 3),

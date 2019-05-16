@@ -111,7 +111,7 @@ def find_next(piece: tuple, current_board: dict) -> list:
     return next_coords
 
 
-def calculate_related(current_board, next_board, colour, colour_exit, colour_p, action, arrange, turn, exit_this=False, offset=0):
+def calculate_related(current_board, next_board, colour, colour_exit, colour_p, action, arrange, turn, exit_this=False, player_nums={}, offset=0):
     rew = 0
 
     reduced_heu = calculate_reduced_heuristic(current_board, next_board, colour, colour_exit[colour])

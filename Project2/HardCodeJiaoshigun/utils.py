@@ -111,7 +111,7 @@ def find_next(piece: tuple, current_board: dict) -> list:
     return next_coords
 
 
-def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange, exit_this=False):
+def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange, player_nums, exit_this=False):
 
         rew = 0
 

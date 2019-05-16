@@ -18,6 +18,8 @@ class Strategy:
         self.colour = colour
 
         self.arrange = config.MAIN[self.colour]
+
+
         
         self.turn = 0
 
@@ -25,10 +27,10 @@ class Strategy:
 
 
 
-    def get_possible_moves(self, current_board, colour, colour_exit, turn):
+    def get_possible_moves(self, current_board, colour, colour_exit, player_nums, turn):
         self.turn = turn
 
-        node = cnode.CompatNode(current_board, colour, colour_exit, turn=self.turn)
+        node = cnode.CompatNode(current_board, colour, colour_exit, player_nums, turn=self.turn)
 
         # succesrs = node.expand()
 

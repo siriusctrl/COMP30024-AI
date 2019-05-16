@@ -6,7 +6,7 @@ import HardCodeJiaoshigun.utils as utils
 
 class CompatNode:
 
-    def __init__(self, next_board, colour, last_colour_e, parent_n=None, action=("None", None), turn=0):
+    def __init__(self, next_board, colour, last_colour_e, player_nums, parent_n=None, action=("None", None), turn=0):
         self.turn = turn
         self.current_board = next_board
         self.parent_n = parent_n
@@ -15,6 +15,8 @@ class CompatNode:
         self.arrange = config.MAIN[self.colour]
 
         self.win = 0
+
+        self.player_nums = player_nums
 
         self.last_colour_e = last_colour_e
         self.colour_e = copy.deepcopy(last_colour_e)
@@ -42,7 +44,9 @@ class CompatNode:
                                       self.colour_p,
                                       self.action,
                                       self.arrange,
-                                      self.action[0] == "EXIT")
+                                      self.player_nums,
+                                      self.action[0] == "EXIT",
+                                      )
         else:
             self.cald = []
 
@@ -64,7 +68,9 @@ class CompatNode:
                 action = ("EXIT", a)
                 next_bor = utils.get_next_curbo(self.current_board, action, colour)
 
-                next_node = CompatNode(next_bor, colour, self.colour_e, self, action, nxt_turn)
+                next_player_nums = self.next_player_nums(self.player_nums, action)
+
+                next_node = CompatNode(next_bor, colour, self.colour_e, next_player_nums, self, action, nxt_turn)
                 all_state_players.append(next_node)
 
         if 2:
@@ -83,7 +89,9 @@ class CompatNode:
 
                     next_bor = utils.get_next_curbo(self.current_board, m_action, colour)
 
-                    next_node = CompatNode(next_bor, colour, self.colour_e, self, m_action, nxt_turn)
+                    next_player_nums = self.next_player_nums(self.player_nums, m_action)
+
+                    next_node = CompatNode(next_bor, colour, self.colour_e, next_player_nums, self, m_action, nxt_turn)
 
                     all_state_players.append(next_node)
 
@@ -92,7 +100,15 @@ class CompatNode:
                 action = ("PASS", None)
                 next_bor = utils.get_next_curbo(self.current_board, action, colour)
 
-                next_node = CompatNode(next_bor, colour, self.colour_e, self, action, nxt_turn)
+                next_player_nums = self.next_player_nums(self.player_nums, action)
+
+                next_node = CompatNode(next_bor, colour, self.colour_e, next_player_nums, self, action, nxt_turn)
                 all_state_players.append(next_node)
 
         return all_state_players
+
+
+    def next_player_nums(self, player_num, action):
+        next_player_nums=copy.deepcopy(player_num)
+        # check if action[0] is MOVE or JUMP then action[1][0] is pre and actuion[1][1] is aft
+        return next_player_nums

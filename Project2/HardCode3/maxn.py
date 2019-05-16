@@ -47,7 +47,7 @@ class MaxN:
     def chose_next(self, node, depth):
         self.count += 1
         if depth == 0:
-            return node.get_full_utilities(), node
+            return 0, node
         
         values = [self.chose_next(n, depth - 1) for n in self.explore_next(node, self.next_colour[node.colour], 2)]
         
