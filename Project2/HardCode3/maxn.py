@@ -21,11 +21,12 @@ class MaxN:
         utils = []
 
         '''for i in successor:
-            utils.append((i.cald[3], i))'''
+            utils.append((i.calculated[3], i))'''
 
-        utils = sorted(successor, key=lambda x: x.cald[3])
+        utils = sorted(successor, key=lambda x: x.calculated[3])
 
         utils = utils[len(utils) // discard_rate:]
+        
 
         return utils
 
@@ -37,7 +38,7 @@ class MaxN:
             further_utils.append((self.chose_next(c, depth), c))
         print(self.count)
 
-        refactored_utils = sorted(further_utils, key=lambda x: x[0][1].calds[self.current_state.colour][-1])
+        refactored_utils = sorted(further_utils, key=lambda x: x[0][1].calculateds[self.current_state.colour][-1])
 
         best = refactored_utils[-1][0][1]
 
@@ -52,7 +53,7 @@ class MaxN:
         
         # mv = self.max_value(values, node.colour)
 
-        mv = sorted(values, key=lambda x: x[1].calds[node.colour][-1])
+        mv = sorted(values, key=lambda x: x[1].calculateds[node.colour][-1])
 
         return mv[-1]
 

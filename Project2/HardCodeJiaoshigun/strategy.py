@@ -39,8 +39,6 @@ class Strategy:
 
         succesrs = node.expand()
 
-
-
         max_e = max(succesrs, key=lambda x: x.cald[ 3])
 
         '''for succr in succesrs:

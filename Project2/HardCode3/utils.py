@@ -111,71 +111,35 @@ def find_next(piece: tuple, current_board: dict) -> list:
     return next_coords
 
 
-def cal_all(current_board, next_bor, colour, colour_e, colour_p, action, arrange, tun, exit_this=False, offset=0):
+def calculate_related(current_board, next_board, colour, colour_exit, colour_p, action, arrange, turn, exit_this=False, offset=0):
     rew = 0
 
-    d_heurii = cal_rheu(current_board, next_bor, colour, colour_e[colour])
+    reduced_heu = calculate_reduced_heuristic(current_board, next_board, colour, colour_exit[colour])
 
-    if exit_this:
-        rew += config.EXIT_RW
-    else:
-        pass
+    log_uti = []
 
-    log_uti = get_utility(current_board, next_bor, colour, d_heurii, colour_e, arrange)
-
-    piece_difference = cal_pdiff(current_board, next_bor, colour)
-    danger_piece = cal_dpiei(current_board, next_bor, colour, colour_e)
-
-    other_rheu = cal_otherrheu(current_board, next_bor, colour, colour_e)
-
-    et = False
-
-    if action[0] in ("JUMP",):
-        fr = action[1][0]
-        to = action[1][1]
-        sk = (fr[0] + (to[0] - fr[0]) / 2, fr[1] + (to[1] - fr[1]) / 2)
-        if next_bor[sk] == colour and current_board[sk] != next_bor[sk]:
-            et = True
-    close = cal_clo(current_board, next_bor, colour, colour_e)
-
-    ev = hard_code_eva_function(piece_difference, d_heurii, danger_piece, colour_p[colour], colour_e[colour], action,
-                                other_rheu, tun, close, offset)
-    rew += check_heuristic_rew(colour_e, next_bor, colour, d_heurii)
-
-    # if ev == -1:
-    # print_board(current_board)
-    # print_board(next_bor)
-    # print(colour)
-    # print("============")
-
-    return [rew, d_heurii, log_uti, ev]
+    piece_difference = calculate_piece_difference(current_board, next_board, colour)
+    danger_piece = calculate_danger(current_board, next_board, colour, colour_exit)
+    other_rheu = calculate_otherreducedheu(current_board, next_board, colour, colour_exit)
+    close = calculate_close(current_board, next_board, colour, colour_exit)
+    utility_value = hard_code_eva_function(piece_difference, reduced_heu, danger_piece, 
+                                colour_p[colour], colour_exit[colour], action,
+                                other_rheu, turn, close, offset)
 
 
-def get_utility(current_board, suc_bo, colour, re, colour_ea, arrange):
-    piece_difference = cal_pdiff(current_board, suc_bo, colour)
-    danger_piece = cal_dpiei(current_board, suc_bo, colour, colour_ea)
-
-    utility = [
-        re,
-        piece_difference,
-        danger_piece
-    ]
-
-    utility += player_es(colour_ea, False, arrange)
-
-    utility += cal_heuristic(suc_bo, colour, colour_ea, arrange)
-
-    return utility
+    return [rew, reduced_heu, log_uti, utility_value]
 
 
 def heuristic(players, colour, player_exit):
     h = 0
 
     tmp_h = []
+
     for p in players:
         tmp_h.append(config.COST[colour][p])
 
     tmp_h.sort()
+
     if len(players) + player_exit >= 4:
         h = sum(tmp_h[:4 - player_exit])
     else:
@@ -186,88 +150,71 @@ def heuristic(players, colour, player_exit):
 
 
 def get_next_curbo(current_board, action, colour):
-    t_cur = copy.deepcopy(current_board)
+    next_board = copy.deepcopy(current_board)
 
     if action[0] in ("MOVE", "JUMP"):
-        t_cur[action[1][0]] = "empty"
-        t_cur[action[1][1]] = colour
+        next_board[action[1][0]] = "empty"
+        next_board[action[1][1]] = colour
         if action[0] in ("JUMP",):
             fr = action[1][0]
             to = action[1][1]
             sk = (fr[0] + (to[0] - fr[0]) / 2, fr[1] + (to[1] - fr[1]) / 2)
 
             # well I dont freaking know what im thinking about
-            if t_cur[sk] != "empty" and t_cur[sk] != colour:
-                t_cur[sk] = colour
+            if next_board[sk] != "empty" and next_board[sk] != colour:
+                next_board[sk] = colour
 
     elif action[0] in ("EXIT",):
-        t_cur[action[1]] = "empty"
+        next_board[action[1]] = "empty"
 
-    return t_cur
-
-
-def player_es(colour_e, exit_this, arrange):
-    # only red here wait for more colours
-    rest_ps = [colour_e[k] for k in arrange]
-
-    if exit_this:
-        rest_ps[0] = rest_ps[0] + 1
-
-    return rest_ps
-
-
-def cal_heuristic(suc_bo, colour, colour_exit, arrange):
-    heuris = [heuristic([x for x in suc_bo.keys() if suc_bo[x] == c], c, colour_exit[c]) for c in arrange]
-    return heuris
+    return next_board
 
 
 '''
     calculation of variables used in eval func
 '''
+def calculate_piece_difference(cur_state, next_state, colour):
+    cur_pieces = [k for k in cur_state.keys() if cur_state[k] != "empty" and cur_state[k] == colour]
+    next_pieces = [k for k in next_state.keys() if next_state[k] != "empty" and next_state[k] == colour]
+
+    cur_pieces_board = len(cur_pieces)
+    next_pieces_board = len(next_pieces)
+    return next_pieces_board - cur_pieces_board
 
 
-def cal_pdiff(cur_state, next_state, colour):
-    c_or = [k for k in cur_state.keys() if cur_state[k] != "empty" and cur_state[k] == colour]
-    n_r = [k for k in next_state.keys() if next_state[k] != "empty" and next_state[k] == colour]
+def calculate_danger(cur_state, next_state, colour, colour_exit):
+    next_players = [k for k in next_state.keys() if next_state[k] == colour]
+    next_players.sort(key=lambda x: importance_of_pa(x, colour))
 
-    c_ors = len(c_or)
-    n_s = len(n_r)
-    return n_s - c_ors
+    need = 4 - colour_exit[colour]
+    next_players = next_players[:need]
 
-
-def cal_dpiei(cur_state, next_state, colour, colour_e):
-    nxt_pl = [k for k in next_state.keys() if next_state[k] == colour]
-    nxt_pl.sort(key=lambda x: importance_of_pa(x, colour))
-
-    need = 4 - colour_e[colour]
-    nxt_pl = nxt_pl[:need]
-
-    nxt_ot = [k for k in next_state.keys() if next_state[k] != "empty" and next_state[k] != colour]
+    next_others = [k for k in next_state.keys() if next_state[k] != "empty" and next_state[k] != colour]
 
     tmp_current_board = {x: "empty" for x in config.CELLS}
-    for p in nxt_pl:
+    for p in next_players:
         tmp_current_board[p] = "n"
-    for p in nxt_ot:
+    for p in next_others:
         tmp_current_board[p] = "n"
 
     dengr = set({})
 
-    for p in nxt_ot:
-        p_nxt = find_next(p, tmp_current_board)
-        for d in p_nxt:
-            if d[2] == 2:
-                if d[3] in nxt_pl:
-                    dengr.add(d[3])
+    for p in next_others:
+        p_next_action = find_next(p, tmp_current_board)
+        for action in p_next_action:
+            if action[2] == 2:
+                if action[3] in next_players:
+                    dengr.add(action[3])
 
     return len(dengr)
 
 
-def cal_rheu(cur_state, next_state, colour, player_exit):
-    cur_pl = [x for x in cur_state.keys() if cur_state[x] == colour]
-    nxt_pl = [x for x in next_state.keys() if next_state[x] == colour]
+def calculate_reduced_heuristic(cur_state, next_state, colour, player_exit):
+    cur_pieces = [x for x in cur_state.keys() if cur_state[x] == colour]
+    next_pieces = [x for x in next_state.keys() if next_state[x] == colour]
 
-    cur_heuri = heuristic(cur_pl, colour, player_exit)
-    nxt_heuri = heuristic(nxt_pl, colour, player_exit)
+    cur_heuri = heuristic(cur_pieces, colour, player_exit)
+    nxt_heuri = heuristic(next_pieces, colour, player_exit)
 
     return nxt_heuri - cur_heuri
 
@@ -276,9 +223,8 @@ def cal_rheu(cur_state, next_state, colour, player_exit):
     eval func
 '''
 
-
 def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, danger_pieces: int, players, player_exit,
-                           action, other_rheu, tun, close, offset: float) -> float:
+                           action, other_rheu, turn, close, offset: float) -> float:
     """
     1. # possible safety movement (*1)
     2. reduced heuristic to dest (positive means increased, negative means decreased) *(-2)
@@ -302,7 +248,7 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
     elif t == 4:
         res += 1 * pieces_difference + max((danger_pieces - max(0, pieces_difference)), 0) * (-25)
 
-        if tun > 15:
+        if turn > 15:
             res += close * (-0.1) + (-8) * reduced_heuristic + 0.5 * others
         else:
             res += close * (-0.4) + (-2) * reduced_heuristic + 0.5 * others
@@ -310,75 +256,51 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
 
         res += 1 * pieces_difference + max((danger_pieces - max(0, pieces_difference)), 0) * (-15) + 0.5 * others
 
-        if tun > 15:
+        if turn > 15:
             res += close * (-0.1) + (-8) * reduced_heuristic
         else:
             res += close * (-0.4) + (-2) * reduced_heuristic
     return res
 
 
-def check_heuristic_rew(colour_exit, suc_bo, colour, d_heur):
-    n_r = [k for k in suc_bo.keys() if suc_bo[k] != "empty" and suc_bo[k] == colour]
-    exited = colour_exit[colour]
-
-    count = exited + len(n_r)
-
-    if d_heur > 0:
-        return config.D_HEURISTIC
-    elif d_heur == 0:
-        return config.D_HEURISTIC_HORIZONTAL
-
-    return 0
-
-
-def cal_clo(cur_state, next_state, colour, colour_exit):
+def calculate_close(cur_state, next_state, colour, colour_exit):
     need = 4 - colour_exit[colour]
-    py = [x for x in next_state.keys() if next_state[x] == colour]
+    next_players = [x for x in next_state.keys() if next_state[x] == colour]
 
-    if (need == 0) or (len(py) == 0):
+    if (need == 0) or (len(next_players) == 0):
         return 0
 
-    py.sort(key=lambda x: importance_of_pa(x, colour))
+    next_players.sort(key=lambda x: importance_of_pa(x, colour))
+    next_players = next_players[:need]
 
-    py = py[:need]
-
-    # consider_num = max(len(py) - need + 1, 1)
-    res = []
-    # if consider_num > 0:
-    # if len(py) < consider_num:
-    # print(py, next_state)
-    # for i in range(consider_num):
-    alldist = cal_all_distance(py, py[0])
-    # shit
-    # res.append(alldist)
+    alldist = cal_all_distance(next_players, next_players[0])
 
     return alldist
 
 
-def cal_otherrheu(cur_state, next_state, colour, colour_exit):
+def calculate_otherreducedheu(cur_state, next_state, colour, colour_exit):
     colours = ["red", "green", "blue"]
     colours.remove(colour)
 
-    c_rh = {
-    }
-
+    c_rh = {}
     for c in colours:
-        c_rh[c] = cal_rheu(cur_state, next_state, c, colour_exit[c])
+        c_rh[c] = calculate_reduced_heuristic(cur_state, next_state, c, colour_exit[c])
 
     return c_rh
 
 
-def cal_all_distance(py, pa):
-    thr = pa[0], -(pa[0] + pa[1]), pa[1]
-    din = 0
-    for pj in py:
-        pjt = pj[0], -(pj[0] + pj[1]), pj[1]
+def cal_all_distance(next_players, player):
+    player_transformed = player[0], -(player[0] + player[1]), player[1]
+    distance = 0
 
-        dn = (abs(thr[0] - pjt[0]) + abs(thr[1] - pjt[1]) + abs(thr[2] - pjt[2])) / 2
+    for next_player in next_players:
+        next_player_ted = next_player[0], -(next_player[0] + next_player[1]), next_player[1]
 
-        din += dn
+        dis = (abs(player_transformed[0] - next_player_ted[0]) + abs(player_transformed[1] - next_player_ted[1]) + abs(player_transformed[2] - next_player_ted[2])) / 2
 
-    return din
+        distance += dis
+
+    return distance
 
 
 def importance_of_pa(pa, colour):
