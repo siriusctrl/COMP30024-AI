@@ -195,6 +195,7 @@ def cost_from_goal(goal: tuple, tmp_current_board: dict, colour) -> None:
 
 tmp_current_board = {x: "empty" for x in CELLS}
 
-for g in NEWGOAL:
-    for go in NEWGOAL[g]:
+
+for g in GOALS:
+    for go in GOALS[g]:
         cost_from_goal(go, tmp_current_board, g)
