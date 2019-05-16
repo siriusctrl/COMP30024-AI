@@ -52,7 +52,7 @@ class CompatNode:
                                                   self.arrange,
                                                   self.turn,
                                                   self.action[0] == "EXIT",
-                                                  self.visited[self.colour_p[self.colour]])
+                                                  0)
                 else:
                     self.calds[c] = utils.cal_all(parent_n.current_board,
                                                   self.current_board,

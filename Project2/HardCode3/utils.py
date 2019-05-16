@@ -298,19 +298,22 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
         res += 35
 
     if t < 4:
-        res += 30 * pieces_difference + (-1) * reduced_heuristic + (danger_pieces - max(0, pieces_difference)) * (-20)
+        res += 30 * pieces_difference + (-1) * reduced_heuristic + danger_pieces * (-20)
     elif t == 4:
-        res += 1 * pieces_difference + (danger_pieces - max(0, pieces_difference)) * (-20) + 1.5 * others
-        if tun > 30:
-            res += close * (-0.1) + (-1) * reduced_heuristic + 1.5 * others
+        res += 1 * pieces_difference + max((danger_pieces - max(0, pieces_difference)), 0) * (-25)
+
+        if tun > 15:
+            res += close * (-0.1) + (-8) * reduced_heuristic + 0.5 * others
         else:
-            res += close * (-0.8) + (-4) * reduced_heuristic + 1 * others
+            res += close * (-0.4) + (-2) * reduced_heuristic + 0.5 * others
     else:
-        res += 1 * pieces_difference + (danger_pieces - max(0, pieces_difference)) * (-10)
-        if tun > 30:
-            res += close * (-0.1) + (-1) * reduced_heuristic + 1.5 * others
+
+        res += 1 * pieces_difference + max((danger_pieces - max(0, pieces_difference)), 0) * (-15) + 0.5 * others
+
+        if tun > 15:
+            res += close * (-0.1) + (-8) * reduced_heuristic
         else:
-            res += close * (-0.8) + (-4) * reduced_heuristic + 1 * others
+            res += close * (-0.4) + (-2) * reduced_heuristic
     return res
 
 
