@@ -169,15 +169,33 @@ def heuristic(players, colour, player_exit, colour_p):
 
     res = 0
 
-    for i in player_not_in_corner:
-        available_corner = []
-        for o in unoccupied_corner:
-            heuristic_m = config.COST[colour][o]
-            #print_board(heuristic_m)
-            available_corner.append(heuristic_m[i])
+    if len(players) < 4:
 
-        if len(available_corner) != 0:
-            res += min(available_corner)
+        for i in player_not_in_corner:
+            available_corner = []
+            for o in unoccupied_corner:
+                heuristic_m = config.COST[colour][o]
+                #print_board(heuristic_m)
+                available_corner.append((heuristic_m[i], o))
+
+            if len(available_corner) != 0:
+                min_corner = min(available_corner, key=lambda x: x[0])
+                res += min_corner[0]
+                unoccupied_corner.remove(min_corner[1])
+    
+    else:
+        for o in unoccupied_corner:
+        
+            available_corner = []
+            for i in player_not_in_corner:
+                heuristic_m = config.COST[colour][o]
+                #print_board(heuristic_m)
+                available_corner.append((heuristic_m[i], i))
+
+            if len(available_corner) != 0:
+                min_corner = min(available_corner, key=lambda x: x[0])
+                res += min_corner[0]
+                player_not_in_corner.remove(min_corner[1])
 
     return res
 
@@ -291,14 +309,14 @@ def evaluate_move(pieces_difference: int, reduced_heuristic: float, danger_piece
     if action[0] == "EXIT":
         res += 30
 
-    res += -1 * reduced_heuristic
+    # res += -1 * reduced_heuristic
 
-    # if t < 4:
-    #     res += 30 * pieces_difference + (-10) * reduced_heuristic + max((danger_pieces - max(0, pieces_difference)), 0) * (-20) + others
-    # elif t == 4:
-    #     res += 30 * pieces_difference + (-10) * reduced_heuristic + max((danger_pieces - max(0, pieces_difference)), 0) * (-10) + others
-    # else:
-    #     res += 30 * pieces_difference + (-10) * reduced_heuristic + max((danger_pieces - max(0, pieces_difference)), 0) * (-5) + 1.5 * others
+    if t < 4:
+         res += 50 * pieces_difference + (-10) * reduced_heuristic + max((danger_pieces - max(0, pieces_difference)), 0) * (-20) + others
+    elif t == 4:
+        res += 30 * pieces_difference + (-5) * reduced_heuristic + max((danger_pieces - max(0, pieces_difference)), 0) * (-10) + others
+    else:
+        res += 30 * pieces_difference + (-5) * reduced_heuristic + max((danger_pieces - max(0, pieces_difference)), 0) * (-5) + 1.5 * others
 
     return res
 

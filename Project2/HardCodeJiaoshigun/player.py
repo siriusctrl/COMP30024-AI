@@ -29,7 +29,9 @@ class Player:
         # board in each turn
         self.current_board = {}
 
-        self.player_nums = {}
+        self.player_nums = {
+
+        }
 
         self.colour_exit = {
             "red": 0,
@@ -152,5 +154,8 @@ class Player:
     
     def update_player_nums(self, colour, pre_loc, loc):
         # update self.player_nums
+        if colour == self.colour:
+            if pre_loc in self.player_nums:
+                pass
         return
 

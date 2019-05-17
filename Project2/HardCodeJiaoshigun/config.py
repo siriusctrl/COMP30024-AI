@@ -46,10 +46,10 @@ PIECES_PLACE = {
 
 TMPGOALS = {
     "red": [
-        (-3, 3),
         (0, 3),
-        (0, -3),
+        (-3, 3),
         (-3, 0),
+        (0, -3),
     ],
     "green": [
         (0, -3),
@@ -64,6 +64,10 @@ TMPGOALS = {
         (0, 3)
     ]
 }
+
+# piece < 4 then find the point (conor)
+# piece > 4 then point find piece
+# only count the piece 
 
 # related to logger
 MORE_RW = 10
