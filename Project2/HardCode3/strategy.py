@@ -1,10 +1,5 @@
-import HardCode3.utils as utils
 import HardCode3.config as config
-import HardCode3.logger as logger
-
 import HardCode3.compatNode as cnode
-import copy
-import queue
 import HardCode3.maxn as maxn
 
 # 2 utility:

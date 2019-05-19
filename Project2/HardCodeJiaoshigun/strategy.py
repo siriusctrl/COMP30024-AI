@@ -21,8 +21,6 @@ class Strategy:
 
         self.arrange = config.MAIN[self.colour]
 
-        
-
         for g in config.GOALS:
 
             utils.print_board(self.cost[g], g)
@@ -38,14 +36,13 @@ class Strategy:
 
         succesrs = node.expand()
 
-        max_e = max(succesrs, key=lambda x: x.cald[ 3])
+        max_e = max(succesrs, key=lambda x: x.cald[3])
 
         '''for succr in succesrs:
 
             if succr.action[0] in ("EXIT", None):
                 max_e = succr
                 '''
-
 
         re = max_e.cald[1]
         utility = max_e.cald[2]

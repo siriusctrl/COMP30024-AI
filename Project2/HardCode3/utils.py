@@ -1,5 +1,5 @@
-import HardCode3.config as config
 import copy
+import HardCode3.config as config
 
 
 def print_board(board_dict: dict, message: str = "", debug: bool = False, **kwargs) -> None:
@@ -81,7 +81,7 @@ def find_next(piece: tuple, current_board: dict) -> list:
     the give coordinate on the board.
     
     returns:
-        list of next moves of all pieces : [(piece, move_to, 1 or 2, skiped piece), ]
+        list of next moves of all pieces : [(piece, move_to, 1 or 2, skipped piece), ]
     """
 
     # distance that can be reached by action MOVE
@@ -114,46 +114,50 @@ def find_next(piece: tuple, current_board: dict) -> list:
     return next_coords
 
 
-def calculate_related(current_board, next_board, colour, colour_exit, 
-                            colour_p, action, turn, exit_this=False, offset=0):
-    '''
+def calculate_related(current_board, next_board, colour, colour_exit,
+                      colour_p, action, turn, exit_this=False, offset=0):
+    """
         calculate all related utility values
         but currently, rew and log_uti is ignored and abandoned.
 
         return a list : [0, reduced heuristic, [], utility value]
-    '''
+    """
     rew = 0
 
-    reduced_heu = calculate_reduced_heuristic(current_board, 
-                            next_board, colour, colour_exit[colour])
+    reduced_heu = calculate_reduced_heuristic(current_board,
+                                              next_board, colour, colour_exit[colour])
 
     log_uti = []
 
-    piece_difference = calculate_piece_difference(current_board, 
-                                                next_board, colour)
-    danger_piece = calculate_danger(current_board, next_board, colour, 
-                                                colour_exit)
-    other_rheu = calculate_otherreducedheu(current_board, next_board, colour, 
-                                                colour_exit)
-    close = calculate_close(current_board, next_board, colour, 
-                                                colour_exit)
-    utility_value = hard_code_eva_function(piece_difference, reduced_heu, 
-                                danger_piece, colour_p[colour], 
-                                colour_exit[colour], action, other_rheu, 
-                                turn, close, offset)
+    piece_difference = calculate_piece_difference(current_board,
+                                                  next_board, colour)
+
+    danger_piece = calculate_danger(current_board, next_board, colour,
+                                    colour_exit)
+
+    other_reduced_heuristic = calculate_others_reduced_heuristic(current_board, next_board, colour,
+                                                                 colour_exit)
+
+    close = calculate_close(current_board, next_board, colour,
+                            colour_exit)
+
+    utility_value = hard_code_eva_function(piece_difference, reduced_heu,
+                                           danger_piece, colour_p[colour],
+                                           colour_exit[colour], action, other_reduced_heuristic,
+                                           turn, close, offset)
 
     return [rew, reduced_heu, log_uti, utility_value]
 
 
 def heuristic(players, colour, player_exit):
-    '''
+    """
         heuristic function
 
-        evaluate how much distance we need to get 
+        evaluate how much distance we need to get
         this state to goal state.
 
         intuitively, its the number of move steps we should further take
-        But the value is calculated differently when the 
+        But the value is calculated differently when the
         number of pieces (sum of exits and pieces in board)
         is varied around 4.
 
@@ -162,7 +166,7 @@ def heuristic(players, colour, player_exit):
             colour: player's colour
             player_exit: colour's count of exits
 
-    '''
+    """
     h = 0
 
     # all currently in-board pieces' distance to nearest goals.
@@ -175,11 +179,11 @@ def heuristic(players, colour, player_exit):
 
     # if exits + pieces in board >= 4
     if len(players) + player_exit >= 4:
-        
+
         # get sum of the least 4 heuristics to be the overall heuristic of current state
         h = sum(tmp_h[:4 - player_exit])
     else:
-        
+
         # pieces is not enough for winning
         # get sum of all in-board pieces' heuristics and for each of the number of lacking pieces, 15
         # which is the intuitively max steps taking from any where of the board to goal
@@ -190,14 +194,14 @@ def heuristic(players, colour, player_exit):
 
 
 def get_next_curbo(current_board, action, colour):
-    '''
+    """
         getting next board given current board and the action to change the board
 
         args:
-            current_board: dict of board, {coordin: colour, }
+            current_board: dict of board, {coordinates: colour, }
             action: action shown in spec, (action type, action params)
             colour: colour of player who did the action
-    '''
+    """
 
     next_board = copy.deepcopy(current_board)
 
@@ -222,14 +226,14 @@ def get_next_curbo(current_board, action, colour):
 
 
 def calculate_piece_difference(cur_state, next_state, colour):
-    '''
+    """
         calculate piece difference of player in colour
 
         args:
-            cur_state: dict of current board {coordin:colour,}
-            next_state: dict of next board {coordin: colour,}
+            cur_state: dict of current board {coordinates:colour,}
+            next_state: dict of next board {coordinates: colour,}
             colour: colour of player who is calculating piece difference
-    '''
+    """
 
     # current pieces of colour and next pieces of colours
     cur_pieces = [k for k in cur_state.keys() if cur_state[k] != "empty" and cur_state[k] == colour]
@@ -243,15 +247,15 @@ def calculate_piece_difference(cur_state, next_state, colour):
 
 
 def calculate_danger(cur_state, next_state, colour, colour_exit):
-    '''
+    """
         danger pieces
 
         args:
-            cur_state: dict of current board {coordin:colour,}
-            next_state: dict of next board {coordin: colour,}
+            cur_state: dict of current board {coordinates :colour,}
+            next_state: dict of next board {coordinates : colour,}
             colour: colour of player who is calculating piece difference
             colour_exit: all player's count of exits {colour: counts}
-    '''
+    """
 
     # next state's pieces sorted using importance (heuristic)
     next_players = [k for k in next_state.keys() if next_state[k] == colour]
@@ -288,30 +292,30 @@ def calculate_danger(cur_state, next_state, colour, colour_exit):
 
 
 def calculate_reduced_heuristic(cur_state, next_state, colour, player_exit):
-    '''
+    """
         calculate reduced heuristic
 
         args:
-            cur_state: current state {coordin: colour}
-            next_state: next state {coordin: colour}
+            cur_state: current state {coordinates: colour}
+            next_state: next state {coordinates: colour}
             colour: player's colour
             player_exit: player's exits count
-    '''
+    """
 
     # pieces in current state and next states
     cur_pieces = [x for x in cur_state.keys() if cur_state[x] == colour]
     next_pieces = [x for x in next_state.keys() if next_state[x] == colour]
 
     # total heuristics of two states
-    cur_heuri = heuristic(cur_pieces, colour, player_exit)
-    nxt_heuri = heuristic(next_pieces, colour, player_exit)
+    cur_heuristic = heuristic(cur_pieces, colour, player_exit)
+    nxt_heuristic = heuristic(next_pieces, colour, player_exit)
 
-    return nxt_heuri - cur_heuri
+    return nxt_heuristic - cur_heuristic
 
 
 def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, danger_pieces: int, players, player_exit,
-                           action, other_rheu, turn, close, offset: float) -> float:
-    '''
+                           action, other_reduced_heuristic, turn, close, offset: float) -> float:
+    """
         utility
 
         args:
@@ -321,10 +325,10 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
             players: list of player's pieces coordinates
             player_exit: player's count of exits
             action: the action take from last state to this state
-            other_rheu: other player's reduced heu
+            other_rheu: other player's reduced heuristic
             turn: turns so far of current game
             close: how close that important pieces are
-    '''
+    """
 
     # sum of exits and pieces in-board
     t = len(players) + player_exit
@@ -335,53 +339,57 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
 
     # other player's reduced heuristic
     # evaluate if we can stuck others and let them move backwards
-    others = sum(other_rheu.values())
+    others = sum(other_reduced_heuristic.values())
 
     res = 0 - offset
 
-    # if a piece can leave
+    # if a piece can leave we assign it with a slightly higher marks
+    # since we prefer it to leave early to gain advantages to win the
+    # game unless that action could result in some other bad results
     if action[0] == "EXIT" and (t >= 4):
         res += 35
 
     # if now lacking pieces to win
     if t < 4:
-        # emphasizes getting more pieces and save existing pieces
-        res += 30 * pieces_difference + (-1) * reduced_heuristic + danger_pieces * (-20)
-
+        # emphasizes getting more pieces and save existing pieces and consider take which piece could
+        # give our opponents more pain
+        res += 30 * pieces_difference + (-1) * reduced_heuristic + danger_pieces * (-20) + 0.1 * others
+    # we have just the right number of piece to win the game
     elif t == 4:
+        res += 1 * pieces_difference + max((danger_pieces - max(0, pieces_difference)), 0) * (-25)
 
         # getting more pieces if we can
         # but more carefully move towards goal
         res += 3 * pieces_difference + max((danger_pieces - max(0, pieces_difference)), 0) * (-25)
 
         if turn > 15:
-            res += close * (-0.1) + (-8) * reduced_heuristic + 0.5 * others
+            res += close * (-0.1) + (-6) * reduced_heuristic + 0.5 * others
         else:
             res += close * (-0.4) + (-2) * reduced_heuristic + 0.3 * others
+    # we now have at least one spare piece in terms of winning the game
     else:
-
-        # no need to get more
-        # move towards the goal
+        # do not prefer to get more pieces
+        # highly recommend to move toward the goal
         # stuck others
-        res += 1 * pieces_difference + max((danger_pieces - max(0, pieces_difference)), 0) * (-15) + 0.8 * others
+        res += 1 * pieces_difference + max((danger_pieces - max(0, pieces_difference)), 0) * (-15) + 0.3 * others
 
         if turn > 15:
-            res += close * (-0.1) + (-8) * reduced_heuristic
+            res += close * (-0.1) + (-6) * reduced_heuristic
         else:
             res += close * (-0.4) + (-2) * reduced_heuristic
     return res
 
 
 def calculate_close(cur_state, next_state, colour, colour_exit):
-    '''
+    """
         calculate how close player's pieces are
 
         args:
-            cur_state: dict of all pieces {coordin: colour
-            next_state: dict of all pieces in next state {coordin: colour}
+            cur_state: dict of all pieces {coordinate: colour
+            next_state: dict of all pieces in next state {coordinate: colour}
             colour_exit: dict of players and count of exits {colour: count exits}
             colour: player
-    '''
+    """
 
     # how much pieces we need to calculate this variable
     need = 4 - colour_exit[colour]
@@ -395,21 +403,21 @@ def calculate_close(cur_state, next_state, colour, colour_exit):
     next_players = next_players[:need]
 
     # calculate distances between important players
-    alldist = cal_all_distance(next_players, next_players[0])
+    cohesive = cal_all_distance(next_players, next_players[0])
 
-    return alldist
+    return cohesive
 
 
-def calculate_otherreducedheu(cur_state, next_state, colour, colour_exit):
-    '''
+def calculate_others_reduced_heuristic(cur_state, next_state, colour, colour_exit):
+    """
         calculate other's reduced heuristics of current state and next state
 
         args:
-            cur_state: dict {coordin: colour}
-            next_state: dict of next state {coordin: colour}
+            cur_state: dict {coordinate: colour}
+            next_state: dict of next state {coordinate: colour}
             colour: player's colour
             colour_exit: dict of player and count exits {colour: exit counts}
-    '''
+    """
 
     colours = ["red", "green", "blue"]
     colours.remove(colour)
@@ -423,22 +431,22 @@ def calculate_otherreducedheu(cur_state, next_state, colour, colour_exit):
 
 
 def cal_all_distance(next_players, player):
-    '''
+    """
         calculate distance between next_players and player
 
         args:
             next_players: list of pieces
             player: piece
-    '''
+    """
     player_transformed = player[0], -(player[0] + player[1]), player[1]
     distance = 0
 
     for next_player in next_players:
         next_player_ted = next_player[0], -(next_player[0] + next_player[1]), next_player[1]
 
-        dis = (abs(player_transformed[0] - next_player_ted[0]) + 
-                    abs(player_transformed[1] - next_player_ted[1]) + 
-                    abs(player_transformed[2] - next_player_ted[2])) / 2
+        dis = (abs(player_transformed[0] - next_player_ted[0]) +
+               abs(player_transformed[1] - next_player_ted[1]) +
+               abs(player_transformed[2] - next_player_ted[2])) / 2
 
         distance += dis
 
@@ -446,9 +454,9 @@ def cal_all_distance(next_players, player):
 
 
 def importance_of_pa(pa, colour):
-    '''
+    """
         importance of a player in colour
 
         pa: piece
-    '''
+    """
     return config.COST[colour][pa]

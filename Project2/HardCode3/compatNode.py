@@ -6,12 +6,12 @@ from collections import defaultdict as dd
 
 class CompatNode:
 
-    def __init__(self, next_board, colour, last_colour_exit, parent_n=None, 
-                                                action=("None", None), turn=0):
-        '''
+    def __init__(self, next_board, colour, last_colour_exit, parent_n=None,
+                 action=("None", None), turn=0):
+        """
             initialize CompatNode
 
-            We use a node to represent a state, no matter the state is an 
+            We use a node to represent a state, no matter the state is an
             actual state of current game or the imagine state in the tree
             of maxN.
 
@@ -20,17 +20,17 @@ class CompatNode:
 
                 colour:             the player's colour in this node
 
-                last_colour_exit:   a dict of players' colour and their 
+                last_colour_exit:   a dict of players' colour and their
                                     number of exit pieces
 
                 parent_n:           parent node
 
-                action:             last action from last state to 
+                action:             last action from last state to
                                     this state
 
                 turn:               game's total turn so far
-        '''
-        
+        """
+
         self.turn = turn
         self.current_board = next_board
         self.parent_n = parent_n
@@ -66,65 +66,64 @@ class CompatNode:
 
         # different colour's pieces
         for clr in self.colour_players.keys():
-            self.colour_players[clr] = [x for x in self.current_board.keys() 
-                                            if self.current_board[x] == clr]
+            self.colour_players[clr] = [x for x in self.current_board.keys()
+                                        if self.current_board[x] == clr]
 
         if parent_n is not None:
 
-            # calculate all player's utility value for this state
-            self.calculateds = {}
+            # calculate all player's evaluation for this state
+            self.evals = {}
 
             for c in ["red", "green", "blue"]:
 
                 if c == self.colour:
-                    self.calculateds[c] = utils.calculate_related(
-                                                parent_n.current_board,
-                                                self.current_board,
-                                                self.colour,
-                                                self.colour_exit,
-                                                self.colour_players,
-                                                self.action,
-                                                self.turn,
-                                                self.action[0] == "EXIT",
-                                                0)
+                    self.evals[c] = utils.calculate_related(
+                        parent_n.current_board,
+                        self.current_board,
+                        self.colour,
+                        self.colour_exit,
+                        self.colour_players,
+                        self.action,
+                        self.turn,
+                        self.action[0] == "EXIT",
+                        0)
                 else:
-                    self.calculateds[c] = utils.calculate_related(
-                                                parent_n.current_board,
-                                                self.current_board,
-                                                c,
-                                                self.colour_exit,
-                                                self.colour_players,
-                                                ("None", None),
-                                                self.turn,
-                                                False,
-                                                0)
+                    self.evals[c] = utils.calculate_related(
+                        parent_n.current_board,
+                        self.current_board,
+                        c,
+                        self.colour_exit,
+                        self.colour_players,
+                        ("None", None),
+                        self.turn,
+                        False,
+                        0)
 
             # accumulate utility value from parent to this state
             for c in ["red", "green", "blue"]:
-                if parent_n.calculated:
-                    self.calculateds[c][3] += parent_n.calculateds[c][3]
+                if parent_n.evals[c]:
+                    print(self.evals[c], "parents = ", parent_n.evals)
+                    self.evals[c][3] += parent_n.evals[c][3]
 
-            # get self colour's utility value
-            self.calculated = self.calculateds[self.colour]
-            
+            # get self colour's evaluation values
+            self.eval = self.evals[self.colour]
+
         else:
-
-            self.calculated = []
-            self.calculateds = {
+            self.eval = []
+            self.evals = {
                 "red": [],
                 "green": [],
                 "blue": []
             }
 
-
     def expand(self, colour=""):
-        '''
+        """
             expand successors from this state
 
             args:
                 colour:     next successor's player's colour
                             used when consider other player's move in MaxN
-        '''
+        """
 
         if colour == "":
             colour = self.colour
@@ -146,14 +145,13 @@ class CompatNode:
                 action = ("EXIT", a)
 
                 # next board
-                next_bor = utils.get_next_curbo(self.current_board, action, 
-                                                                        colour)
+                next_bor = utils.get_next_curbo(self.current_board, action,
+                                                colour)
 
-                next_node = CompatNode(next_bor, colour, self.colour_exit, 
-                                                        self, action, nxt_turn)
+                next_node = CompatNode(next_bor, colour, self.colour_exit,
+                                       self, action, nxt_turn)
                 all_state_players.append(next_node)
 
-        
         # all next actions
         all_ms = []
         for p in ps:
@@ -170,28 +168,26 @@ class CompatNode:
                     m_action = ("JUMP", (ms[0], ms[1]))
 
                 # get next board from the this action
-                next_bor = utils.get_next_curbo(self.current_board, 
-                                                        m_action, colour)
+                next_bor = utils.get_next_curbo(self.current_board,
+                                                m_action, colour)
 
-                next_node = CompatNode(next_bor, colour, self.colour_exit, 
-                                                        self, m_action, nxt_turn)
+                next_node = CompatNode(next_bor, colour, self.colour_exit,
+                                       self, m_action, nxt_turn)
 
                 all_state_players.append(next_node)
-        
+
         else:
-            
+
             if len(all_state_players) == 0:
                 action = ("PASS", None)
 
                 # next board
-                next_bor = utils.get_next_curbo(self.current_board, action, 
-                                                                        colour)
+                next_bor = utils.get_next_curbo(self.current_board, action,
+                                                colour)
 
-                next_node = CompatNode(next_bor, colour, self.colour_exit, 
-                                                        self, action, nxt_turn)
+                next_node = CompatNode(next_bor, colour, self.colour_exit,
+                                       self, action, nxt_turn)
 
                 all_state_players.append(next_node)
 
-
         return all_state_players
-
