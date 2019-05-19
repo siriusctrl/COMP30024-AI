@@ -3,13 +3,6 @@ import queue
 # define the boundary of the board
 CELLS = sorted([(q, r) for q in range(-3, +3 + 1) for r in range(-3, +3 + 1) if -q - r in range(-3, +3 + 1)])
 
-P_MAPPING = {
-    "red": 1,
-    "green": 2,
-    "blue": 3,
-    "empty": 0
-}
-
 START = {
     'red': [(-3, 3), (-3, 2), (-3, 1), (-3, 0)],
     'green': [(0, -3), (1, -3), (2, -3), (3, -3)],
@@ -194,7 +187,6 @@ def cost_from_goal(goal: tuple, tmp_current_board: dict, colour) -> None:
 
 
 tmp_current_board = {x: "empty" for x in CELLS}
-
 
 for g in GOALS:
     for go in GOALS[g]:
