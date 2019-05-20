@@ -360,7 +360,7 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
 
         # getting more pieces if we can
         # but more carefully move towards goal
-        res += 3 * pieces_difference + max((danger_pieces - max(0, pieces_difference)), 0) * (-25)
+        res += 1 * pieces_difference + max((danger_pieces - max(0, pieces_difference)), 0) * (-25)
 
         if turn > 15:
             res += close * (-0.1) + (-6) * reduced_heuristic + 0.5 * others
