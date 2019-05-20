@@ -1,5 +1,5 @@
-import HardCode3.config as config
-import HardCode3.utils as utils
+import VanGame.config as config
+import VanGame.utils as utils
 import copy
 from collections import defaultdict as dd
 
@@ -102,7 +102,6 @@ class CompatNode:
             # accumulate utility value from parent to this state
             for c in ["red", "green", "blue"]:
                 if parent_n.evals[c]:
-                    print(self.evals[c], "parents = ", parent_n.evals)
                     self.evals[c][3] += parent_n.evals[c][3]
 
             # get self colour's evaluation values

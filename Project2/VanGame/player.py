@@ -1,11 +1,8 @@
 import VanGame.utils as utils
 import VanGame.strategy as strategy
-import VanGame.logger as logger
 import VanGame.config as config
-import copy, datetime
-import json, time
-import math
-import os
+import copy
+
 
 class Player:
 
@@ -20,7 +17,7 @@ class Player:
         program will play as (Red, Green or Blue). The value will be one of the 
         strings "red", "green", or "blue" correspondingly.
         """
-        
+        # print(colour)
         self.colour = colour
 
         # player's goal
@@ -34,13 +31,13 @@ class Player:
 
         self.colour_exit = {
             "red": 0,
-            "green": 0,
-            "blue": 0
+            "blue": 0,
+            "green": 0
         }
 
+        self.turn = 0
 
-
-        self.strategy = strategy.Strategy(self.goal, self.colour)
+        self.strategy = strategy.Strategy(self.colour)
 
         # TODO: Set up state representation.
 
@@ -51,7 +48,9 @@ class Player:
             for o in config.START[c]:
                 self.current_board[o] = c
 
-
+        # print(self.colour_p)
+        # print(self.current_board)
+        # print(self.goal)
 
     def action(self):
         """
@@ -65,8 +64,7 @@ class Player:
         actions.
         """
         # TODO: Decide what action to take.
-
-        return self.strategy.get_possible_moves(self.current_board, self.colour, self.colour_p, self.goal, self.colour_exit)
+        return self.strategy.get_possible_moves(self.current_board, self.colour, self.colour_exit, self.turn)
 
     def update(self, colour, action):
         """
@@ -89,22 +87,12 @@ class Player:
         # TODO: Update state representation in response to action.
         self.update_board(action, colour)
 
-        for n in self.colour_exit.keys():
-            if self.colour_exit[n] == 4:
-                player_exited = self.colour_exit[self.colour]
-                r = - (4 - player_exited) * config.EXIT_RW
-                s_wi = "[2zzz]"
-                if n == self.colour:
-                    r += 0
-                    s_wi = "[1win]"
-                self.strategy.logger.update_last_log("rew", r)
-                self.strategy.logger.export_log(s_wi)
-                break
-                
+        self.turn = self.turn + 1
 
         
 
     def update_board(self, action, colour):
+        
         if action[0] in ("MOVE", "JUMP"):
             self.current_board[action[1][0]] = "empty"
             self.current_board[action[1][1]] = colour
@@ -117,8 +105,7 @@ class Player:
 
                 # well I dont freaking know what im thinking about
                 if self.current_board[sk] != "empty" and self.current_board[sk] != colour:
-                    
-                    
+
                     self.colour_p[self.current_board[sk]].remove(sk)
                     self.colour_p[colour].append(sk)
 
@@ -127,20 +114,7 @@ class Player:
 
                     tmp_tbr = self.current_board
                     pl = [m for m in tmp_tbr.keys() if tmp_tbr[m] == self.colour]
-                    if lst == self.colour:
-                        if(len(pl) >= 4):
-                            self.strategy.logger.update_last_log("rew", -config.MORE_RW)
-                            '''self.strategy.log[len(self.strategy.log)-1][1]-= config.MORE_RW'''
-                        else:
-                            self.strategy.logger.update_last_log("rew", -config.LESS_RW)
-                            # self.strategy.log[len(self.strategy.log)-1][1] -= utils.LESS_RW
-                    elif lst != self.colour and colour == self.colour:
-                        if(len(pl) > 4):
-                            self.strategy.logger.update_last_log("rew", config.MORE_RW)
-                            # self.strategy.log[len(self.strategy.log)-1][1]+=utils.MORE_RW
-                        else:
-                            self.strategy.logger.update_last_log("rew", config.LESS_RW)
-                            # self.strategy.log[len(self.strategy.log)-1][1] += utils.LESS_RW
+                    
 
         elif action[0] in ("EXIT",):
             self.current_board[action[1]] = "empty"
@@ -149,7 +123,8 @@ class Player:
             if colour not in self.colour_exit.keys():
                 self.colour_exit[colour] = 0
             self.colour_exit[colour] += 1
-        
 
         return
+
+        
 

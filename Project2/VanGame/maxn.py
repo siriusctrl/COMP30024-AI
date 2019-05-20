@@ -1,6 +1,6 @@
 import numpy as np
-import HardCode3.utils as utils
-import HardCode3.config as config
+import VanGame.utils as utils
+import VanGame.config as config
 
 import random
 import math
@@ -38,7 +38,6 @@ class MaxN:
 
         for c in self.choices:
             further_utils.append((self.chose_next(c, depth), c))
-        print(self.count)
 
         refactored_utils = sorted(further_utils, key=lambda x: x[0][1].evals[self.current_state.colour][-1])
 
