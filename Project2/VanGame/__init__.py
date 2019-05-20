@@ -1,7 +1,5 @@
-from VanGame.player import Player as Player
-import VanGame.utils as u
+from VanGame.player import Player
+
 
 def test():
     print("hello")
-    linear = u.Linear()
-    print(linear.forward([10]))
