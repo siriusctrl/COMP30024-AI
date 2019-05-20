@@ -328,6 +328,8 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
             other_rheu: other player's reduced heuristic
             turn: turns so far of current game
             close: how close that important pieces are
+
+            more detailed explanation please refer to the report
     """
 
     # sum of exits and pieces in-board
