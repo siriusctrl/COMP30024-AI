@@ -363,15 +363,15 @@ def hard_code_eva_function(pieces_difference: int, reduced_heuristic: float, dan
         res += 1 * pieces_difference + max((danger_pieces - max(0, pieces_difference)), 0) * (-25)
 
         if turn > 15:
-            res += close * (-0.1) + (-6) * reduced_heuristic + 0.5 * others
+            res += close * (-0.1) + (-6) * reduced_heuristic + 0.7 * others
         else:
-            res += close * (-0.4) + (-2) * reduced_heuristic + 0.3 * others
+            res += close * (-0.4) + (-2) * reduced_heuristic + 0.5 * others
     # we now have at least one spare piece in terms of winning the game
     else:
         # do not prefer to get more pieces
         # highly recommend to move toward the goal
         # stuck others
-        res += 1 * pieces_difference + max((danger_pieces - max(0, pieces_difference)), 0) * (-15) + 0.3 * others
+        res += 1 * pieces_difference + max((danger_pieces - max(0, pieces_difference)), 0) * (-15) + 0.4 * others
 
         if turn > 15:
             res += close * (-0.1) + (-6) * reduced_heuristic
