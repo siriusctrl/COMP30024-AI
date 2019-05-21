@@ -146,10 +146,12 @@ class CompatNode:
                 # next board
                 next_bor = utils.get_next_curbo(self.current_board, action,
                                                 colour)
-
+                
                 next_node = CompatNode(next_bor, colour, self.colour_exit,
                                        self, action, nxt_turn)
+                
                 all_state_players.append(next_node)
+                
 
         # all next actions
         all_ms = []

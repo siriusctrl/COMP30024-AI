@@ -12,6 +12,10 @@ class MaxN:
         self.current_state = current_state
         self.next_move = {"red": "green", "green": "blue", "blue": "red"}
         self.choices = [i for i in current_state.expand()]
+
+        self.choices = sorted(self.choices, key=lambda x: x.eval[3])
+
+        self.choices = self.choices[int(len(self.choices) // 2):]
         self.root_colour = current_state.colour
         self.all_colour = {"red":["green", "blue"], "green": ["red", "blue"], "blue": ["red", "green"]}
         self.next_colour = {"red":"green", "green": "blue", "blue": "red"}
@@ -20,7 +24,7 @@ class MaxN:
     @staticmethod
     def explore_next(node, colour, discard_rate):
 
-        successor = node.expand(colour)
+        successor = node.expand(colour=colour)
         utils = []
 
         '''for i in successor:
@@ -51,24 +55,10 @@ class MaxN:
         if depth == 0:
             return 0, node
         
-        values = [self.chose_next(n, depth - 1) for n in self.explore_next(node, self.next_colour[node.colour], 3)]
+        values = [self.chose_next(n, depth - 1) for n in self.explore_next(node, self.next_colour[node.colour], 2)]
         
         # mv = self.max_value(values, node.colour)
 
         mv = sorted(values, key=lambda x: x[1].evals[node.colour][-1])
 
         return mv[-1]
-
-
-def softmax_chose(options: list):
-    ops = np.array(options)
-    prob = softmax(np.array(ops))
-    # print("\n", options, "\n", prob, "\n")
-    prob = prob.reshape(len(prob),)
-    return np.random.choice(len(options), 1, p=prob)[0]
-
-
-def softmax(x):
-    """Compute softmax values for each sets of scores in x."""
-    e_x = np.exp(x - np.max(x))
-    return e_x / e_x.sum(axis=0)
