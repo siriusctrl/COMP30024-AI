@@ -30,7 +30,8 @@ and only important files in deep reinforcement learning to illustrate the idea w
 
 \subsection{HardCode}
 
-This section will discuss important files which implement in classical approach. 
+This section will discuss important files which implement in the classical approach which is 
+the version that I regard as our final version.
 Our final file named VanGame will be a example.
 All packages implementing classical strategy have similar structures.
 
@@ -139,7 +140,18 @@ to update the reward for previous states.
 However, after about more than 20k matches based on self-playing, the ability of the bot still couldn't 
 match the player based on greedy search.
 \\
-We primarily trying to feed the map to feedforward NN, whereas, it convergence really slow. Consequently, we have to
+\\
+We have two major different explore strategies used for different stage of training. 
+Refer to the code, the most frequently used one 
+is softmax explore. As the model will return a value for all the actions, I simply normalize them use
+softmax to generate probability for each of the action and chose them based on multinomial distribution. 
+The advantages for doing this is that we balance the trend of exploring and best move. After 10k self-played
+games, the game starting to converge. We now change the strategy to only select the best action to speed up 
+the training process.
+\\
+\\
+From the input perspective, we primarily trying to feed the map to feedforward NN. Whereas, 
+it convergence extremely slow. Consequently, we have to
 make some "hand-made" features, which are quit similar as the previous selection one. Our aim turn to find a 
 sophisticated weight for those features. However, the game still convergence really slow. After that, we think of adding
 some extra reward to the game to guide our model converge faster. If on of our a pieces got eaten and $T < 4$, we give it
@@ -172,12 +184,12 @@ this turn.
 \\
 \\
 For MaxN pruning, we use our evaluation function to chop off the worst 
-one third of the possible actions for each set of successors which have the same parents. Due to the fact that there are always
+half of the possible actions for each set of successors which have the same parents. Due to the fact that there are always
 some super stupid actions each state, and there are very unlikely some good moves following it as we only search for 1 round of
 play (3-ply). 
 For the full MaxN explore, the time complexity can be represent in $O(b^l)$ 
 where $b$ represent the maximum possible action for a player, and $l$ represent how many turns we want to explore further.
-By doing our simple pruning method, we could roughly half the base, which the formula becomes $O((\frac{2b}{3})^l)$.
+By doing our simple pruning method, we could roughly half the base, which the formula becomes $O((\frac{b}{2})^l)$.
 
 \section{Things We Learnt From This Project}
 In conclusion, what we learn from this project is that classical method could still perform really well 

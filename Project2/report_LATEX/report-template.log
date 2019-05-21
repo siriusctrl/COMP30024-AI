@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.3.13)  21 MAY 2019 16:37
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.3.13)  21 MAY 2019 20:30
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -92,68 +92,98 @@ LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <10.95> not available
 
 
 ]
-Underfull \hbox (badness 4621) in paragraph at lines 81--88
+Underfull \hbox (badness 4621) in paragraph at lines 82--89
 \OT1/ppl/m/n/10.95 Using eval-u-a-tion func-tion just like us-ing
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 81--88
+Underfull \hbox (badness 10000) in paragraph at lines 82--89
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 81--88
+Underfull \hbox (badness 10000) in paragraph at lines 82--89
 \OT1/ppl/m/n/10.95 The fol-low-ing pa-ram-e-ters are what we
  []
 
-LaTeX Font Info:    Try loading font information for OMS+ppl on input line 91.
+LaTeX Font Info:    Try loading font information for OMS+ppl on input line 92.
 (/usr/local/texlive/2018/texmf-dist/tex/latex/psnfss/omsppl.fd
 File: omsppl.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ppl/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 91.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 92.
 
-Underfull \hbox (badness 6526) in paragraph at lines 109--112
+Underfull \hbox (badness 6526) in paragraph at lines 110--113
 []\OT1/ppl/b/n/10.95 other[]reduced[]hueristic \OT1/ppl/m/n/10.95 Sim-i-lar as re-
  []
 
 
-Underfull \hbox (badness 1742) in paragraph at lines 126--129
+Underfull \hbox (badness 1742) in paragraph at lines 127--130
 []\OT1/ppl/m/n/10.95 group up and move to-gether at early
  []
 
+
+Underfull \hbox (badness 1968) in paragraph at lines 137--161
+\OT1/ppl/m/n/10.95 We put a lot ef-fort on im-ple-ment-ing and
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--161
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--161
+
+ []
+
+
+Underfull \hbox (badness 2735) in paragraph at lines 137--161
+\OT1/ppl/m/n/10.95 From the in-put per-spec-tive, we pri-mar-ily
+ []
+
+
+Underfull \hbox (badness 7963) in paragraph at lines 137--161
+\OT1/ppl/m/n/10.95 Whereas, it con-ver-gence ex-tremely slow.
+ []
+
+
+Underfull \hbox (badness 1924) in paragraph at lines 137--161
+\OT1/ppl/m/n/10.95 made" fea-tures, which are quit sim-i-lar as
+ []
+
 [2]
-Underfull \hbox (badness 10000) in paragraph at lines 159--181
+Underfull \hbox (badness 10000) in paragraph at lines 171--193
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 159--181
+Underfull \hbox (badness 10000) in paragraph at lines 171--193
 
  []
 
 
-Underfull \hbox (badness 1325) in paragraph at lines 159--181
+Underfull \hbox (badness 1325) in paragraph at lines 171--193
 \OT1/ppl/m/n/10.95 eval-u-a-tion func-tion to eval-u-ate the cur-rent
  []
 
 
-Underfull \hbox (badness 1325) in paragraph at lines 159--181
+Underfull \hbox (badness 1325) in paragraph at lines 171--193
 \OT1/ppl/m/n/10.95 to rep-re-sent the long run re-ward for each
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 159--181
+Underfull \hbox (badness 10000) in paragraph at lines 171--193
 
  []
 
 
-Underfull \hbox (badness 4556) in paragraph at lines 159--181
+Underfull \hbox (badness 4556) in paragraph at lines 171--193
 \OT1/ppl/m/n/10.95 For MaxN prun-ing, we use our eval-u-a-
  []
 
 
-Underfull \hbox (badness 1033) in paragraph at lines 159--181
+Underfull \hbox (badness 1033) in paragraph at lines 171--193
 \OT1/ppl/m/n/10.95 some good moves fol-low-ing it as we only
  []
 
@@ -161,13 +191,13 @@ Underfull \hbox (badness 1033) in paragraph at lines 159--181
 Here is how much of TeX's memory you used:
  479 strings out of 492649
  6357 string characters out of 6129622
- 70616 words of memory out of 5000000
+ 72616 words of memory out of 5000000
  4404 multiletter control sequences out of 15000+600000
  16539 words of font info for 46 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  24i,9n,19p,248b,226s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb>
-Output written on /Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.pdf (3 pages, 95359 bytes).
+Output written on /Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.pdf (3 pages, 95864 bytes).
 PDF statistics:
  43 PDF objects out of 1000 (max. 8388607)
  30 compressed objects within 1 object stream

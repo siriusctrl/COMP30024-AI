@@ -1,7 +1,7 @@
 # Fdb version 3
-["pdflatex"] 1558420628 "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.tex" "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.pdf" "report-template" 1558420628
-  "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.aux" 1558420628 8 a94a2480d3289e625eea47cd1b285758 ""
-  "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.tex" 1558420627 10937 a7805be0552716db78e24339ab2374f9 ""
+["pdflatex"] 1558434627 "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.tex" "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.pdf" "report-template" 1558436595
+  "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.aux" 1558434627 8 a94a2480d3289e625eea47cd1b285758 ""
+  "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.tex" 1558436595 11615 2f753c140cae83c0d52db0ebd4fdb058 ""
   "/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/base/8r.enc" 1480098666 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2018/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/local/texlive/2018/texmf-dist/fonts/tfm/adobe/palatino/pplb7t.tfm" 1480098688 1616 371d1ee60c04b008c8fd760060cd34f1 ""
@@ -44,11 +44,11 @@
   "/usr/local/texlive/2018/texmf-var/web2c/pdftex/pdflatex.fmt" 1552449474 4220280 49c649c9dcf3ea0ad122b125e54af249 ""
   "/usr/local/texlive/2018/texmf.cnf" 1523934483 577 0b39adfd7c93507ff20c9c14c2f1a33f ""
   "colacl.sty" 1557403808 21520 4b33295faefce7dd9d9782fec7f3f87a ""
-  "report-template.aux" 1558420628 8 a94a2480d3289e625eea47cd1b285758 ""
-  "report-template.tex" 1558420627 10937 a7805be0552716db78e24339ab2374f9 ""
+  "report-template.aux" 1558434627 8 a94a2480d3289e625eea47cd1b285758 ""
+  "report-template.tex" 1558436595 11615 2f753c140cae83c0d52db0ebd4fdb058 ""
   (generated)
-  "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.pdf"
-  "report-template.log"
   "report-template.aux"
-  "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.log"
+  "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.pdf"
   "report-template.pdf"
+  "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.log"
+  "report-template.log"
