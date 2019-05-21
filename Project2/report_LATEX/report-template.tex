@@ -149,25 +149,40 @@ Unfortunately, due to time limited for this project, we don't have chance to dig
 
 \section{Comparison Between Different Strategies}
 
-All our model could satisfy the time and memory limit for even 256 game turns. The fastest one is greedy, which only take
-less than 0.1s to make decision. The other two HardCode with MaxN version could make decision within 0.5 sec on average.
+All our model (including the model that are not the final version) could satisfy both
+time and memory limit for even 256 game turns. The fastest one is greedy, 
+which only take less than 0.1s to make decision. 
+The other two HardCode with MaxN version could make decision within 0.5 sec on average.
 The one use deep learning could make decision around 0.1s which is just a little bit longer than greedy strategy.
 
-\section{Optimization for MaxN}
+\section{MaxN Search and Optimization}
+This is actually the core part of our strategy, but our strategy are relatively simple. 
+\\
+\\
+In terms of saving memory, we create nodes only during the time of MaxN search.
+we don't really have a "tree" structure, we use recursive call to deal with parents and children 
+hierarchy which could save a some RAM space.
+\\
+\\
+For each layer in MaxN, we use the greedy evaluation function to evaluate the current state comparing to the previous state 
+(their parent nodes if we talking about a tree)
+for each player no matter who is going to play at current turn. Then, after we reached the bottom of MaxN, we back propagate the 
+final value for the last state to the top and use it to represent the long run reward for each individual action I am going to take 
+this turn.
+\\
+\\
+For MaxN pruning, we use our evaluation function to chop off the worst 
+one third of the possible actions for each set of successors which have the same parents. Due to the fact that there are always
+some super stupid actions each state, and there are very unlikely some good moves following it as we only search for 1 round of
+play (3-ply). 
+For the full MaxN explore, the time complexity can be represent in $O(b^l)$ 
+where $b$ represent the maximum possible action for a player, and $l$ represent how many turns we want to explore further.
+By doing our simple pruning method, we could roughly half the base, which the formula becomes $O((\frac{2b}{3})^l)$.
 
-This is actually the core part of our strategy, but our strategy are relatively simple. In terms of saving memory, we 
-create nodes only during the time of MaxN. For MaxN pruning, we use our evaluation function to chop off the worst 
-half of action, as they wouldn't be even considered anyway. By doing this, we could simply half the branching factors.
-For each layer in MaxN, we use the greedy 
-evaluation function to evaluate how good is each action in terms of who is going to take action at that turn
-and then propagate back the final choice to its parents.
-Notice that we don't really have a "tree" structure, we use recursive call to deal with parents and children 
-hierarchy which could save a lot of memory.
-
-\section{Things we learnt from this project}
+\section{Things We Learnt From This Project}
 In conclusion, what we learn from this project is that classical method could still perform really well 
-if you only have limited time and resources, and reinforcement learning method take really long time to see some 
-feedbacks, you must be patience for that. The reason for that is reinforcement learning has too many hyper-parameters
-that we need to tune. Last but not least, hope you enjoy reading this report, have a nice day.
+if you only have limited time and resources. Reinforcement learning method take really long time to see some 
+feedbacks due to the large number of hyper-parameters that we need to tune. 
+Last but not least, hope you enjoy reading this report, have a nice day.
 
 \end{document}

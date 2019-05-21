@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.3.13)  21 MAY 2019 01:11
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.3.13)  21 MAY 2019 16:37
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -122,9 +122,42 @@ Underfull \hbox (badness 1742) in paragraph at lines 126--129
 []\OT1/ppl/m/n/10.95 group up and move to-gether at early
  []
 
-[2] [3
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 159--181
 
-] (/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.aux) ) 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 159--181
+
+ []
+
+
+Underfull \hbox (badness 1325) in paragraph at lines 159--181
+\OT1/ppl/m/n/10.95 eval-u-a-tion func-tion to eval-u-ate the cur-rent
+ []
+
+
+Underfull \hbox (badness 1325) in paragraph at lines 159--181
+\OT1/ppl/m/n/10.95 to rep-re-sent the long run re-ward for each
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 159--181
+
+ []
+
+
+Underfull \hbox (badness 4556) in paragraph at lines 159--181
+\OT1/ppl/m/n/10.95 For MaxN prun-ing, we use our eval-u-a-
+ []
+
+
+Underfull \hbox (badness 1033) in paragraph at lines 159--181
+\OT1/ppl/m/n/10.95 some good moves fol-low-ing it as we only
+ []
+
+[3] (/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.aux) ) 
 Here is how much of TeX's memory you used:
  479 strings out of 492649
  6357 string characters out of 6129622
@@ -133,11 +166,11 @@ Here is how much of TeX's memory you used:
  16539 words of font info for 46 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  24i,9n,19p,248b,226s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb>
-Output written on /Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.pdf (3 pages, 85760 bytes).
+{/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb>
+Output written on /Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.pdf (3 pages, 95359 bytes).
 PDF statistics:
- 39 PDF objects out of 1000 (max. 8388607)
- 27 compressed objects within 1 object stream
+ 43 PDF objects out of 1000 (max. 8388607)
+ 30 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

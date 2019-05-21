@@ -57,7 +57,7 @@ class MaxN:
         if depth == 0:
             return 0, node
         
-        values = [self.chose_next(n, depth - 1) for n in self.explore_next(node, self.next_colour[node.colour], 2)]
+        values = [self.chose_next(n, depth - 1) for n in self.explore_next(node, self.next_colour[node.colour], 3)]
         
         # mv = self.max_value(values, node.colour)
 

@@ -1,7 +1,7 @@
 # Fdb version 3
-["pdflatex"] 1558365103 "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.tex" "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.pdf" "report-template" 1558365565
-  "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.aux" 1558365103 8 a94a2480d3289e625eea47cd1b285758 ""
-  "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.tex" 1558365565 10221 51d8ad90c12380b923d67fac532b0ac6 ""
+["pdflatex"] 1558420628 "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.tex" "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.pdf" "report-template" 1558420628
+  "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.aux" 1558420628 8 a94a2480d3289e625eea47cd1b285758 ""
+  "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.tex" 1558420627 10937 a7805be0552716db78e24339ab2374f9 ""
   "/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/base/8r.enc" 1480098666 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2018/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/local/texlive/2018/texmf-dist/fonts/tfm/adobe/palatino/pplb7t.tfm" 1480098688 1616 371d1ee60c04b008c8fd760060cd34f1 ""
@@ -24,6 +24,7 @@
   "/usr/local/texlive/2018/texmf-dist/fonts/tfm/public/cm/cmsy9.tfm" 1480098701 1116 25a7bf822c58caf309a702ef79f4afbb ""
   "/usr/local/texlive/2018/texmf-dist/fonts/tfm/public/latex-fonts/lasy6.tfm" 1480098711 520 4889cce2180234b97cad636b6039c722 ""
   "/usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb" 1480098733 36299 5f9df58c2139e7edcf37c8fca4bd384d ""
+  "/usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb" 1480098733 35469 70d41d2b9ea31d5d813066df7c99281c ""
   "/usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1480098733 35752 024fb6c41858982481f6968b5fc26508 ""
   "/usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb" 1480098733 32726 0a1aea6fcd6468ee2cf64d891f5c43c8 ""
   "/usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1480098733 32569 5e5ddc8df908dea60932f3c484a54c0d ""
@@ -43,11 +44,11 @@
   "/usr/local/texlive/2018/texmf-var/web2c/pdftex/pdflatex.fmt" 1552449474 4220280 49c649c9dcf3ea0ad122b125e54af249 ""
   "/usr/local/texlive/2018/texmf.cnf" 1523934483 577 0b39adfd7c93507ff20c9c14c2f1a33f ""
   "colacl.sty" 1557403808 21520 4b33295faefce7dd9d9782fec7f3f87a ""
-  "report-template.aux" 1558365103 8 a94a2480d3289e625eea47cd1b285758 ""
-  "report-template.tex" 1558365565 10221 51d8ad90c12380b923d67fac532b0ac6 ""
+  "report-template.aux" 1558420628 8 a94a2480d3289e625eea47cd1b285758 ""
+  "report-template.tex" 1558420627 10937 a7805be0552716db78e24339ab2374f9 ""
   (generated)
+  "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.pdf"
   "report-template.log"
+  "report-template.aux"
   "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.log"
   "report-template.pdf"
-  "report-template.aux"
-  "/Users/xinyaoniu/Documents/COMP30024-AI/Project2/report_LATEX/report-template.pdf"
