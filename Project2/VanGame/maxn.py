@@ -43,12 +43,6 @@ class MaxN:
 
         best = refactored_utils[-1][0][1]
 
-        if len(refactored_utils) >= 2:
-            ch = math.floor(random.random() * 2)
-            if ch == 0:
-                return refactored_utils[-1][-1]
-            else:
-                return refactored_utils[-1][-1]
 
         return refactored_utils[-1][-1]
 
@@ -64,18 +58,6 @@ class MaxN:
         mv = sorted(values, key=lambda x: x[1].evals[node.colour][-1])
 
         return mv[-1]
-
-    '''def max_value(self, values, colour):
-
-        refactored_values = sorted(values, key=lambda x: self.evaluate_weights(x[0], colour))
-
-        return refactored_values[-1]
-
-    def evaluate_weights(self, x, colour):
-        # define how we make trade off between our gain and other opponents lost in utility
-        opp_one = self.all_colour[colour][0]
-        opp_two = self.all_colour[colour][1]
-        return x[colour] + (x[opp_one] + x[opp_two]) * config.TRADE_OFF'''
 
 
 def softmax_chose(options: list):
